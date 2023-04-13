@@ -79,20 +79,17 @@ function updateDisplay() {
 
     for (let [type, ants] of Object.values(antSpecies).entries()) {
         for (let [tier, ant] of Object.values(ants).entries()) {
+
+            const displayCostThreshold = (ant.owned == 0) && (resources.food.total < (ant.cost / 2));
+            let display = displayCostThreshold ? "none" : "";
+            document.getElementById(ant.id + "-button").style.display = display;
+            document.getElementById(ant.id + "-data-1").style.display = display;
+            document.getElementById(ant.id + "-data-2").style.display = display;
+
             document.getElementById(ant.id + "-bought").innerHTML = numberFormat(ant.bought);
             document.getElementById(ant.id + "-owned").innerHTML = numberFormat(ant.owned);
             document.getElementById(ant.id + "-production").innerHTML = numberFormat(ant.production * ant.owned) + ' ' + ant.abb;
             document.getElementById(ant.id + "-cost").innerHTML = numberFormat(ant.cost);
-            
-            if ((ant.owned == 0) && (resources.food.total < (ant.cost / 2))) {
-                document.getElementById(ant.id + "-button").style.display = "none";
-                document.getElementById(ant.id + "-data-1").style.display = "none";
-                document.getElementById(ant.id + "-data-2").style.display = "none";
-            } else {
-                document.getElementById(ant.id + "-button").style.display = "";
-                document.getElementById(ant.id + "-data-1").style.display = "";
-                document.getElementById(ant.id + "-data-2").style.display = "";
-            };
         };
     };
 };
