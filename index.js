@@ -24,11 +24,11 @@ for (let [type, ants] of Object.values(antSpecies).entries()) {
     for (let [tier, ant] of Object.values(ants).entries()) {
         ant.bought = 0;
         ant.owned = 0;
-        ant.production = .1;
         ant.boost = 1;
     };
     for (let [tier, ant] of Object.values(ants).entries()) {
         ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.bought);
+        ant.production = Math.log(tier + 1) * 0.1;
     };
 };
 
