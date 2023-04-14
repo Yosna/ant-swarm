@@ -103,7 +103,6 @@ setInterval(function gameLoop() {
                 // Add food if the ant is the lowest tier
                 resources.food.total += (ant.production * ant.owned) / 10;
                 totalFoodProduction += ant.production * ant.owned;
-                console.log(ant.production)
             } else {
                 // Add ants to the tier below
                 Object.values(antSpecies)[type][Object.keys(ants)[tier - 1]].owned += ((ant.production * ant.owned) / 10);
