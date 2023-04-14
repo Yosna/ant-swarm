@@ -24,11 +24,11 @@ for (let [type, ants] of Object.values(antSpecies).entries()) {
     for (let [tier, ant] of Object.values(ants).entries()) {
         ant.bought = 0;
         ant.owned = 0;
+        ant.production = 0.1;
         ant.boost = 1;
     };
     for (let [tier, ant] of Object.values(ants).entries()) {
         ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.bought);
-        ant.production = Math.log(tier + 1) * 0.1;
     };
 };
 
@@ -46,7 +46,6 @@ function recruit(antType, antTier) {
                         return;
                     } else {
                         resources.food.total -= ant.cost;
-                        ant.production += 0.1;
                         ant.bought++;
                         ant.owned++;
                     }
@@ -104,6 +103,7 @@ setInterval(function gameLoop() {
                 // Add food if the ant is the lowest tier
                 resources.food.total += (ant.production * ant.owned) / 10;
                 totalFoodProduction += ant.production * ant.owned;
+                console.log(ant.production)
             } else {
                 // Add ants to the tier below
                 Object.values(antSpecies)[type][Object.keys(ants)[tier - 1]].owned += ((ant.production * ant.owned) / 10);
