@@ -46,6 +46,7 @@ function recruit(antType, antTier) {
                         return;
                     } else {
                         resources.food.total -= ant.cost;
+                        ant.production += 0.1;
                         ant.bought++;
                         ant.owned++;
                     }
