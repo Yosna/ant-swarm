@@ -1,12 +1,12 @@
 let antSpecies = {
     garden: {
-        smallWorker: {name: "Small Garden Worker", id: "small-garden-worker", product: "food", abb: "F/s"},
-        regularWorker: {name: "Regular Garden Worker", id: "regular-garden-worker", product: "small garden workers", abb: "SGW/s"},
-        largeWorker: {name: "Large Garden Worker", id: "large-garden-worker", product: "regular garden workers", abb: "RGW/s"},
-        smallDrone: {name: "Small Garden Drone", id: "small-garden-drone", product: "large garden workers", abb: "LGW/s"},
-        regularDrone: {name: "Regular Garden Drone", id: "regular-garden-drone", product: "small garden drones", abb: "SGD/s"},
-        largeDrone: {name: "Large Garden Drone", id: "large-garden-drone", product: "regular garden drones", abb: "RGD/s"},
-        queen: {name: "Garden Ant Queen", id: "garden-ant-queen", product: "large garden drones", abb: "LGD/s"},
+        smallWorker: {name: "Small Garden Worker", id: "small-garden-worker", idabb: "SGW", product: "food", abb: "F/s"},
+        regularWorker: {name: "Regular Garden Worker", id: "regular-garden-worker", idabb: "RGW", product: "small garden workers", abb: "SGW/s"},
+        largeWorker: {name: "Large Garden Worker", id: "large-garden-worker", idabb: "LGW", product: "regular garden workers", abb: "RGW/s"},
+        smallDrone: {name: "Small Garden Drone", id: "small-garden-drone", idabb: "SGD", product: "large garden workers", abb: "LGW/s"},
+        regularDrone: {name: "Regular Garden Drone", id: "regular-garden-drone", idabb: "RGD", product: "small garden drones", abb: "SGD/s"},
+        largeDrone: {name: "Large Garden Drone", id: "large-garden-drone", idabb: "LGD", product: "regular garden drones", abb: "RGD/s"},
+        queen: {name: "Garden Ant Queen", id: "garden-ant-queen", idabb: "GQ", product: "large garden drones", abb: "LGD/s"},
     },
 };
 
@@ -29,10 +29,16 @@ const game = (() => {
             ant.owned = 0;
             ant.production = .1;
             ant.boost = 1;
+            ant.upgrades = 1;
         };
         for (let [tier, ant] of Object.values(ants).entries()) {
             ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.bought);
         };
+    };
+
+    // Hide locked content
+    for (let upgradeSlot = 1; upgradeSlot < 9; upgradeSlot++) {
+        document.getElementById("upgrade-button-" + upgradeSlot).style.display = "none";
     };
 
     // Recruit an ant
@@ -42,12 +48,29 @@ const game = (() => {
                 for (let [tier, ant] of Object.values(ants).entries()) {
                     if (antTier == tier) {
                         if (ant.cost > resources.food.total) {
-                            return;
+                            return; // Not enough food to buy the ant
                         } else {
                             resources.food.total -= ant.cost;
                             ant.bought++;
                             ant.owned++;
-                        }
+
+                            // Determine if any upgrade prerequisites have been met
+                            if (ant.bought >= (ant.upgrades * 1)) {
+                                for (let upgradeSlot = 1; upgradeSlot < 9; upgradeSlot++) {
+                                    const upgradeButton = document.getElementById("upgrade-button-" + upgradeSlot);
+                                    
+                                    if (upgradeButton.classList.contains(ant.id + "-upgrade-" + ant.upgrades)) {
+                                        break; // Exit the loop and do nothing if the upgrade is already displayed
+                                    }
+                                    if (upgradeButton.style.display == "none") {
+                                        upgradeButton.setAttribute("class", ant.id + "-upgrade-" + ant.upgrades);
+                                        upgradeButton.innerHTML = ant.idabb + ant.upgrades;
+                                        upgradeButton.style.display = "";
+                                        break;
+                                    };
+                                };
+                            };
+                        };
                     };
                 };
             };
