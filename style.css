@@ -81,10 +81,13 @@ body {
     display: flex;
     height: 100%;
     width: 50%;
+    overflow: auto;
 } .upgrade-button-container > button {
     background-color: #2c8172;
     font-size: 16px;
-    margin: auto;
-    height: 90%;
-    width: 12%;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 2.2%;
+    height: 80%;
+    width: 10%;
 }
