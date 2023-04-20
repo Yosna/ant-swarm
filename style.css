@@ -68,7 +68,7 @@ body {
     border: 1px solid black;
     display: flex;
     height: 100%;
-    width: 50%;
+    width: 33%;
 } .forage-button-container > button {
     background-color: #2c8172;
     font-size: 16px;
@@ -80,7 +80,7 @@ body {
     border: 1px solid black;
     display: flex;
     height: 100%;
-    width: 50%;
+    width: 33%;
     overflow: auto;
 } .upgrade-button-container > button {
     background-color: #2c8172;
@@ -90,4 +90,13 @@ body {
     margin-left: 2.2%;
     height: 80%;
     width: 10%;
+}
+.quantity-button-container {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 33%;
+} .quantity-button-container > span {
+    text-decoration: underline;
 }
