@@ -104,11 +104,15 @@ const game = (() => {
                                 class="upgrade-button"
                                 id="${ant.id_abb}"
                                 onclick="game.buyUpgrade()"
+                                title=""
                             >
                                 ${ant.id_abb}
                             </button>
                         `;
 
+                        $('#ant.id_abb').tooltip({
+                            content: 'test',
+                        });
                         upgradeContainer.innerHTML += buttonElement;
                     };
                 };
@@ -215,21 +219,21 @@ const util = (() => {
         }
     };
     
-    // Create the timer that keeps the game running
+    // Create a cycle to update the game
+    function cycle() {
+        game.calculate.upgrades();
+        game.calculate.resourceProduction();
+        game.display.update()
+    };
+
+    // Create the timer to loop the cycle
     function timer() {
-        setInterval(function gameCycle() {
-
-            game.calculate.upgrades();
-
-            game.calculate.resourceProduction();
-
-            game.display.update();
-
-        }, stats.tickSpeed);
+        setInterval(cycle, stats.tickSpeed);
     };
 
     return {
         numbers,
+        cycle,
         timer,
     };
 })();
