@@ -1,12 +1,12 @@
 let antSpecies = {
     garden: {
-        smallWorker: {name: 'Small Garden Worker', id: 'small-garden-worker', id_abb: 'SGW', product: 'food', prod_abb: 'F/s'},
-        regularWorker: {name: 'Regular Garden Worker', id: 'regular-garden-worker', id_abb: 'RGW', product: 'small garden workers', prod_abb: 'SGW/s'},
-        largeWorker: {name: 'Large Garden Worker', id: 'large-garden-worker', id_abb: 'LGW', product: 'regular garden workers', prod_abb: 'RGW/s'},
-        smallDrone: {name: 'Small Garden Drone', id: 'small-garden-drone', id_abb: 'SGD', product: 'large garden workers', prod_abb: 'LGW/s'},
-        regularDrone: {name: 'Regular Garden Drone', id: 'regular-garden-drone', id_abb: 'RGD', product: 'small garden drones', prod_abb: 'SGD/s'},
-        largeDrone: {name: 'Large Garden Drone', id: 'large-garden-drone', id_abb: 'LGD', product: 'regular garden drones', prod_abb: 'RGD/s'},
-        queen: {name: 'Garden Ant Queen', id: 'garden-ant-queen', id_abb: 'GQ', product: 'large garden drones', prod_abb: 'LGD/s'},        
+        smallWorker: {name: 'Small Garden Worker', id: 'small-garden-worker', id_abb: 'SGW', product: 'food', prod_abb: 'F'},
+        regularWorker: {name: 'Regular Garden Worker', id: 'regular-garden-worker', id_abb: 'RGW', product: 'small garden workers', prod_abb: 'SGW'},
+        largeWorker: {name: 'Large Garden Worker', id: 'large-garden-worker', id_abb: 'LGW', product: 'regular garden workers', prod_abb: 'RGW'},
+        smallDrone: {name: 'Small Garden Drone', id: 'small-garden-drone', id_abb: 'SGD', product: 'large garden workers', prod_abb: 'LGW'},
+        regularDrone: {name: 'Regular Garden Drone', id: 'regular-garden-drone', id_abb: 'RGD', product: 'small garden drones', prod_abb: 'SGD'},
+        largeDrone: {name: 'Large Garden Drone', id: 'large-garden-drone', id_abb: 'LGD', product: 'regular garden drones', prod_abb: 'RGD'},
+        queen: {name: 'Garden Ant Queen', id: 'garden-ant-queen', id_abb: 'GQ', product: 'large garden drones', prod_abb: 'LGD'},        
     },
 };
 
@@ -17,8 +17,13 @@ let resources = {
     },
 };
 
-let foragingRate = 1;
-let foragingBoost = 1;
+let stats = {
+    foraging: {
+        rate: 0.1,
+        boost: 1,
+    },
+    tickSpeed: 100,
+};
 
 const init = (() => {
     
@@ -31,8 +36,7 @@ const init = (() => {
                 ant.production = .1;
                 ant.boost = 1;
                 ant.upgrades = 1;
-            };
-            for (let [tier, ant] of Object.values(ants).entries()) {
+                ant.visible = false;
                 ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.bought);
             };
         };
@@ -49,7 +53,7 @@ const game = (() => {
 
     // Gather food by foraging
     function forage() {
-        resources.food.total += (foragingRate * foragingBoost);
+        resources.food.total += (stats.foraging.rate * stats.foraging.boost);
         document.getElementById('food-total').innerHTML = util.numbers(resources.food.total);
     };
 
@@ -60,8 +64,8 @@ const game = (() => {
                 for (let [tier, ant] of Object.values(ants).entries()) {
                     if (antTier == tier) {
 
-                        // Check if the food is sufficient
-                        if (ant.cost > resources.food.total) return;
+                        // Check if the food is sufficient; util.numbers() fixes floating point number precision
+                        if (util.numbers(resources.food.total) < ant.cost) return;
 
                         resources.food.total -= ant.cost;
                         ant.bought++;
@@ -72,6 +76,10 @@ const game = (() => {
         };
     };
 
+    function buyUpgrade() {
+        // placeholder text
+    };
+
     const calculate = (() => {
 
         function upgrades() {
@@ -80,6 +88,7 @@ const game = (() => {
 
                     // Determine if any upgrade prerequisites have been met
                     if (ant.bought >= (ant.upgrades * 1)) {
+
                         const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
                         const upgradesUnlocked = upgradeContainer.querySelectorAll('*');
     
@@ -88,40 +97,51 @@ const game = (() => {
                             if (upgradesUnlocked[i].id == ant.id_abb) return; 
                         };
                         
-                        // Create a new upgrade button once the prerequisites have been met
-                        const buttonElement = ('<button type="button" class="upgrade-button" id="' + ant.id_abb + '" onclick=game.upgrade()">' + ant.id_abb + '</button>');
+                        // Create and display a new upgrade element once the prerequisites have been met
+                        const buttonElement = `
+                            <button
+                                type="button" 
+                                class="upgrade-button"
+                                id="${ant.id_abb}"
+                                onclick="game.buyUpgrade()"
+                            >
+                                ${ant.id_abb}
+                            </button>
+                        `;
 
-                        upgradeContainer.innerHTML += buttonElement; // Display the element
+                        upgradeContainer.innerHTML += buttonElement;
                     };
                 };
             };
         };
 
         function resourceProduction() {
-            let totalFoodProduction = 0;
+            let foodPerSecond = 0;
         
             for (let [type, ants] of Object.values(antSpecies).entries()) {
                 for (let [tier, ant] of Object.values(ants).entries()) {
+
                     if (tier == 0) { 
                         // Add food if the ant is the lowest tier
-                        resources.food.total += (ant.production * ant.owned) / 10;
-                        totalFoodProduction += ant.production * ant.owned;
+                        resources.food.total += (ant.production * ant.owned) * (stats.tickSpeed / 1000);
+                        foodPerSecond += ant.production * ant.owned;
                     } else { 
-                        // Add ants to the tier below
-                        Object.values(antSpecies)[type][Object.keys(ants)[tier - 1]].owned += ((ant.production * ant.owned) / 10);
+                        // Add ants to the previous tier
+                        Object.values(antSpecies)[type][Object.keys(ants)[tier - 1]].owned += (ant.production * ant.owned) * (stats.tickSpeed / 1000);
                     };
+
                     // Calculate the cost of the ant for the current tier
                     ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.bought) * (tier + 1);
                 };
             };
         
-            resources.food.production = totalFoodProduction;
+            resources.food.production = foodPerSecond;
         };
 
         return {
             upgrades,
             resourceProduction,
-        }
+        };
     })();
 
     const display = (() => {
@@ -137,7 +157,7 @@ const game = (() => {
 
                     // Determine if the cost threshold has been met to display the next ant
                     const displayCostThreshold = (ant.owned == 0) && (resources.food.total < (ant.cost / 4));
-                    let display = displayCostThreshold ? 'none' : '';
+                    let display = (displayCostThreshold && (ant.visible == false)) ? 'none' : '';
                     
                     // Update visibility of the ant's information
                     document.getElementById(ant.id + '-button').style.display = display;
@@ -150,6 +170,8 @@ const game = (() => {
                         document.getElementById(ant.id + '-owned').innerHTML = util.numbers(ant.owned);
                         document.getElementById(ant.id + '-production').innerHTML = util.numbers(ant.production * ant.owned) + ' ' + ant.prod_abb;
                         document.getElementById(ant.id + '-cost').innerHTML = util.numbers(ant.cost);
+
+                        ant.visible = true;
                     }
                 };
             };
@@ -157,12 +179,13 @@ const game = (() => {
 
         return {
             update,
-        }
+        };
     })();
 
     return {
         forage,
         recruit,
+        buyUpgrade,
         calculate,
         display,
     };
@@ -192,7 +215,7 @@ const util = (() => {
         }
     };
     
-    // Create a timer to keep the game running
+    // Create the timer that keeps the game running
     function timer() {
         setInterval(function gameCycle() {
 
@@ -202,7 +225,7 @@ const util = (() => {
 
             game.display.update();
 
-        }, 100);
+        }, stats.tickSpeed);
     };
 
     return {
