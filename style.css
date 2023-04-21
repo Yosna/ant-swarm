@@ -1,9 +1,9 @@
 * {
     font-family: 'Consolas';
-    -ms-overflow-style: none; /* Internet Explorer, Edge */
-    scrollbar-width: none; /* Firefox */
-} *::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    -ms-overflow-style: none; /* Hide scrollbar: Internet Explorer, Edge */
+    scrollbar-width: none;  /* Hide scrollbar: Firefox */
+} *::-webkit-scrollbar {  /* Hide scrollbar: Chrome, Safari, Opera */
+    display: none;
 }
 body {
     background-color: #1e453e;
@@ -29,7 +29,6 @@ body {
 }
 .resource-container {
     height: 15%;
-}.resource-container > p {
     text-align: center;
 }
 .ant-recruit-container {
@@ -64,11 +63,34 @@ body {
     height: 10%;
     width: 100%;
 }
-.forage-button-container {
+.upgrade-button-container {
+    display: flex;
+    justify-content: flex-end;
+    height: 100%;
+    width: 30%;
+    overflow: auto;
+} .upgrade-button-container > button {
+    background-color: #2c8172;
+    font-size: 14px;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 2%;
+    height: 65%;
+    width: 15%;
+} .upgrade-button-container > button:hover::after {
+    background-color: inherit;
     border: 1px solid black;
+    border-radius: 20px;
+    position: absolute;
+    content: attr(data-string);
+    transform: translateX(-60%) translateY(-200%) scale(110%);
+    padding: 5px;
+}
+.forage-button-container {
     display: flex;
     height: 100%;
-    width: 33%;
+    width: 40%;
 } .forage-button-container > button {
     background-color: #2c8172;
     font-size: 16px;
@@ -76,27 +98,31 @@ body {
     height: 90%;
     width: 90%;
 }
-.upgrade-button-container {
-    border: 1px solid black;
+.recruit-quantity-container {
     display: flex;
+    flex-direction: row;
+    text-align: center;
     height: 100%;
-    width: 33%;
-    overflow: auto;
-} .upgrade-button-container > button {
-    background-color: #2c8172;
-    font-size: 16px;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: 2.2%;
-    height: 80%;
-    width: 10%;
-}
-.quantity-button-container {
-    border: 1px solid black;
+    width: 30%;
+} 
+#quantity-column {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    height: 100%;
-    width: 33%;
-} .quantity-button-container > span {
-    text-decoration: underline;
+    width: 60%;
+} #quantity-column > select {
+    border: 1px solid black;
+}
+#rounding-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 40%;
+}
+.quantity-options {
+    background-color: inherit;
+    text-align: center;
+    margin: auto;
+    height: 50%;
+    width: 80%;
 }
