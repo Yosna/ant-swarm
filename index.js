@@ -12,7 +12,7 @@ let antSpecies = {
 
 let resources = {
     food: {
-        total: 0,
+        total: 1000000000000000,
         production: 0,
     },
 };
@@ -28,16 +28,34 @@ let stats = {
 const init = (() => {
     
     function load() {
+
+        // Create event listeners for webpage functionality
+
+        // Upgrade Container event listener to change the default axial scroll direction
+        const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
+        upgradeContainer.addEventListener('wheel', function(event) {
+
+            // Determine which axis is being scrolled
+            if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+
+                // Prevent attempted scrolling on the y-axis
+                event.preventDefault();
+
+                // Redirect the y-axis scroll distance to the x-axis
+                upgradeContainer.scrollLeft += event.deltaY;
+            }
+        });
+        
+
         // Set the values for all ants
         for (let [type, ants] of Object.values(antSpecies).entries()) {
             for (let [tier, ant] of Object.values(ants).entries()) {
-                ant.bought = 0;
-                ant.owned = 0;
+                ant.bought = 9;
+                ant.owned = 9;
                 ant.production = .1;
                 ant.boost = 1;
-                ant.upgrades = 1;
+                ant.upgrades = 0;
                 ant.visible = false;
-                ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.bought);
             };
         };
 
@@ -76,8 +94,16 @@ const game = (() => {
         };
     };
 
-    function buyUpgrade() {
-        // placeholder text
+    function buyUpgrade(upgrade) {
+        for (let [type, ants] of Object.values(antSpecies).entries()) {
+            for (let [tier, ant] of Object.values(ants).entries()) {
+
+                // Determine which ant to upgrade
+                if (ant.id == upgrade) {
+                    
+                }
+            };
+        };
     };
 
     const calculate = (() => {
@@ -85,31 +111,52 @@ const game = (() => {
         function upgrades() {
             for (let [type, ants] of Object.values(antSpecies).entries()) {
                 for (let [tier, ant] of Object.values(ants).entries()) {
+                    let displayed = false;
 
-                    // Determine if any upgrade prerequisites have been met
-                    if (ant.bought >= (ant.upgrades * 1)) {
+                    // Set the number of ants bought that unlock each upgrade
+                    const breakpoint = [10, 25, 50, 100, 200, 300, 400, 500, 750, 1000];
 
+                    // Determine if any upgrade breakpoints have been hit
+                    if ((ant.upgrades < 10) && (ant.bought >= breakpoint[ant.upgrades])) {
                         const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
                         const upgradesUnlocked = upgradeContainer.querySelectorAll('*');
     
                         // Check if the upgrade is already unlocked
                         for (let i = 0; i < (upgradesUnlocked.length); i++) {
-                            if (upgradesUnlocked[i].id == ant.id_abb) return; 
+                            if (upgradesUnlocked[i].id == ant.id_abb) displayed = true; 
                         };
                         
                         // Create and display a new upgrade element once the prerequisites have been met
-                        const buttonElement = `
-                            <button
-                                type="button" 
-                                class="upgrade-button"
-                                id="${ant.id_abb}"
-                                onclick="game.buyUpgrade()"
-                                data-string="placeholder string"
-                            >
-                                ${ant.id_abb}
-                            </button>
-                        `;
-                        upgradeContainer.innerHTML += buttonElement;
+                        if (displayed == false) {
+                            
+                            // Calculate the cost for the next upgrade
+                            const antCostAtBreakpoint = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, breakpoint[ant.upgrades]) * (tier + 1);
+                            let upgradeCost = (antCostAtBreakpoint * 12) * Math.pow(1.2, ant.upgrades);
+                            if (upgradeCost < 10000) upgradeCost = Math.floor(upgradeCost);
+
+                            // Calculate the production boost of the upgrade
+                            const productionBoost = 1 + (0.001 * (ant.upgrades + 1));
+                            const productionPercent = ((productionBoost - 1) * 100).toFixed(1) + '%';
+
+                            const buttonElement = `
+                                <button
+                                    type="button" 
+                                    class="upgrade-button"
+                                    id="${ant.id_abb}"
+                                    onclick="game.buyUpgrade('${ant.id}')"
+                                    data-string=
+                                        "${ant.name}
+                                        Upgrade ${(ant.upgrades + 1)}\n
+                                        Cost: ${util.numbers(upgradeCost)}\n
+                                        Boosts production by ${productionPercent} 
+                                        for every ${ant.id_abb} recruited"
+                                >
+                                    ${ant.id_abb}
+                                </button>
+                            `;
+                    
+                            upgradeContainer.innerHTML += buttonElement;
+                        };
                     };
                 };
             };
@@ -211,8 +258,8 @@ const util = (() => {
             case n < 10000: 
                 return parseFloat(n.toFixed(1)).toLocaleString();
             default: 
-                return scientificNotation.format(n);
-        }
+                return scientificNotation.format(n).toLowerCase();
+        };
     };
     
     // Create the cycle that updates the game
@@ -222,7 +269,7 @@ const util = (() => {
         game.display.update()
     };
 
-    // Create the timer that loops the cycle
+    // Create the timer that loops the game cycle
     function timer() {
         setInterval(cycle, stats.tickSpeed);
     };
