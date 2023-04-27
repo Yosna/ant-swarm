@@ -16,8 +16,17 @@
     <div class="window-container">
         <h1 id="title-header">Ant Swarm</h1>
         <div class="content-container">
-            <div class="menu-content">
+            <div class="menu-container">
+                <div class="menu-button-container">
 
+                </div>
+                <div class="save-button-container">
+                    <p>Save Menu:</p>
+                    <button type="button" onclick="util.save()">Save Game</button>
+                    <button type="button" onclick="util.autoSave()">Autosave (<span id="autosave-status">on</span>)</button>
+                    <button type="button" onclick="util.loadSave()">Load Save</button>
+                    <button type="button" onclick="util.deleteSave()">Delete Save</button>
+                </div>
             </div>
             <div class="game-content">
                 <div class="resource-container">
@@ -28,7 +37,7 @@
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text" id="small-garden-worker-data-1">
                                     <p>Bought: <span id="small-garden-worker-bought">0</span></p>
-                                    <p>Owned: <span id="small-garden-worker-owned">0</span></p>
+                                    <p>Owned:  <span id="small-garden-worker-owned">0</span></p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
@@ -71,44 +80,44 @@
                     <div class="ant-recruit-column garden-ant-recruits">
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text" id="small-garden-worker-data-2">
-                                    <p>Cost      : <span id="small-garden-worker-cost">0</span></p>
-                                    <p>Production: <span id="small-garden-worker-production">0</span></p>
+                                    <p>Cost: <span id="small-garden-worker-cost">0</span></p>
+                                    <p>Prod: <span id="small-garden-worker-production">0</span> /s</p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text" id="regular-garden-worker-data-2">
-                                    <p>Cost:       <span id="regular-garden-worker-cost">0</span></p>
-                                    <p>Production: <span id="regular-garden-worker-production">0</span></p>
+                                    <p>Cost: <span id="regular-garden-worker-cost">0</span></p>
+                                    <p>Prod: <span id="regular-garden-worker-production">0</span> /s</p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text" id="large-garden-worker-data-2">
-                                    <p>Cost:       <span id="large-garden-worker-cost">0</span></p>
-                                    <p>Production: <span id="large-garden-worker-production">0</span></p>
+                                    <p>Cost: <span id="large-garden-worker-cost">0</span></p>
+                                    <p>Prod: <span id="large-garden-worker-production">0</span> /s</p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text" id="small-garden-drone-data-2">
-                                    <p>Cost:       <span id="small-garden-drone-cost">0</span></p>
-                                    <p>Production: <span id="small-garden-drone-production">0</span></p>
+                                    <p>Cost: <span id="small-garden-drone-cost">0</span></p>
+                                    <p>Prod: <span id="small-garden-drone-production">0</span> /s</p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text" id="regular-garden-drone-data-2">
-                                    <p>Cost:       <span id="regular-garden-drone-cost">0</span></p>
-                                    <p>Production: <span id="regular-garden-drone-production">0</span></p>
+                                    <p>Cost: <span id="regular-garden-drone-cost">0</span></p>
+                                    <p>Prod: <span id="regular-garden-drone-production">0</span> /s</p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text" id="large-garden-drone-data-2">
-                                    <p>Cost:       <span id="large-garden-drone-cost">0</span></p>
-                                    <p>Production: <span id="large-garden-drone-production">0</span></p>
+                                    <p>Cost: <span id="large-garden-drone-cost">0</span></p>
+                                    <p>Prod: <span id="large-garden-drone-production">0</span> /s</p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text" id="garden-ant-queen-data-2">
-                                    <p>Cost:       <span id="garden-ant-queen-cost">0</span></p>
-                                    <p>Production: <span id="garden-ant-queen-production">0</span></p>
+                                    <p>Cost: <span id="garden-ant-queen-cost">0</span></p>
+                                    <p>Prod: <span id="garden-ant-queen-production">0</span> /s</p>
                             </div>
                         </div>
                     </div>
