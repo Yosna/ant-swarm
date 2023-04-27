@@ -83,6 +83,7 @@ const init = (() => {
                     ant.visible = false;
                 };
             };
+            util.save();
         };
 
         util.timers();
