@@ -12,7 +12,7 @@ let antSpecies = {
 
 let resources = {
     food: {
-        total: 1000000000000000,
+        total: 0,
         production: 0,
     },
 };
@@ -23,13 +23,31 @@ let stats = {
         boost: 1,
     },
     tickSpeed: 100,
+    lastUpdate: Date.now(),
 };
+
+let conditions = {
+    active: true,
+    autoSave: true,
+}
 
 const init = (() => {
     
     function load() {
 
         // Create event listeners for webpage functionality
+
+        // Active window detection
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                conditions.active = true;
+                const elapsedTime = Date.now() - stats.lastUpdate;
+                console.log(elapsedTime);
+            } else if (document.visibilityState === 'hidden') {
+                conditions.active = false;
+            };
+            console.log(document.visibilityState);
+        });
 
         // Upgrade Container event listener to change the default axial scroll direction
         const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
@@ -46,20 +64,28 @@ const init = (() => {
             }
         });
         
-
-        // Set the values for all ants
-        for (let [type, ants] of Object.values(antSpecies).entries()) {
-            for (let [tier, ant] of Object.values(ants).entries()) {
-                ant.bought = 9;
-                ant.owned = 9;
-                ant.production = .1;
-                ant.boost = 1;
-                ant.upgrades = 0;
-                ant.visible = false;
+        if (localStorage.getItem('saveData')) {
+            // Find and load the local save data if possible
+            const saveData = JSON.parse(atob(localStorage.getItem('saveData')));
+            antSpecies = saveData.antSpecies;
+            resources = saveData.resources;
+            stats = saveData.stats;
+            conditions = saveData.conditions;
+        } else {
+            // Create the values for all ants if local data isn't found
+            for (let [type, ants] of Object.values(antSpecies).entries()) {
+                for (let [tier, ant] of Object.values(ants).entries()) {
+                    ant.bought = 0;
+                    ant.owned = 0;
+                    ant.production = .1;
+                    ant.boost = 1;
+                    ant.upgrades = 0;
+                    ant.visible = false;
+                };
             };
         };
 
-        util.timer();
+        util.timers();
     };
 
     return {
@@ -105,8 +131,15 @@ const game = (() => {
             };
         };
     };
-
+    
     const calculate = (() => {
+
+        function offlineProgress() {
+            return;
+            const elapsedTime = (Date.now() - stats.lastUpdate);
+            if (elapsedTime > 200) console.log(elapsedTime);
+            stats.lastUpdate = Date.now();
+        };
 
         function upgrades() {
             for (let [type, ants] of Object.values(antSpecies).entries()) {
@@ -186,6 +219,7 @@ const game = (() => {
         };
 
         return {
+            offlineProgress,
             upgrades,
             resourceProduction,
         };
@@ -264,20 +298,74 @@ const util = (() => {
     
     // Create the cycle that updates the game
     function cycle() {
-        game.calculate.upgrades();
-        game.calculate.resourceProduction();
-        game.display.update()
+        if (conditions.active) {
+            game.calculate.upgrades();
+            game.calculate.resourceProduction();
+            game.display.update();
+
+            timestamp();
+        };
     };
 
-    // Create the timer that loops the game cycle
-    function timer() {
-        setInterval(cycle, stats.tickSpeed);
+    function timestamp() {
+        return stats.lastUpdate = Date.now();
+    }
+
+    function save() {
+        timestamp();
+
+        const saveData = {
+            antSpecies: antSpecies,
+            resources: resources,
+            stats: stats,
+            conditions: conditions,
+        };
+        const encodedData = btoa(JSON.stringify(saveData));
+
+        localStorage.setItem('saveData', encodedData);
+        console.log('Game saved');
     };
+
+    function autoSave() {
+        conditions.autoSave = !conditions.autoSave;
+        let autoSaveStatus = document.getElementById('autosave-status');
+        if (conditions.autoSave) return autoSaveStatus.innerHTML = 'on';
+        else return autoSaveStatus.innerHTML = 'off';
+    };
+
+    function loadSave() {
+        // placeholder text
+    };
+
+    function deleteSave() {
+        localStorage.clear();
+    };
+
+    // Create the timers for the game cycle and auto saving
+    function timers() {
+        gameCycle = setInterval(cycle, stats.tickSpeed);
+        saveGame = setInterval(function() {
+            if (conditions.autoSave) save();
+        }, 60000);
+    };
+
+    function resetTimers() {
+        clearInterval(gameCycle);
+        clearInterval(saveGame);
+
+        timers();
+    }
 
     return {
         numbers,
         cycle,
-        timer,
+        timestamp,
+        save,
+        autoSave,
+        loadSave,
+        deleteSave,
+        timers,
+        resetTimers,
     };
 })();
 
