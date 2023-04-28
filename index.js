@@ -42,8 +42,9 @@ const init = (() => {
             if (document.visibilityState === 'visible') {
                 conditions.active = true;
                 const elapsedTime = Date.now() - stats.lastUpdate;
-                console.log(elapsedTime);
+                console.log(elapsedTime / 1000 + ' seconds');
             } else if (document.visibilityState === 'hidden') {
+                util.timestamp();
                 conditions.active = false;
             };
             console.log(document.visibilityState);
@@ -72,7 +73,7 @@ const init = (() => {
             stats = saveData.stats;
             conditions = saveData.conditions;
         } else {
-            // Create the values for all ants if local data isn't found
+            // Create the values for all ants if no local data was detected
             for (let [type, ants] of Object.values(antSpecies).entries()) {
                 for (let [tier, ant] of Object.values(ants).entries()) {
                     ant.bought = 0;
@@ -259,8 +260,20 @@ const game = (() => {
             };
         };
 
+        // Toggle the display for settings
+        function settings(display) {
+            let settingsContainer = document.getElementById('settings-container');
+            let elementsToHide = document.getElementsByClassName('main-container');
+
+            for (let i = 0; i < elementsToHide.length; i++) elementsToHide[i].style.display = 'none';
+
+            if (display == 'none') document.getElementById('main-container').style.display = 'flex';
+            else settingsContainer.style.display = display;
+        };
+
         return {
             update,
+            settings,
         };
     })();
 
@@ -305,6 +318,7 @@ const util = (() => {
             game.display.update();
 
             timestamp();
+            console.log('cycled');
         };
     };
 
@@ -313,8 +327,6 @@ const util = (() => {
     }
 
     function save() {
-        timestamp();
-
         const saveData = {
             antSpecies: antSpecies,
             resources: resources,
@@ -346,7 +358,7 @@ const util = (() => {
     function timers() {
         gameCycle = setInterval(cycle, stats.tickSpeed);
         saveGame = setInterval(function() {
-            if (conditions.autoSave) save();
+            if (conditions.autoSave && conditions.active) save();
         }, 60000);
     };
 
