@@ -15,20 +15,23 @@
 <body>
     <div class="window-container">
         <h1 id="title-header">Ant Swarm</h1>
-        <div class="content-container">
+        <div class="main-container" id="main-container">
             <div class="menu-container">
                 <div class="menu-button-container">
 
                 </div>
                 <div class="save-button-container">
-                    <p>Save Menu:</p>
+                    <p>Save Menu</p>
                     <button type="button" onclick="util.save()">Save Game</button>
                     <button type="button" onclick="util.autoSave()">Autosave (<span id="autosave-status">on</span>)</button>
                     <button type="button" onclick="util.loadSave()">Load Save</button>
                     <button type="button" onclick="util.deleteSave()">Delete Save</button>
                 </div>
+                <div class="settings-button-container">
+                    <button type="button" onclick="game.display.settings('flex')">Settings</button>
+                </div>
             </div>
-            <div class="game-content">
+            <div class="game-container">
                 <div class="resource-container">
                     <p class="resource">Food: <span id="food-total">0</span> (<span id="food-production">0</span>/s)</p>
                 </div>
@@ -145,7 +148,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="game-content-footer">
+                <div class="game-footer">
                     <div class="upgrade-button-container">
                     </div>
                     <div class="forage-button-container">
@@ -167,8 +170,13 @@
                     </div>
                 </div>
             </div>
-            <div class="species-content">
+            <div class="species-container">
 
+            </div>
+        </div>
+        <div class="main-container" id="settings-container">
+            <div id="settings-header">
+                <button type="button" onclick="game.display.settings('none')">X</button>
             </div>
         </div>
     </div>
