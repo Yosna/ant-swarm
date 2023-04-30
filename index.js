@@ -60,7 +60,7 @@ const init = (() => {
 
                 // Redirect the y-axis scroll distance to the x-axis
                 upgradeContainer.scrollLeft += event.deltaY;
-            }
+            };
         });
         
         const saveFound = localStorage.getItem('saveData');
@@ -171,6 +171,7 @@ const game = (() => {
             util.log('You were away for', (elapsedTime / 1000), 'seconds');
             util.log('Running', cycles, 'cycles');
             for (let i = 0; i < cycles; i++) progressionCycle();
+            util.save();
         };
 
         function upgrades() {
