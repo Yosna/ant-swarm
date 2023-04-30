@@ -28,7 +28,7 @@
                     <button type="button" onclick="util.deleteSave()">Delete Save</button>
                 </div>
                 <div class="settings-button-container">
-                    <button type="button" onclick="game.display.settings('flex')">Settings</button>
+                    <button type="button" onclick="game.display.settings(true)">Settings</button>
                 </div>
             </div>
             <div class="game-container">
@@ -171,12 +171,21 @@
                 </div>
             </div>
             <div class="species-container">
+                <div class="species-button-container">
 
+                </div>
+                <div class="message-log-container">
+                    <div class="message-log-header">
+                        <p>Message Log</p>
+                        <button type="button" onclick="util.clearLogs()">Clear</button>
+                    </div>
+                    <div class="message-log"></div>
+                </div>
             </div>
         </div>
         <div class="main-container" id="settings-container">
-            <div id="settings-header">
-                <button type="button" onclick="game.display.settings('none')">X</button>
+            <div id="settings-container-header">
+                <button type="button" onclick="game.display.settings()">X</button>
             </div>
         </div>
     </div>
