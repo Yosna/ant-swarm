@@ -63,32 +63,45 @@ const init = (() => {
             }
         });
         
-        if (localStorage.getItem('saveData')) {
-            // Find and load the local save data if possible
-            const saveData = JSON.parse(atob(localStorage.getItem('saveData')));
-            antSpecies = saveData.antSpecies;
-            resources = saveData.resources;
-            stats = saveData.stats;
-            conditions = saveData.conditions;
-        } else {
-            // Create the values for all ants if no local data was detected
-            for (let [type, ants] of Object.values(antSpecies).entries()) {
-                for (let [tier, ant] of Object.values(ants).entries()) {
-                    ant.bought = 0;
-                    ant.owned = 0;
-                    ant.production = .1;
-                    ant.boost = 0;
-                    ant.upgrades = 0;
-                    ant.visible = false;
-                };
-            };
-            util.save();
-        };
+        const saveFound = localStorage.getItem('saveData');
+        saveFound ? init.getSave(saveFound) : init.newSave();
+
         util.timers();
+    };
+
+    function getSave(encodedData) {
+        util.log('Loading save data...');
+
+        const saveData = JSON.parse(atob(encodedData));
+        antSpecies = saveData.antSpecies;
+        resources = saveData.resources;
+        stats = saveData.stats;
+        conditions = saveData.conditions;
+
+        game.calculate.offlineProgress();
+    };
+
+    function newSave() {
+        util.log('Creating new save data...');
+
+        for (let [type, ants] of Object.values(antSpecies).entries()) {
+            for (let [tier, ant] of Object.values(ants).entries()) {
+                ant.bought = 0;
+                ant.owned = 0;
+                ant.production = .1;
+                ant.boost = 0;
+                ant.upgrades = 0;
+                ant.visible = false;
+            };
+        };
+
+        util.save();
     };
 
     return {
         load,
+        getSave,
+        newSave,
     };
 })();
 
@@ -156,7 +169,7 @@ const game = (() => {
             const elapsedTime = (Date.now() - stats.lastUpdate);
             const cycles = Math.floor(elapsedTime / stats.tickSpeed);
             util.log('You were away for', (elapsedTime / 1000), 'seconds');
-            util.log('Cycling the game loop', cycles, 'times');
+            util.log('Running', cycles, 'cycles');
             for (let i = 0; i < cycles; i++) progressionCycle();
         };
 
@@ -336,10 +349,11 @@ const util = (() => {
     // Log messages to the game's window
     function log() {
         const d = new Date();
-        let message = `
+        const message = `
             [${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}]:
             ${Array.from(arguments).join(' ')}
         `;
+
         const messageLog = document.querySelector('.message-log');
         const element = document.createElement('span');
 
@@ -368,10 +382,11 @@ const util = (() => {
             stats: stats,
             conditions: conditions,
         };
-        const encodedData = btoa(JSON.stringify(saveData));
 
+        const encodedData = btoa(JSON.stringify(saveData));
         localStorage.setItem('saveData', encodedData);
-        util.log('Game saved');
+
+        util.log('Game saved!');
     };
 
     function autoSave() {
@@ -381,7 +396,11 @@ const util = (() => {
         util.log('Autosaving', conditions.autoSave ? 'enabled' : 'disabled');
     };
 
-    function loadSave() {
+    function importSave() {
+        // placeholder
+    };
+
+    function exportSave() {
         // placeholder
     };
 
@@ -411,7 +430,8 @@ const util = (() => {
         timestamp,
         save,
         autoSave,
-        loadSave,
+        importSave,
+        exportSave,
         deleteSave,
         timers,
         resetTimers,
