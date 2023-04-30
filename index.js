@@ -84,7 +84,6 @@ const init = (() => {
             };
             util.save();
         };
-
         util.timers();
     };
 
@@ -378,8 +377,8 @@ const util = (() => {
     function autoSave() {
         conditions.autoSave = !conditions.autoSave;
         let autoSaveStatus = document.getElementById('autosave-status');
-        if (conditions.autoSave) return autoSaveStatus.innerHTML = 'on';
-        else return autoSaveStatus.innerHTML = 'off';
+        autoSaveStatus.innerHTML = conditions.autoSave ? 'on' : 'off';
+        util.log('Autosaving', conditions.autoSave ? 'enabled' : 'disabled');
     };
 
     function loadSave() {
