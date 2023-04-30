@@ -27,9 +27,9 @@ let stats = {
 };
 
 let conditions = {
-    active: true,
+    activeWindow: true,
     autoSave: true,
-}
+};
 
 const init = (() => {
     
@@ -40,14 +40,12 @@ const init = (() => {
         // Active window detection
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
-                conditions.active = true;
-                const elapsedTime = Date.now() - stats.lastUpdate;
-                console.log(elapsedTime / 1000 + ' seconds');
+                conditions.activeWindow = true;
+                game.calculate.offlineProgress();
             } else if (document.visibilityState === 'hidden') {
-                util.timestamp();
-                conditions.active = false;
+                conditions.activeWindow = false;
             };
-            console.log(document.visibilityState);
+            util.log(document.visibilityState);
         });
 
         // Upgrade Container event listener to change the default axial scroll direction
@@ -79,7 +77,7 @@ const init = (() => {
                     ant.bought = 0;
                     ant.owned = 0;
                     ant.production = .1;
-                    ant.boost = 1;
+                    ant.boost = 0;
                     ant.upgrades = 0;
                     ant.visible = false;
                 };
@@ -122,25 +120,45 @@ const game = (() => {
         };
     };
 
-    function buyUpgrade(upgrade) {
+    function buyUpgrade(antToUpgrade) {
         for (let [type, ants] of Object.values(antSpecies).entries()) {
             for (let [tier, ant] of Object.values(ants).entries()) {
 
                 // Determine which ant to upgrade
-                if (ant.id == upgrade) {
-                    
-                }
+                if (ant.id == antToUpgrade) {
+                    const upgrade = document.getElementById(ant.id + '-upgrade');
+                    const upgradeCost = upgrade.getAttribute('data-cost');
+                    const upgradeBoost = upgrade.getAttribute('data-boost');
+
+                    if (resources.food.total < upgradeCost) return;
+                    resources.food.total -= upgradeCost;
+                    ant.boost += upgradeBoost;
+                    ant.upgrades++;
+                };
             };
+        };
+    };
+
+    // Create the cycle for continuous progression
+    function progressionCycle() {
+        if (conditions.activeWindow) {
+            calculate.upgrades();
+            calculate.resourceProduction();
+            display.update();
+
+            util.timestamp();
         };
     };
     
     const calculate = (() => {
 
         function offlineProgress() {
-            return;
+            util.log('Calculating offline time...');
             const elapsedTime = (Date.now() - stats.lastUpdate);
-            if (elapsedTime > 200) console.log(elapsedTime);
-            stats.lastUpdate = Date.now();
+            const cycles = Math.floor(elapsedTime / stats.tickSpeed);
+            util.log('You were away for', (elapsedTime / 1000), 'seconds');
+            util.log('Cycling the game loop', cycles, 'times');
+            for (let i = 0; i < cycles; i++) progressionCycle();
         };
 
         function upgrades() {
@@ -158,7 +176,9 @@ const game = (() => {
     
                         // Check if the upgrade is already unlocked
                         for (let i = 0; i < (upgradesUnlocked.length); i++) {
-                            if (upgradesUnlocked[i].id == ant.id_abb) displayed = true; 
+                            if (upgradesUnlocked[i].id == (ant.id + '-upgrade')) {
+                                displayed = true;
+                            };
                         };
                         
                         // Create and display a new upgrade element once the prerequisites have been met
@@ -170,14 +190,14 @@ const game = (() => {
                             if (upgradeCost < 10000) upgradeCost = Math.floor(upgradeCost);
 
                             // Calculate the production boost of the upgrade
-                            const productionBoost = 1 + (0.001 * (ant.upgrades + 1));
-                            const productionPercent = ((productionBoost - 1) * 100).toFixed(1) + '%';
+                            const productionBoost = 0.001 * (ant.upgrades + 1);
+                            const productionPercent = (productionBoost * 100).toFixed(1) + '%';
 
                             const buttonElement = `
                                 <button
                                     type="button" 
                                     class="upgrade-button"
-                                    id="${ant.id_abb}"
+                                    id="${ant.id}-upgrade"
                                     onclick="game.buyUpgrade('${ant.id}')"
                                     data-string=
                                         "${ant.name}
@@ -185,6 +205,8 @@ const game = (() => {
                                         Cost: ${util.numbers(upgradeCost)}\n
                                         Boosts production by ${productionPercent} 
                                         for every ${ant.id_abb} recruited"
+                                    data-cost="${upgradeCost}"
+                                    data-boost="${productionBoost}"
                                 >
                                     ${ant.id_abb}
                                 </button>
@@ -202,21 +224,21 @@ const game = (() => {
         
             for (let [type, ants] of Object.values(antSpecies).entries()) {
                 for (let [tier, ant] of Object.values(ants).entries()) {
+                    const productionBoost = 1 + (ant.boost * ant.bought);
+                    const productionPerTick = ant.production * ant.owned * productionBoost * (stats.tickSpeed / 1000);
+                    const lastAnt = Object.values(antSpecies)[type][Object.keys(ants)[tier - 1]];
 
-                    if (tier == 0) { 
-                        // Add food if the ant is the lowest tier
-                        resources.food.total += (ant.production * ant.owned) * (stats.tickSpeed / 1000);
-                        foodPerSecond += ant.production * ant.owned;
-                    } else { 
-                        // Add ants to the previous tier
-                        Object.values(antSpecies)[type][Object.keys(ants)[tier - 1]].owned += (ant.production * ant.owned) * (stats.tickSpeed / 1000);
+                    try { 
+                        lastAnt.owned += productionPerTick;
+                    } catch { 
+                        resources.food.total += productionPerTick;
+                        foodPerSecond += ant.production * ant.owned * productionBoost;
                     };
 
-                    // Calculate the cost of the ant for the current tier
+                    // Calculate the cost of the next ant
                     ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.bought) * (tier + 1);
                 };
             };
-        
             resources.food.production = foodPerSecond;
         };
 
@@ -255,20 +277,21 @@ const game = (() => {
                         document.getElementById(ant.id + '-cost').innerHTML = util.numbers(ant.cost);
 
                         ant.visible = true;
-                    }
+                    };
                 };
             };
         };
 
         // Toggle the display for settings
         function settings(display) {
-            let settingsContainer = document.getElementById('settings-container');
-            let elementsToHide = document.getElementsByClassName('main-container');
-
-            for (let i = 0; i < elementsToHide.length; i++) elementsToHide[i].style.display = 'none';
-
-            if (display == 'none') document.getElementById('main-container').style.display = 'flex';
-            else settingsContainer.style.display = display;
+            const defaultContainer = document.getElementById('main-container');
+            const settingsContainer = document.getElementById('settings-container');
+            const elementsToHide = document.getElementsByClassName('main-container');
+            
+            for (const container of elementsToHide) container.style.display = 'none';
+            
+            const container = display ? settingsContainer : defaultContainer;
+            container.style.display = 'flex';
         };
 
         return {
@@ -281,6 +304,7 @@ const game = (() => {
         forage,
         recruit,
         buyUpgrade,
+        progressionCycle,
         calculate,
         display,
     };
@@ -309,22 +333,34 @@ const util = (() => {
                 return scientificNotation.format(n).toLowerCase();
         };
     };
-    
-    // Create the cycle that updates the game
-    function cycle() {
-        if (conditions.active) {
-            game.calculate.upgrades();
-            game.calculate.resourceProduction();
-            game.display.update();
 
-            timestamp();
-            console.log('cycled');
+    // Log messages to the game's window
+    function log() {
+        const d = new Date();
+        let message = `
+            [${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}]:
+            ${Array.from(arguments).join(' ')}
+        `;
+        const messageLog = document.querySelector('.message-log');
+        const element = document.createElement('span');
+
+        // Append the new text element to the log container
+        element.textContent = message;
+        messageLog.insertBefore(element, messageLog.firstChild);
+
+        // Limit the number of messages
+        if (messageLog.childElementCount > 25) {
+            messageLog.removeChild(messageLog.lastChild);
         };
     };
 
+    function clearLogs() {
+        document.querySelector('.message-log').innerHTML = '';
+    };
+
     function timestamp() {
-        return stats.lastUpdate = Date.now();
-    }
+        stats.lastUpdate = Date.now();
+    };
 
     function save() {
         const saveData = {
@@ -336,7 +372,7 @@ const util = (() => {
         const encodedData = btoa(JSON.stringify(saveData));
 
         localStorage.setItem('saveData', encodedData);
-        console.log('Game saved');
+        util.log('Game saved');
     };
 
     function autoSave() {
@@ -347,7 +383,7 @@ const util = (() => {
     };
 
     function loadSave() {
-        // placeholder text
+        // placeholder
     };
 
     function deleteSave() {
@@ -356,9 +392,9 @@ const util = (() => {
 
     // Create the timers for the game cycle and auto saving
     function timers() {
-        gameCycle = setInterval(cycle, stats.tickSpeed);
+        gameCycle = setInterval(game.progressionCycle, stats.tickSpeed);
         saveGame = setInterval(function() {
-            if (conditions.autoSave && conditions.active) save();
+            if (conditions.autoSave && conditions.activeWindow) save();
         }, 60000);
     };
 
@@ -367,11 +403,12 @@ const util = (() => {
         clearInterval(saveGame);
 
         timers();
-    }
+    };
 
     return {
         numbers,
-        cycle,
+        log,
+        clearLogs,
         timestamp,
         save,
         autoSave,
