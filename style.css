@@ -169,15 +169,50 @@ body {
     height: 95%;
     width: 20%;
 }
+.species-button-container {
+    height: 75%;
+    width: 100%;
+}
+.message-log-container {
+    height: 25%;
+    width: 100%;
+}
+.message-log-header {
+    border-bottom: 1px solid black;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    height: 15%;
+    width: 100%;
+}.message-log-header > p {
+    margin-left: 5%;
+    height: 100%;
+    width: 70%;
+} .message-log-header > button {
+    background-color: inherit;
+    width: 30%;
+}
+.message-log {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow: auto;
+    font-size: 12px;
+    height: 85%;
+    width: 100%;
+} .message-log > span {
+    border-bottom: 1px solid black;
+    box-sizing: border-box;
+    padding: 3px;
+}
 #settings-container {
     display: none;
 }
-#settings-header {
+#settings-container-header {
     display: flex;
     justify-content: flex-end;
     height: 5%;
     width: 100%;
-} #settings-header > button {
+} #settings-container-header > button {
     background-color: inherit;
     border: none;
     color: #a10000;
