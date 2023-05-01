@@ -34,9 +34,7 @@ let conditions = {
 const init = (() => {
     
     function load() {
-
         // Create event listeners for webpage functionality
-
         // Active window detection
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
@@ -143,9 +141,13 @@ const game = (() => {
                     const upgradeBoost = upgrade.getAttribute('data-boost');
 
                     if (resources.food.total < upgradeCost) return;
-                    resources.food.total -= upgradeCost;
-                    ant.boost += upgradeBoost;
+
+                    // Apply the upgrade
+                    resources.food.total -= parseFloat(upgradeCost);
+                    ant.boost += parseFloat(upgradeBoost);
                     ant.upgrades++;
+
+                    upgrade.remove();
                 };
             };
         };
@@ -179,7 +181,7 @@ const game = (() => {
                 for (let [tier, ant] of Object.values(ants).entries()) {
                     let displayed = false;
 
-                    // Set the number of ants bought that unlock each upgrade
+                    // Determine the number of ants bought that unlock each upgrade
                     const breakpoint = [10, 25, 50, 100, 200, 300, 400, 500, 750, 1000];
 
                     // Determine if any upgrade breakpoints have been hit
@@ -284,12 +286,13 @@ const game = (() => {
     
                     // Update the ant's display if visible
                     if (display == "") {
+                        const totalProduction = (1 + (ant.boost * ant.bought)) * ant.production * ant.owned;
+                        ant.visible = true;
+
                         document.getElementById(ant.id + '-bought').innerHTML = util.numbers(ant.bought);
                         document.getElementById(ant.id + '-owned').innerHTML = util.numbers(ant.owned);
-                        document.getElementById(ant.id + '-production').innerHTML = util.numbers(ant.production * ant.owned) + ' ' + ant.prod_abb;
+                        document.getElementById(ant.id + '-production').innerHTML = util.numbers(totalProduction) + ' ' + ant.prod_abb;
                         document.getElementById(ant.id + '-cost').innerHTML = util.numbers(ant.cost);
-
-                        ant.visible = true;
                     };
                 };
             };
@@ -414,7 +417,7 @@ const util = (() => {
         gameCycle = setInterval(game.progressionCycle, stats.tickSpeed);
         saveGame = setInterval(function() {
             if (conditions.autoSave && conditions.activeWindow) save();
-        }, 60000);
+        }, 180000);
     };
 
     function resetTimers() {
