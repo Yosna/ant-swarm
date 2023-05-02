@@ -22,12 +22,12 @@
                 </div>
                 <div class="save-button-container">
                     <p>Save Options</p>
-                    <button type="button" onclick="util.save()" style="width:100%">Save Game</button>
-                    <button type="button" onclick="util.importSave()">Import Save</button>
-                    <button type="button" onclick="util.deleteSave()">Delete Save</button>
+                    <button type="button" id="save-button" style="width:100%">Save Game</button>
+                    <button type="button" id="import-button">Import Save</button>
+                    <button type="button" id="export-button">Export Save</button>
                 </div>
                 <div class="settings-button-container">
-                    <button type="button" onclick="game.display.settings(true)">Settings</button>
+                    <button type="button" class="settings-menu">Settings</button>
                 </div>
             </div>
             <div class="game-container">
@@ -125,25 +125,25 @@
                     </div>
                     <div class="ant-recruit-column garden-ant-recruits">
                         <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button" id="small-garden-worker-button" onclick="game.recruit(0, 0)">Small Garden Worker</button>
+                            <button type="button" class="recruit-button" id="small-garden-worker-button">Small Garden Worker</button>
                         </div>
                         <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button" id="regular-garden-worker-button" onclick="game.recruit(0, 1)">Regular Garden Worker</button>
+                            <button type="button" class="recruit-button" id="regular-garden-worker-button">Regular Garden Worker</button>
                         </div>
                         <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button" id="large-garden-worker-button" onclick="game.recruit(0, 2)">Large Garden Worker</button>
+                            <button type="button" class="recruit-button" id="large-garden-worker-button">Large Garden Worker</button>
                         </div>
                         <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button" id="small-garden-drone-button" onclick="game.recruit(0, 3)">Small Garden Drone</button>
+                            <button type="button" class="recruit-button" id="small-garden-drone-button">Small Garden Drone</button>
                         </div>
                         <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button" id="regular-garden-drone-button" onclick="game.recruit(0, 4)">Regular Garden Drone</button>
+                            <button type="button" class="recruit-button" id="regular-garden-drone-button">Regular Garden Drone</button>
                         </div>
                         <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button" id="large-garden-drone-button" onclick="game.recruit(0, 5)">Large Garden Drone</button>
+                            <button type="button" class="recruit-button" id="large-garden-drone-button">Large Garden Drone</button>
                         </div>
                         <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button" id="garden-ant-queen-button" onclick="game.recruit(0, 6)">Garden Ant Queen</button>
+                            <button type="button" class="recruit-button" id="garden-ant-queen-button">Garden Ant Queen</button>
                         </div>
                     </div>
                 </div>
@@ -151,7 +151,7 @@
                     <div class="upgrade-button-container">
                     </div>
                     <div class="forage-button-container">
-                        <button type="button" onclick="game.forage()">Forage for Food</button>
+                        <button type="button" id="forage-button">Forage for Food</button>
                     </div>
                     <div class="recruit-quantity-container">
                         <div id="quantity-column">
@@ -176,7 +176,7 @@
                 <div class="message-log-container">
                     <div class="message-log-header">
                         <p>Message Log</p>
-                        <button type="button" onclick="util.clearLogs()">Clear</button>
+                        <button type="button" id="clear-log-button">Clear</button>
                     </div>
                     <div class="message-log"></div>
                 </div>
@@ -184,14 +184,15 @@
         </div>
         <div class="main-container" id="settings-container">
             <div id="settings-container-header">
-                <button type="button" onclick="game.display.settings()">X</button>
+                <button type="button" class="settings-menu">X</button>
             </div>
             <div id="settings-container-body">
-                <button type="button" onclick="util.autoSave()">Autosave (<span id="autosave-status">on</span>)</button><hr>
+                <button type="button" id="autosave-button">Autosave (<span id="autosave-status">on</span>)</button><hr>
+                <button type="button" id="delete-button">Delete Save</button>
             </div>
         </div>
     </div>
-    <script src="index.js"></script>
+    <script type="module" src="index.js"></script>
 </body>
 
 </html>
