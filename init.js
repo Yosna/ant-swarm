@@ -88,8 +88,8 @@ function getSave(encodedData) {
 function newSave() {
     game.util.log('Creating new save data...');
 
-    for (let [type, ants] of Object.values(recruits).entries()) {
-        for (let [tier, ant] of Object.values(ants).entries()) {
+    for (let [type, ants] of Object.entries(recruits)) {
+        for (let [tier, ant] of Object.entries(ants)) {
             ant.bought = 0;
             ant.owned = 0;
             ant.production = .1;

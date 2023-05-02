@@ -12,8 +12,8 @@ function forage() {
 
 // Recruit an ant
 function recruit(target) {
-    for (let [type, ants] of Object.values(recruits).entries()) {
-        for (let [tier, ant] of Object.values(ants).entries()) {
+    for (let [type, ants] of Object.entries(recruits)) {
+        for (let [tier, ant] of Object.entries(ants)) {
             if (ant.name == target.innerText) {
                 // Check if the food is sufficient; util.numbers() fixes floating point number precision
                 if (util.numbers(resources.food.total) < ant.cost) return;
@@ -27,8 +27,8 @@ function recruit(target) {
 };
 
 function buyUpgrade(antToUpgrade) {
-    for (let [type, ants] of Object.values(recruits).entries()) {
-        for (let [tier, ant] of Object.values(ants).entries()) {
+    for (let [type, ants] of Object.entries(recruits)) {
+        for (let [tier, ant] of Object.entries(ants)) {
 
             // Determine which ant to upgrade
             if (ant.id == antToUpgrade) {
