@@ -17,6 +17,39 @@ function offlineProgress() {
     game.util.save();
 };
 
+function costByQuantity(ant, tier) {
+    const quantitySelection = document.getElementById('quantity-selection');
+    let quantityCost = 0;
+
+    for (let i = 0; i < quantitySelection.value; i++) {
+        const cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.recruited + i) * (tier + 1);
+        quantityCost += cost;
+        if (tier == 0) console.log('Cost:', cost)
+    };
+    if (tier == 0) console.log('Quantity Cost:', quantityCost);
+};
+
+function resourceProduction() {
+    let foodPerSecond = 0;
+
+    for (let [type, ants] of Object.values(recruits).entries()) {
+        for (let [tier, ant] of Object.values(ants).entries()) {
+            const productionBoost = 1 + (ant.boost * ant.recruited);
+            const productionPerTick = ant.production * ant.acquired * productionBoost * (stats.tickSpeed / 1000);
+            const lastAnt = Object.values(recruits)[type][Object.keys(ants)[tier - 1]];
+
+            try { 
+                lastant.acquired += productionPerTick;
+            } catch { 
+                resources.food.total += productionPerTick;
+                foodPerSecond += ant.production * ant.acquired * productionBoost;
+            };
+        };
+    };
+
+    resources.food.production = foodPerSecond;
+};
+
 function upgrades() {
     for (let [type, ants] of Object.values(recruits).entries()) {
         for (let [tier, ant] of Object.values(ants).entries()) {
@@ -26,7 +59,7 @@ function upgrades() {
             const breakpoint = [10, 25, 50, 100, 200, 300, 400, 500, 750, 1000];
 
             // Determine if any upgrade breakpoints have been hit
-            if ((ant.upgrades < 10) && (ant.bought >= breakpoint[ant.upgrades])) {
+            if ((ant.upgrades < 10) && (ant.recruited >= breakpoint[ant.upgrades])) {
                 const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
                 const upgradesUnlocked = upgradeContainer.querySelectorAll('*');
 
@@ -75,32 +108,9 @@ function upgrades() {
     };
 };
 
-function resourceProduction() {
-    let foodPerSecond = 0;
-
-    for (let [type, ants] of Object.values(recruits).entries()) {
-        for (let [tier, ant] of Object.values(ants).entries()) {
-            const productionBoost = 1 + (ant.boost * ant.bought);
-            const productionPerTick = ant.production * ant.owned * productionBoost * (stats.tickSpeed / 1000);
-            const lastAnt = Object.values(recruits)[type][Object.keys(ants)[tier - 1]];
-
-            try { 
-                lastAnt.owned += productionPerTick;
-            } catch { 
-                resources.food.total += productionPerTick;
-                foodPerSecond += ant.production * ant.owned * productionBoost;
-            };
-
-            // Calculate the cost of the next ant
-            ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.bought) * (tier + 1);
-        };
-    };
-
-    resources.food.production = foodPerSecond;
-};
-
 export default {
     offlineProgress,
-    upgrades,
+    costByQuantity,
     resourceProduction,
+    upgrades,
 };

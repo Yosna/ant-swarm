@@ -14,6 +14,15 @@ function load() {
         });
     });
 
+    const quantitySelection = document.getElementById('quantity-selection');
+    quantitySelection.addEventListener('change', e => {
+        for (let [type, ants] of Object.values(recruits).entries()) {
+            for (let [tier, ant] of Object.values(ants).entries()) {
+                game.calculate.costByQuantity(ant, tier);
+            };
+        };
+    });
+
     const clearLogButton = document.getElementById('clear-log-button');
     clearLogButton.addEventListener('click', game.util.clearLogs);
 
@@ -88,13 +97,14 @@ function getSave(encodedData) {
 function newSave() {
     game.util.log('Creating new save data...');
 
-    for (let [type, ants] of Object.entries(recruits)) {
-        for (let [tier, ant] of Object.entries(ants)) {
-            ant.bought = 0;
-            ant.owned = 0;
+    for (let [type, ants] of Object.values(recruits).entries()) {
+        for (let [tier, ant] of Object.values(ants).entries()) {
+            ant.recruited = 0;
+            ant.acquired = 0;
             ant.production = .1;
             ant.boost = 0;
             ant.upgrades = 0;
+            ant.cost = (1 * Math.pow(10, tier * 2)) * (tier + 1);
             ant.visible = false;
         };
     };

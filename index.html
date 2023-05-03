@@ -35,51 +35,51 @@
                     <p class="resource">Food: <span id="food-total">0</span> (<span id="food-production">0</span>/s)</p>
                 </div>
                 <div class="ant-recruit-container">
-                    <div class="ant-recruit-column garden-ant-recruits">
+                    <div class="ant-recruit-column garden-ant-recruited">
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text small-garden-worker-data">
-                                <p>Bought: <span id="small-garden-worker-bought">0</span></p>
-                                <p>Owned:  <span id="small-garden-worker-owned">0</span></p>
+                                <p>Recruited: <span id="small-garden-worker-recruited">0</span></p>
+                                <p>Acquired:  <span id="small-garden-worker-acquired">0</span></p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text regular-garden-worker-data">
-                                <p>Bought: <span id="regular-garden-worker-bought">0</span></p>
-                                <p>Owned:  <span id="regular-garden-worker-owned">0</span></p>
+                                <p>Recruited: <span id="regular-garden-worker-recruited">0</span></p>
+                                <p>Acquired:  <span id="regular-garden-worker-acquired">0</span></p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text large-garden-worker-data">
-                                <p>Bought: <span id="large-garden-worker-bought">0</span></p>
-                                <p>Owned:  <span id="large-garden-worker-owned">0</span></p>
+                                <p>Recruited: <span id="large-garden-worker-recruited">0</span></p>
+                                <p>Acquired:  <span id="large-garden-worker-acquired">0</span></p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text small-garden-drone-data">
-                                <p>Bought: <span id="small-garden-drone-bought">0</span></p>
-                                <p>Owned:  <span id="small-garden-drone-owned">0</span></p>
+                                <p>Recruited: <span id="small-garden-drone-recruited">0</span></p>
+                                <p>Acquired:  <span id="small-garden-drone-acquired">0</span></p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text regular-garden-drone-data">
-                                <p>Bought: <span id="regular-garden-drone-bought">0</span></p>
-                                <p>Owned:  <span id="regular-garden-drone-owned">0</span></p>
+                                <p>Recruited: <span id="regular-garden-drone-recruited">0</span></p>
+                                <p>Acquired:  <span id="regular-garden-drone-acquired">0</span></p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text large-garden-drone-data">
-                                <p>Bought: <span id="large-garden-drone-bought">0</span></p>
-                                <p>Owned:  <span id="large-garden-drone-owned">0</span></p>
+                                <p>Recruited: <span id="large-garden-drone-recruited">0</span></p>
+                                <p>Acquired:  <span id="large-garden-drone-acquired">0</span></p>
                             </div>
                         </div>
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text garden-ant-queen-data">
-                                <p>Bought: <span id="garden-ant-queen-bought">0</span></p>
-                                <p>Owned:  <span id="garden-ant-queen-owned">0</span></p>
+                                <p>Recruited: <span id="garden-ant-queen-recruited">0</span></p>
+                                <p>Acquired:  <span id="garden-ant-queen-acquired">0</span></p>
                             </div>
                         </div>
                     </div>
-                    <div class="ant-recruit-column garden-ant-recruits">
+                    <div class="ant-recruit-column garden-ant-recruited">
                         <div class="ant-recruit-cell">
                             <div class="ant-recruit-text small-garden-worker-data">
                                 <p>Cost: <span id="small-garden-worker-cost">0</span></p>
@@ -123,7 +123,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="ant-recruit-column garden-ant-recruits">
+                    <div class="ant-recruit-column garden-ant-recruited">
                         <div class="ant-recruit-cell">
                             <button type="button" class="recruit-button small-garden-worker-data" id="small-garden-worker-button">Small Garden Worker</button>
                         </div>
@@ -156,10 +156,14 @@
                     <div class="recruit-quantity-container">
                         <div id="quantity-column">
                             <span>Quantity:</span>
-                            <select class="quantity-options">
-                                <option value="option1">Option 1</option>
-                                <option value="option2">Option 2</option>
-                                <option value="option3">Option 3</option>
+                            <select class="quantity-options" id="quantity-selection">
+                                <option value="1">Buy 1</option>
+                                <option value="5">Buy 5</option>
+                                <option value="10">Buy 10</option>
+                                <option value="25">Buy 25</option>
+                                <option value="50">Buy 50</option>
+                                <option value="100">Buy 100</option>
+                                <option value="max">Buy Max</option>
                             </select>
                         </div>
                         <div id="rounding-column">
