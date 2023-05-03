@@ -13,16 +13,17 @@ function update() {
             // Determine if the cost threshold has been met to display the next ant
             const displayCostThreshold = (ant.owned == 0) && (resources.food.total < (ant.cost / 4));
             let display = (displayCostThreshold && (ant.visible == false)) ? 'none' : '';
+            ant.visible = (display == '') ? true : false;
             
             // Update visibility of the ant's information
-            document.getElementById(ant.id + '-button').style.display = display;
-            document.getElementById(ant.id + '-data-1').style.display = display;
-            document.getElementById(ant.id + '-data-2').style.display = display;
+            const antContainers = document.getElementsByClassName(ant.id + '-data');
+            for (const antData of antContainers) {
+                antData.style.display = display;
+            };
 
-            // Update the ant's display if visible
-            if (display == "") {
+            // Update the ant's data if visible
+            if (ant.visible) {
                 const totalProduction = (1 + (ant.boost * ant.bought)) * ant.production * ant.owned;
-                ant.visible = true;
 
                 document.getElementById(ant.id + '-bought').innerHTML = game.util.numbers(ant.bought);
                 document.getElementById(ant.id + '-owned').innerHTML = game.util.numbers(ant.owned);

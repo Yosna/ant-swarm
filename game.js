@@ -16,7 +16,9 @@ function recruit(target) {
         for (let [tier, ant] of Object.entries(ants)) {
             if (ant.name == target.innerText) {
                 // Check if the food is sufficient; util.numbers() fixes floating point number precision
-                if (util.numbers(resources.food.total) < ant.cost) return;
+                if (util.numbers(resources.food.total) < ant.cost) {
+                    return;
+                };
 
                 resources.food.total -= ant.cost;
                 ant.bought++;
@@ -57,7 +59,6 @@ function progression() {
         calculate.upgrades();
         calculate.resourceProduction();
         display.update();
-
         util.timestamp();
     };
 };

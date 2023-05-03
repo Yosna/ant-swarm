@@ -18,8 +18,8 @@ function offlineProgress() {
 };
 
 function upgrades() {
-    for (let [type, ants] of Object.entries(recruits)) {
-        for (let [tier, ant] of Object.entries(ants)) {
+    for (let [type, ants] of Object.values(recruits).entries()) {
+        for (let [tier, ant] of Object.values(ants).entries()) {
             let displayed = false;
 
             // Determine the number of ants bought that unlock each upgrade
