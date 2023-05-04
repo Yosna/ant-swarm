@@ -114,8 +114,16 @@ function newSave() {
     game.util.save();
 };
 
+function antUpgradeEventListener(ant) {
+    const upgradeButton = document.getElementById(ant.id + '-upgrade');
+    upgradeButton.addEventListener('click', () => {
+        game.buyUpgrade(ant.id);
+    });
+};
+
 export default {
     load,
     getSave,
     newSave,
-}
+    antUpgradeEventListener,
+};

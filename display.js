@@ -49,7 +49,33 @@ function settings(display) {
     container.style.display = 'flex';
 };
 
+function antUpgradeElement(ant, upgrade) {
+    const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
+    const buttonElement = `
+        <button
+            type="button" 
+            class="upgrade-button"
+            id="${ant.id}-upgrade"
+            data-id="${ant.id}"
+            data-string=
+                "${ant.name}
+                Upgrade ${(ant.upgrades + 1)}\n
+                Cost: ${game.util.numbers(upgrade.cost)}\n
+                Boosts production by ${upgrade.percent} 
+                for every ${ant.id_abb} recruited"
+            data-cost="${upgrade.cost}"
+            data-boost="${upgrade.boost}"
+        >
+            ${ant.id_abb}
+        </button>
+    `;
+    upgradeContainer.innerHTML += buttonElement;
+
+    game.init.antUpgradeEventListener(ant);
+};
+
 export default {
     update,
     settings,
+    antUpgradeElement,
 };
