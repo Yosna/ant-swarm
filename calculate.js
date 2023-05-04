@@ -2,32 +2,56 @@ import { recruits, resources, stats, conditions, timers } from './index.js';
 import * as game from './game.js';
 
 function offlineProgress() {
-    game.util.log('Calculating offline time...');
-
     const elapsedTime = (Date.now() - stats.lastUpdate);
     const cycles = Math.floor(elapsedTime / stats.tickSpeed);
 
     game.util.log('You were away for', (elapsedTime / 1000), 'seconds');
-    game.util.log('Progressing', cycles, 'cycles');
 
+    // Run the number of progression cycles missed since last update
     for (let i = 0; i < cycles; i++) {
         game.progression();
     };
-    
-    game.util.save();
 };
 
 function costByQuantity(ant, tier) {
-    const quantitySelection = document.getElementById('quantity-selection');
-    let quantityCost = 0;
-
-    for (let i = 0; i < quantitySelection.value; i++) {
-        const cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.recruited + i) * (tier + 1);
-        quantityCost += cost;
-        if (tier == 0) console.log('Cost:', cost)
+    let quantity = document.getElementById('quantity-selection').value;
+    quantity = roundedQuantity(ant, (quantity == 'max') ? 0 : quantity);
+    let cost = 0;
+    let foodRemaining = game.util.numbers(resources.food.total);
+    
+    if (quantity > 0) { // Calculate the cost of the quantity selected
+        for (let i = 0; i < quantity; i++) {
+            const nextCost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.recruited + i) * (tier + 1);
+            cost += nextCost;
+        };
+    } else { // Calculate the cost of the maximum quantity
+        while (resources.food.total > cost) { // Continue until cost exceeds total food
+            const nextCost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.recruited + quantity) * (tier + 1);
+            if (foodRemaining >= nextCost) {
+                foodRemaining -= nextCost;
+                cost += nextCost;
+                quantity++;
+            } else {
+                break;
+            };
+        };
     };
-    if (tier == 0) console.log('Quantity Cost:', quantityCost);
+
+    // Set the minimum quantity and cost if no ants can be recruited
+    quantity = (quantity == 0) ? 1 : parseFloat(quantity);
+    cost = (cost == 0) ? ant.cost : parseFloat(cost);
+    return { quantity, cost };
 };
+
+function roundedQuantity(ant, quantity) {
+    const remainder = ant.recruited % quantity;
+    const difference = quantity - remainder;
+    
+    return (conditions.rounding == false) ? quantity // Return if rounding is disabled
+        : (quantity == 0) ? quantity                 // Return if the quantity is 0
+        : (ant.recruited % quantity == 0) ? quantity // Return if the quantity is already rounded
+        : difference;                                // Return the difference if the quantity is not rounded
+}
 
 function resourceProduction() {
     let foodPerSecond = 0;
@@ -39,7 +63,7 @@ function resourceProduction() {
             const lastAnt = Object.values(recruits)[type][Object.keys(ants)[tier - 1]];
 
             try { 
-                lastant.acquired += productionPerTick;
+                lastAnt.acquired += productionPerTick;
             } catch { 
                 resources.food.total += productionPerTick;
                 foodPerSecond += ant.production * ant.acquired * productionBoost;
@@ -87,7 +111,7 @@ function upgrades() {
                             type="button" 
                             class="upgrade-button"
                             id="${ant.id}-upgrade"
-                            onclick="game.buyUpgrade('${ant.id}')"
+                            data-id="${ant.id}"
                             data-string=
                                 "${ant.name}
                                 Upgrade ${(ant.upgrades + 1)}\n
@@ -102,6 +126,12 @@ function upgrades() {
                     `;
             
                     upgradeContainer.innerHTML += buttonElement;
+                    
+                    // Add an event listener to the new upgrade button
+                    const upgradeButton = document.getElementById(ant.id + '-upgrade');
+                    upgradeButton.addEventListener('click', () => {
+                        game.buyUpgrade(ant.id);
+                    });
                 };
             };
         };

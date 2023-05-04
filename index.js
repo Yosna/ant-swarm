@@ -31,11 +31,12 @@ let stats = {
 let conditions = {
     activeWindow: true,
     autoSave: true,
+    rounding: false,
 };
 
 let timers = {
     progression: null,
-    save: null,
+    autoSave: null,
 };
 
 export { recruits, resources, stats, conditions, timers };

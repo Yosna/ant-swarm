@@ -14,17 +14,19 @@ function forage() {
 function recruit(target) {
     for (let [type, ants] of Object.values(recruits).entries()) {
         for (let [tier, ant] of Object.values(ants).entries()) {
-            if (ant.name == target.innerText) {
+            const targetName = target.innerText.substring(0, ant.name.length);
+
+            if (ant.name == targetName) {
+                const q = calculate.costByQuantity(ant, tier);
+
                 // Check if the food is sufficient; util.numbers() fixes floating point number precision
-                if (util.numbers(resources.food.total) < ant.cost) {
+                if (util.numbers(resources.food.total) < q.cost) {
                     return;
                 };
-
-                resources.food.total -= ant.cost;
-                ant.recruited++;
-                ant.acquired++;
+                resources.food.total -= q.cost;
+                ant.recruited += q.quantity;
+                ant.acquired += q.quantity;
                 ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.recruited) * (tier + 1);
-                console.log(ant.cost)
             };
         };
     };

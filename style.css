@@ -231,7 +231,9 @@ body {
     width: 100%;
     overflow: auto;
 } #settings-container-body > hr {
-    width: 100%;
-} #settings-container-body > button {
     width: 40%;
+} #settings-container-body > button {
+    width: 25%;
+    margin-left: auto;
+    margin-right: auto;
 }

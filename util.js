@@ -66,11 +66,11 @@ function save() {
     log('Game saved!');
 };
 
-function autoSave() {
+function toggleAutoSave() {
     conditions.autoSave = !conditions.autoSave;
     let autoSaveStatus = document.getElementById('autosave-status');
     autoSaveStatus.innerHTML = conditions.autoSave ? 'on' : 'off';
-    util('Autosaving', conditions.autoSave ? 'enabled' : 'disabled');
+    log('Autosave:', conditions.autoSave ? 'enabled' : 'disabled');
 };
 
 function importSave() {
@@ -85,10 +85,17 @@ function deleteSave() {
     localStorage.clear();
 };
 
+function toggleRounding() {
+    conditions.rounding = !conditions.rounding;
+    const roundingStatus = document.getElementById('rounding-status');
+    roundingStatus.innerHTML = conditions.rounding ? 'on' : 'off';
+    log('Rounding:', conditions.rounding ? 'enabled' : 'disabled');
+}
+
 // Create the timers for the game cycle and auto saving
 function setTimers() {
     timers.progression = setInterval(game.progression, stats.tickSpeed);
-    timers.save = setInterval(function() {
+    timers.autoSave = setInterval(function() {
         if (conditions.autoSave && conditions.activeWindow) save();
     }, 180000);
 };
@@ -106,10 +113,11 @@ export default {
     clearLogs,
     timestamp,
     save,
-    autoSave,
+    toggleAutoSave,
     importSave,
     exportSave,
     deleteSave,
+    toggleRounding,
     setTimers,
     resetTimers,
 };

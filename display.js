@@ -1,7 +1,7 @@
 import { recruits, resources, stats, conditions, timers } from './index.js';
 import * as game from './game.js';
 
-// Update the game UI
+// Updates to run after the progression cycle
 function update() {
     // Update resource information
     document.getElementById('food-total').innerHTML = game.util.numbers(resources.food.total);
@@ -9,7 +9,6 @@ function update() {
 
     for (let [type, ants] of Object.values(recruits).entries()) {
         for (let [tier, ant] of Object.values(ants).entries()) {
-
             // Determine if the cost threshold has been met to display the next ant
             const displayCostThreshold = (ant.acquired == 0) && (resources.food.total < (ant.cost / 4));
             let display = (displayCostThreshold && (ant.visible == false)) ? 'none' : '';
@@ -24,11 +23,13 @@ function update() {
             // Update the ant's data if visible
             if (ant.visible) {
                 const totalProduction = (1 + (ant.boost * ant.recruited)) * ant.production * ant.acquired;
+                const q = game.calculate.costByQuantity(ant, tier);
 
                 document.getElementById(ant.id + '-recruited').innerHTML = game.util.numbers(ant.recruited);
                 document.getElementById(ant.id + '-acquired').innerHTML = game.util.numbers(ant.acquired);
                 document.getElementById(ant.id + '-production').innerHTML = game.util.numbers(totalProduction) + ' ' + ant.prod_abb;
-                document.getElementById(ant.id + '-cost').innerHTML = game.util.numbers(ant.cost);
+                document.getElementById(ant.id + '-cost').innerHTML = game.util.numbers(q.cost);
+                document.getElementById(ant.id + '-quantity').innerHTML = game.util.numbers(q.quantity);
             };
         };
     };

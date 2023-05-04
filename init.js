@@ -15,13 +15,16 @@ function load() {
     });
 
     const quantitySelection = document.getElementById('quantity-selection');
-    quantitySelection.addEventListener('change', e => {
+    quantitySelection.addEventListener('change', () => {
         for (let [type, ants] of Object.values(recruits).entries()) {
             for (let [tier, ant] of Object.values(ants).entries()) {
                 game.calculate.costByQuantity(ant, tier);
             };
         };
     });
+
+    const roundingButtons = document.getElementById('rounding-button');
+    roundingButtons.addEventListener('click', game.util.toggleRounding)
 
     const clearLogButton = document.getElementById('clear-log-button');
     clearLogButton.addEventListener('click', game.util.clearLogs);
@@ -30,7 +33,7 @@ function load() {
     saveButton.addEventListener('click', game.util.save);
 
     const autoSaveButton = document.getElementById('autosave-button');
-    autoSaveButton.addEventListener('click', game.util.autoSave);
+    autoSaveButton.addEventListener('click', game.util.toggleAutoSave);
 
     const importButton = document.getElementById('import-button');
     importButton.addEventListener('click', game.util.importSave);
@@ -58,7 +61,6 @@ function load() {
         } else if (document.visibilityState === 'hidden') {
             conditions.activeWindow = false;
         };
-        game.util.log(document.visibilityState);
     });
 
     // Upgrade Container event listener to change the default axial scroll direction
