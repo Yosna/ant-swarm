@@ -42,16 +42,14 @@ function buyUpgrade(antToUpgrade) {
                 const upgradeCost = Number(upgrade.getAttribute('data-cost'));
                 const upgradeBoost = Number(upgrade.getAttribute('data-boost'));
 
-                if (resources.food.total < upgradeCost) {
-                    return;
+                if (resources.food.total >= upgradeCost) {
+                    // Apply the upgrade
+                    resources.food.total -= upgradeCost;
+                    ant.boost += upgradeBoost;
+                    ant.upgrades++;
+    
+                    upgrade.remove();
                 };
-
-                // Apply the upgrade
-                resources.food.total -= upgradeCost;
-                ant.boost += upgradeBoost;
-                ant.upgrades++;
-
-                upgrade.remove();
             };
         };
     };

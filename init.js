@@ -19,6 +19,7 @@ function load() {
         for (let [type, ants] of Object.values(recruits).entries()) {
             for (let [tier, ant] of Object.values(ants).entries()) {
                 game.calculate.costByQuantity(ant, tier);
+                quantitySelection.blur()
             };
         };
     });
@@ -65,7 +66,7 @@ function load() {
 
     // Upgrade Container event listener to change the default axial scroll direction
     const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
-    upgradeContainer.addEventListener('wheel', function(event) {
+    upgradeContainer.addEventListener('wheel', function(e) {
 
         // Determine which axis is being scrolled
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
@@ -77,9 +78,14 @@ function load() {
             upgradeContainer.scrollLeft += e.deltaY;
         };
     });
-    
+
     const saveFound = localStorage.getItem('saveData');
     saveFound ? game.init.getSave(saveFound) : game.init.newSave();
+
+    conditions.autoSave = !conditions.autoSave;
+    conditions.rounding = !conditions.rounding;
+    game.util.toggleAutoSave();
+    game.util.toggleRounding();
 
     game.util.setTimers();
 };
@@ -119,6 +125,7 @@ function antUpgradeEventListener(ant) {
     upgradeButton.addEventListener('click', () => {
         game.buyUpgrade(ant.id);
     });
+    console.log(ant.id, 'event listener added');
 };
 
 export default {

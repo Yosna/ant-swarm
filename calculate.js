@@ -15,7 +15,7 @@ function offlineProgress() {
 
 function costByQuantity(ant, tier) {
     let quantity = document.getElementById('quantity-selection').value;
-    quantity = roundedQuantity(ant, (quantity == 'max') ? 0 : quantity);
+    quantity = roundedQuantity(ant, (quantity === 'max') ? 0 : Number(quantity));
     let cost = 0;
     let foodRemaining = Number(game.util.numbers(resources.food.total));
     
@@ -38,18 +38,17 @@ function costByQuantity(ant, tier) {
     };
 
     // Set the minimum quantity and cost if no ants can be recruited
-    quantity = (quantity == 0) ? 1 : parseFloat(quantity);
-    cost = (cost == 0) ? ant.cost : parseFloat(cost);
+    cost = (cost === 0) ? ant.cost : Number(cost);
     return { quantity, cost };
 };
 
 function roundedQuantity(ant, quantity) {
     const remainder = ant.recruited % quantity;
     const difference = quantity - remainder;
-    return (conditions.rounding == false) ? quantity // Return if rounding is disabled
-        : (quantity == 0) ? quantity                 // Return if the quantity is 0
-        : (ant.recruited % quantity == 0) ? quantity // Return if the quantity is already rounded
-        : difference;                                // Return the difference if the quantity is not rounded
+    return (conditions.rounding === false) ? quantity // Return if rounding is disabled
+        : (quantity === 0) ? quantity                 // Return if the quantity is 0
+        : (ant.recruited % quantity === 0) ? quantity // Return if the quantity is already rounded
+        : difference;                                 // Return the difference if the quantity is not rounded
 }
 
 function resourceProduction() {
@@ -99,7 +98,7 @@ function antUpgradeHidden(ant) {
     const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
     const upgradesUnlocked = upgradeContainer.querySelectorAll('*');
     for (let i = 0; i < (upgradesUnlocked.length); i++) {
-        if (upgradesUnlocked[i].id == (ant.id + '-upgrade')) {
+        if (upgradesUnlocked[i].id === (ant.id + '-upgrade')) {
             return false;
         };
     };
