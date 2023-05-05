@@ -231,6 +231,9 @@ body {
     width: 100%;
     overflow: auto;
 } #settings-container-body > hr {
+    background-color: black;
+    border-color: black;
+    height: 2px;
     width: 40%;
 } #settings-container-body > button {
     width: 25%;
