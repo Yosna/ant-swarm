@@ -17,7 +17,7 @@ function costByQuantity(ant, tier) {
     let quantity = document.getElementById('quantity-selection').value;
     quantity = roundedQuantity(ant, (quantity == 'max') ? 0 : quantity);
     let cost = 0;
-    let foodRemaining = game.util.numbers(resources.food.total);
+    let foodRemaining = Number(game.util.numbers(resources.food.total));
     
     if (quantity > 0) { // Calculate the cost of the quantity selected
         for (let i = 0; i < quantity; i++) {
@@ -46,7 +46,6 @@ function costByQuantity(ant, tier) {
 function roundedQuantity(ant, quantity) {
     const remainder = ant.recruited % quantity;
     const difference = quantity - remainder;
-    
     return (conditions.rounding == false) ? quantity // Return if rounding is disabled
         : (quantity == 0) ? quantity                 // Return if the quantity is 0
         : (ant.recruited % quantity == 0) ? quantity // Return if the quantity is already rounded
