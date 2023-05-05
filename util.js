@@ -70,6 +70,7 @@ function toggleAutoSave() {
     conditions.autoSave = !conditions.autoSave;
     let autoSaveStatus = document.getElementById('autosave-status');
     autoSaveStatus.innerHTML = conditions.autoSave ? 'on' : 'off';
+
     log('Autosave:', conditions.autoSave ? 'enabled' : 'disabled');
 };
 
@@ -89,6 +90,7 @@ function toggleRounding() {
     conditions.rounding = !conditions.rounding;
     const roundingStatus = document.getElementById('rounding-status');
     roundingStatus.innerHTML = conditions.rounding ? 'on' : 'off';
+    
     log('Rounding:', conditions.rounding ? 'enabled' : 'disabled');
 }
 

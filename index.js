@@ -41,4 +41,4 @@ let timers = {
 
 export { recruits, resources, stats, conditions, timers };
 
-window.onload = game.init.load()
+window.onload = game.init.load();
