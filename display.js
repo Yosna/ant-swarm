@@ -11,7 +11,7 @@ function update() {
         for (let [tier, ant] of Object.values(ants).entries()) {
             // Determine if the cost threshold has been met to display the next ant
             const displayCostThreshold = (ant.acquired == 0) && (resources.food.total < (ant.cost / 4));
-            let display = (displayCostThreshold && (ant.visible == false)) ? 'none' : '';
+            let display = (displayCostThreshold && (ant.visible === false)) ? 'none' : '';
             ant.visible = (display == '') ? true : false;
             
             // Update visibility of the ant's information
@@ -51,28 +51,22 @@ function settings(display) {
 
 function antUpgradeElement(ant, upgrade) {
     const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
-    const buttonElement = `
-        <button
-            type="button" 
-            class="upgrade-button"
-            id="${ant.id}-upgrade"
-            data-id="${ant.id}"
-            data-string=
-                "${ant.name}
-                Upgrade ${(ant.upgrades + 1)}\n
-                Cost: ${game.util.numbers(upgrade.cost)}\n
-                Boosts production by ${upgrade.percent} 
-                for every ${ant.id_abb} recruited"
-            data-cost="${upgrade.cost}"
-            data-boost="${upgrade.boost}"
-        >
-            ${ant.id_abb}
-        </button>
-    `;
-    upgradeContainer.innerHTML += buttonElement;
+    const buttonElement = document.createElement('button');
+    buttonElement.type = 'button';
+    buttonElement.className = 'upgrade-button';
+    buttonElement.id = `${ant.id}-upgrade`;
+    buttonElement.dataset.id = ant.id;
+    buttonElement.dataset.string = `${ant.name} Upgrade ${(ant.upgrades + 1)}
+        \nCost: ${game.util.numbers(upgrade.cost)}
+        \nBoosts production by ${upgrade.percent} for every ${ant.id_abb} recruited`;
+    buttonElement.dataset.cost = upgrade.cost;
+    buttonElement.dataset.boost = upgrade.boost;
+    buttonElement.innerText = ant.id_abb;
+    upgradeContainer.appendChild(buttonElement);
 
     game.init.antUpgradeEventListener(ant);
 };
+
 
 export default {
     update,
