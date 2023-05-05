@@ -39,16 +39,16 @@ function buyUpgrade(antToUpgrade) {
             // Determine which ant to upgrade
             if (ant.id == antToUpgrade) {
                 const upgrade = document.getElementById(ant.id + '-upgrade');
-                const upgradeCost = upgrade.getAttribute('data-cost');
-                const upgradeBoost = upgrade.getAttribute('data-boost');
+                const upgradeCost = Number(upgrade.getAttribute('data-cost'));
+                const upgradeBoost = Number(upgrade.getAttribute('data-boost'));
 
                 if (resources.food.total < upgradeCost) {
                     return;
                 };
 
                 // Apply the upgrade
-                resources.food.total -= parseFloat(upgradeCost);
-                ant.boost += parseFloat(upgradeBoost);
+                resources.food.total -= upgradeCost;
+                ant.boost += upgradeBoost;
                 ant.upgrades++;
 
                 upgrade.remove();
