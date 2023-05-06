@@ -59,7 +59,7 @@ function buyUpgrade(antToUpgrade) {
 function progression() {
     if (conditions.activeWindow) {
         calculate.upgrades();
-        calculate.resourceProduction();
+        calculate.resourceProduction(1);
         display.update();
         util.timestamp();
     };

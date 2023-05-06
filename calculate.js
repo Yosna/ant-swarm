@@ -3,13 +3,21 @@ import * as game from './game.js';
 
 function offlineProgress() {
     const elapsedTime = (Date.now() - stats.lastUpdate);
-    const cycles = Math.floor(elapsedTime / stats.tickSpeed);
+    let cycles = Math.floor(elapsedTime / stats.tickSpeed);
+    let offlineMultiplier = 1;
+
+    // Cap the number of cycles to reduce loading time
+    if (cycles > 1000) {
+        offlineMultiplier = cycles / 1000;
+        cycles = 1000;
+    };
 
     game.util.log('You were away for', (elapsedTime / 1000), 'seconds');
+    game.util.log('Cycles:', cycles, '- Multiplier:', offlineMultiplier);
 
-    // Run the number of progression cycles missed since last update
+    // Add resources gained since last update
     for (let i = 0; i < cycles; i++) {
-        game.progression();
+        resourceProduction(offlineMultiplier);
     };
 };
 
@@ -51,7 +59,7 @@ function roundedQuantity(ant, quantity) {
         : difference;                                 // Return the difference if the quantity is not rounded
 }
 
-function resourceProduction() {
+function resourceProduction(multiplier) {
     let foodPerSecond = 0;
 
     for (let [type, ants] of Object.values(recruits).entries()) {
@@ -61,15 +69,16 @@ function resourceProduction() {
             const lastAnt = Object.values(recruits)[type][Object.keys(ants)[tier - 1]];
 
             try { 
-                lastAnt.acquired += productionPerTick;
+                lastAnt.acquired += productionPerTick * multiplier;
             } catch { 
-                resources.food.total += productionPerTick;
+                resources.food.total += productionPerTick * multiplier;
                 foodPerSecond += ant.production * ant.acquired * productionBoost;
             };
         };
     };
 
     resources.food.production = foodPerSecond;
+    console.log('Resources updated x' + multiplier);
 };
 
 function upgrades() {
