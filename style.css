@@ -207,6 +207,10 @@ body {
     margin: 0;
 } .message-log > pre > div {
     display: flex;
+    margin-left: .5em;
+}
+.message-text {
+    margin-left: 1em;
 }
 #settings-container {
     display: none;
