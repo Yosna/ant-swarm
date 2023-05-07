@@ -42,9 +42,9 @@ function antUpgradeElement(ant, upgrade) {
     buttonElement.className = 'upgrade-button';
     buttonElement.id = `${ant.id}-upgrade`;
     buttonElement.dataset.id = ant.id;
-    buttonElement.dataset.string = `${ant.name} Upgrade ${(ant.upgrades + 1)}
+    buttonElement.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades + 1)}
         \nCost: ${game.util.numbers(upgrade.cost)}
-        \nBoosts production by ${upgrade.percent} for every ${ant.id_abb} recruited`;
+        \nBoosts production by ${upgrade.percent}\nfor every ${ant.id_abb} recruited`;
     buttonElement.dataset.cost = upgrade.cost;
     buttonElement.dataset.boost = upgrade.boost;
     buttonElement.innerText = ant.id_abb;

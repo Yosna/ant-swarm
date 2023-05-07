@@ -95,7 +95,6 @@ function importSave() {
 
 function exportSave(method) {
     const exported = document.getElementById('import-export-field');
-    log(exported)
     const saveData = {
         recruits: recruits,
         resources: resources,
