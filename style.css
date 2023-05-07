@@ -7,7 +7,7 @@
     display: none;
 }
 body {
-    background-color: #1e453e;
+    background-color: #1e4539;
 }
 #title-header {
     text-align: center;
@@ -34,7 +34,6 @@ body {
     background-color: #4a4a4a;
     font-size: 14px;
     height: 30%;
-    width: 50%;
 }
 .settings-button-container {
     text-align: center;
@@ -195,15 +194,19 @@ body {
 }
 .message-log {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column-reverse; 
     overflow: auto;
     font-size: 12px;
     height: 85%;
     width: 100%;
-} .message-log > span {
+} .message-log > pre {
     border-bottom: 1px solid black;
     box-sizing: border-box;
+    white-space: pre-wrap;
     padding: 3px;
+    margin: 0;
+} .message-log > pre > div {
+    display: flex;
 }
 #settings-container {
     display: none;
@@ -239,4 +242,39 @@ body {
     width: 25%;
     margin-left: auto;
     margin-right: auto;
+}
+.modal {
+    position: fixed;
+    display: none;
+    z-index: 1;
+}
+#import-export-modal {
+    background-color: rgba(200, 200, 200, 0.4);
+    flex-direction: column;
+    align-items: center;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    overflow: hidden;
+} #import-export-modal > h3 { 
+    text-align: center;
+    width: 90%;
+    height: 10%;
+} #import-export-modal > textarea {
+    background-color: rgba(200, 200, 200, 0.8);
+    width: 90%;
+    height: 70%;
+}
+#import-export-button-container {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    height: 20%;
+    font-size: 0;
+    line-height: 0;
+} #import-export-button-container > button {
+    background-color: #808080;
+    width: 25%;
+    height: 80%;
 }

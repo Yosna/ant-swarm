@@ -23,11 +23,11 @@
                 <div class="save-button-container">
                     <p>Save Options</p>
                     <button type="button" id="save-button" style="width:100%">Save Game</button>
-                    <button type="button" id="import-button">Import Save</button>
-                    <button type="button" id="export-button">Export Save</button>
+                    <button type="button" class="import-export-toggle" style="width:60%;">Import/Export</button>
+                    <button type="button" id="delete-button" style="width:40%;">Delete</button>
                 </div>
                 <div class="settings-button-container">
-                    <button type="button" class="settings-menu">Settings</button>
+                    <button type="button" class="settings-toggle">Settings</button>
                 </div>
             </div>
             <div class="game-container">
@@ -165,7 +165,7 @@
                     <div class="upgrade-button-container">
                     </div>
                     <div class="forage-button-container">
-                        <button type="button" id="forage-button">Forage for Food</button>
+                        <button type="button" id="forage-button">Forage</button>
                     </div>
                     <div class="recruit-quantity-container">
                         <div id="quantity-column">
@@ -204,12 +204,22 @@
         </div>
         <div class="main-container" id="settings-container">
             <div id="settings-container-header">
-                <button type="button" class="settings-menu">X</button>
+                <button type="button" class="settings-toggle">X</button>
             </div>
             <div id="settings-container-body">
                 <button type="button" id="autosave-button">Autosave (<span id="autosave-status">on</span>)</button><hr>
-                <button type="button" id="delete-button">Delete Save</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal" id="import-export-modal">
+        <h3>Import/Export</h3>
+        <textarea id="import-export-field"></textarea>
+        <div id="import-export-button-container">
+            <button type="button" id="import-button">Import Save</button>
+            <button type="button" class="export-button">Export Save</button>
+            <button type="button" class="export-button">Export as File</button>
+            <button type="button" class="import-export-toggle">Close</button>
         </div>
     </div>
     <script type="module" src="index.js"></script>

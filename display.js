@@ -35,20 +35,6 @@ function update() {
     };
 };
 
-// Toggle the display for settings
-function settings(display) {
-    const defaultContainer = document.getElementById('main-container');
-    const settingsContainer = document.getElementById('settings-container');
-    const elementsToHide = document.getElementsByClassName('main-container');
-    
-    for (const container of elementsToHide) {
-        container.style.display = 'none'
-    };
-    
-    const container = display ? settingsContainer : defaultContainer;
-    container.style.display = 'flex';
-};
-
 function antUpgradeElement(ant, upgrade) {
     const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
     const buttonElement = document.createElement('button');
@@ -67,9 +53,28 @@ function antUpgradeElement(ant, upgrade) {
     game.init.antUpgradeEventListener(ant);
 };
 
+function settings(display) {
+    const defaultContainer = document.getElementById('main-container');
+    const settingsContainer = document.getElementById('settings-container');
+    const elementsToHide = document.getElementsByClassName('main-container');
+    
+    for (const container of elementsToHide) {
+        container.style.display = 'none'
+    };
+    
+    const container = display ? settingsContainer : defaultContainer;
+    container.style.display = 'flex';
+};
+
+function importExportModal() {
+    document.getElementById('import-export-field').value = '';
+    const modal = document.getElementById('import-export-modal');
+    modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+};
 
 export default {
     update,
-    settings,
     antUpgradeElement,
+    settings,
+    importExportModal,
 };
