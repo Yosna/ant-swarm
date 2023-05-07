@@ -144,7 +144,6 @@ function antUpgradeEventListener(ant) {
     upgradeButton.addEventListener('click', () => {
         game.buyUpgrade(ant.id);
     });
-    console.log(ant.id, 'event listener added');
 };
 
 export default {
