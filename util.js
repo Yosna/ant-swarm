@@ -33,7 +33,7 @@ function log() {
         const text = document.createElement('span');
         time.classList.add('message-time');
         text.classList.add('message-text');
-        time.textContent = `[${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}]: `;
+        time.textContent = `[${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}]:`;
         text.textContent = `${Array.from(arguments).join(' ')}`;
         return [time, text];;
     })();
@@ -88,8 +88,8 @@ function toggleAutoSave() {
 function importSave() {
     const imported = document.getElementById('import-export-field');
     const importStatus = game.init.getSave(imported.value) 
-        ? log('Import success! Save data has been loaded') 
-        : log('Import failed! Please check the save string and try again');
+        ? log(`Import success! Save data has been loaded`) 
+        : log(`Import failed! Please check the save string and try again`);
     return importStatus;
 };
 
