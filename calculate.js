@@ -3,6 +3,13 @@ import * as game from './game.js';
 
 function offlineProgress() {
     const elapsedTime = (Date.now() - stats.lastUpdate);
+    const elapsedDays = Math.floor(elapsedTime / 86400000);
+    const elapsedHours = Math.floor((elapsedTime % 86400000) / 3600000);
+    const elapsedMinutes = Math.floor(((elapsedTime % 86400000) % 3600000) / 60000);
+    const elapsedSeconds = Math.floor((((elapsedTime % 86400000) % 3600000) % 60000) / 1000);
+    const elapsedTimeFormat = `${elapsedDays}d ${elapsedHours}h ${elapsedMinutes}m ${elapsedSeconds}s`;
+    const elapsedTimeMessage = `Welcome back!\nYou were away for:\n${elapsedTimeFormat}`;
+
     let cycles = Math.floor(elapsedTime / stats.tickSpeed);
     let offlineMultiplier = 1;
 
@@ -11,9 +18,7 @@ function offlineProgress() {
         offlineMultiplier = cycles / 1000;
         cycles = 1000;
     };
-
-    game.util.log('You were away for', (elapsedTime / 1000), 'seconds');
-    game.util.log('Cycles:', cycles, '- Multiplier:', offlineMultiplier);
+    game.util.log(elapsedTimeMessage);
 
     // Add resources gained since last update
     for (let i = 0; i < cycles; i++) {
@@ -78,7 +83,6 @@ function resourceProduction(multiplier) {
     };
 
     resources.food.production = foodPerSecond;
-    console.log('Resources updated x' + multiplier);
 };
 
 function upgrades() {
