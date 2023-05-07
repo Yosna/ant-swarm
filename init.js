@@ -33,19 +33,32 @@ function load() {
     const saveButton = document.getElementById('save-button');
     saveButton.addEventListener('click', game.util.save);
 
+    const importExportButtons = document.getElementsByClassName('import-export-toggle');
+    const importExportButton = Array.from(importExportButtons);
+    importExportButton.forEach(button => {
+        button.addEventListener('click', () => {
+            game.display.importExportModal();
+        })
+    });
+
+    const deleteButton = document.getElementById('delete-button');
+    deleteButton.addEventListener('click', game.util.deleteSave);
+
     const autoSaveButton = document.getElementById('autosave-button');
     autoSaveButton.addEventListener('click', game.util.toggleAutoSave);
 
     const importButton = document.getElementById('import-button');
     importButton.addEventListener('click', game.util.importSave);
 
-    const exportButton = document.getElementById('export-button');
-    exportButton.addEventListener('click', game.util.exportSave);
+    const exportButtons = document.getElementsByClassName('export-button');
+    const exportButton = Array.from(exportButtons);
+    exportButton.forEach(button => {
+        button.addEventListener('click', e => {
+            game.util.exportSave(e.target.innerHTML);
+        });
+    });
 
-    const deleteButton = document.getElementById('delete-button');
-    deleteButton.addEventListener('click', game.util.deleteSave);
-
-    const settingsMenuButtons = document.getElementsByClassName('settings-menu');
+    const settingsMenuButtons = document.getElementsByClassName('settings-toggle');
     const settingsMenuButton = Array.from(settingsMenuButtons);
     settingsMenuButton.forEach(button => {
         button.addEventListener('click', e => {
@@ -93,13 +106,19 @@ function load() {
 function getSave(encodedData) {
     game.util.log('Loading save data...');
 
-    const saveData = JSON.parse(atob(encodedData));
-    Object.assign(recruits, saveData.recruits);
-    Object.assign(resources, saveData.resources);
-    Object.assign(stats, saveData.stats);
-    Object.assign(conditions, saveData.conditions);
+    try {
+        const saveData = JSON.parse(atob(encodedData));
+        Object.assign(recruits, saveData.recruits);
+        Object.assign(resources, saveData.resources);
+        Object.assign(stats, saveData.stats);
+        Object.assign(conditions, saveData.conditions);
 
-    game.calculate.offlineProgress();
+        game.calculate.offlineProgress();
+        return true;
+    } catch (error) {
+        game.util.log('Invalid save data detected! Aborting...');
+        return false;
+    };
 };
 
 function newSave() {

@@ -25,21 +25,32 @@ function numbers(n) {
 
 // Log messages to the game's window
 function log() {
-    const date = new Date();
-    const message = `
-        [${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]:
-        ${Array.from(arguments).join(' ')}
-    `;
-
     const messageLog = document.querySelector('.message-log');
-    const element = document.createElement('span');
+
+    const layout = (() => {
+        const d = new Date();
+        const time = document.createElement('span');
+        const text = document.createElement('span');
+        time.classList.add('message-time');
+        text.classList.add('message-text');
+        time.textContent = `[${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}]: `;
+        text.textContent = `${Array.from(arguments).join(' ')}`;
+        return [time, text];;
+    })();
+
+    const logEntry = (() => {
+        const container = document.createElement('pre');
+        const message = document.createElement('div');
+        message.append(...layout);
+        container.appendChild(message);
+        return container;
+    })();
 
     // Append the new text element to the log container
-    element.textContent = message;
-    messageLog.insertBefore(element, messageLog.firstChild);
+    messageLog.insertBefore(logEntry, messageLog.firstChild);
 
     // Limit the number of messages
-    if (messageLog.childElementCount > 25) {
+    if (messageLog.childElementCount > 50) {
         messageLog.removeChild(messageLog.lastChild);
     };
 };
@@ -75,12 +86,49 @@ function toggleAutoSave() {
 };
 
 function importSave() {
-    // placeholder
+    const imported = document.getElementById('import-export-field');
+    const importStatus = game.init.getSave(imported.value) 
+        ? log('Import success! Save data has been loaded') 
+        : log('Import failed! Please check the save string and try again');
+    return importStatus;
 };
 
-function exportSave() {
-    // placeholder
+function exportSave(method) {
+    const exported = document.getElementById('import-export-field');
+    log(exported)
+    const saveData = {
+        recruits: recruits,
+        resources: resources,
+        stats: stats,
+        conditions: conditions,
+    };
+    const encodedData = btoa(JSON.stringify(saveData));
+    exported.value = encodedData;
+    const exportStatus = method.includes('File') 
+        ? exportToFile(exported) 
+        : exportToClipboard(exported);
+    return exportStatus;
 };
+
+function exportToFile(exported) {
+    const d = new Date();
+    const exportDate = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+    const exportTime = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+    const exportFile = `AS_Save_${exportDate}_${exportTime}.txt`;
+    const exportNew = new Blob([exported.value], {type: 'text/plain'});
+    const exportAnchor = document.createElement('a');
+    exportAnchor.href = URL.createObjectURL(exportNew);
+    exportAnchor.download = exportFile;
+    exportAnchor.target = '_blank';
+    exportAnchor.click();
+    return log('Success! Save data exported to file');
+};
+
+function exportToClipboard(exported) {
+    exported.select();
+    navigator.clipboard.writeText(exported.value);
+    return log('Success! Save data copied to clipboard');
+}
 
 function deleteSave() {
     localStorage.clear();
