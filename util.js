@@ -9,49 +9,47 @@ const scientificNotation = new Intl.NumberFormat('en-US', {
 });
 
 // Number format handling
-function numbers(n) {
+function numbers(number) {
     // Check the value of the number and return the appropriate format
     switch (true) {
-    case n < 100:
-        return parseFloat(n.toFixed(2));
-    case n < 1000:
-        return parseFloat(n.toFixed(1));
-    case n < 10000:
-        return parseFloat(n.toFixed(1)).toLocaleString();
-    default:
-        return scientificNotation.format(n).toLowerCase();
+        case number < 100:
+            return parseFloat(number.toFixed(2));
+        case number < 1000:
+            return parseFloat(number.toFixed(1));
+        case number < 10000:
+            return parseFloat(number.toFixed(1)).toLocaleString();
+        default:
+            return scientificNotation.format(number).toLowerCase();
     }
 }
 
 // Log messages to the game's window
 function log() {
-    const messageLog = document.querySelector('.message-log');
+    const entry = createLogEntry(...arguments);
+    addLogEntry(entry);
+}
 
-    const layout = (() => {
-        const d = new Date();
-        const time = document.createElement('span');
-        const text = document.createElement('span');
-        time.classList.add('message-time');
-        text.classList.add('message-text');
-        time.textContent = `[${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}]:`;
-        text.textContent = `${Array.from(arguments).join(' ')}`;
-        return [time, text];
-    })();
+function createLogEntry() {
+    const d = new Date();
+    const time = document.createElement('span');
+    const text = document.createElement('span');
+    time.classList.add('message-time');
+    text.classList.add('message-text');
+    time.textContent = `[${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}]:`;
+    text.textContent = `${Array.from(arguments).join(' ')}`;
+    const layout = [time, text];
+    const log = document.createElement('div');
+    const entry = document.createElement('pre');
+    log.append(...layout);
+    entry.appendChild(log);
+    return entry;
+}
 
-    const logEntry = (() => {
-        const container = document.createElement('pre');
-        const message = document.createElement('div');
-        message.append(...layout);
-        container.appendChild(message);
-        return container;
-    })();
-
-    // Append the new text element to the log container
-    messageLog.insertBefore(logEntry, messageLog.firstChild);
-
-    // Limit the number of messages
-    if (messageLog.childElementCount > 50) {
-        messageLog.removeChild(messageLog.lastChild);
+function addLogEntry(entry) {
+    const log = document.querySelector('.message-log');
+    log.insertBefore(entry, log.firstChild);
+    if (log.childElementCount > 50) {
+        log.removeChild(log.lastChild);
     }
 }
 
