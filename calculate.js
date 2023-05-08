@@ -89,7 +89,7 @@ function resourceProduction(multiplier) {
 
 function totalProduction(ant) {
     const production = (1 + (ant.boost * ant.recruited)) * ant.production * ant.acquired;
-    return production + ' ' + ant.prod_abb;
+    return game.util.numbers(production) + ' ' + ant.prod_abb;
 }
 
 function upgrades() {
