@@ -26,36 +26,19 @@ function offlineProgress() {
     }
 }
 
-function costByQuantity(ant, tier) {
+function costByQuantity(ant) {
+    let calculation = document.getElementById('quantity-selection').value;
     let quantity = document.getElementById('quantity-selection').value;
-    quantity = roundedQuantity(ant, (quantity === 'max') ? 0 : Number(quantity));
-    let cost = 0;
-    let foodRemaining = Number(game.util.numbers(resources.food.total));
 
-    if (quantity > 0) { // Calculate the cost of the quantity selected
-        for (let i = 0; i < quantity; i++) {
-            const nextCost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.recruited + i) * (tier + 1);
-            cost += nextCost;
-        }
-    } else { // Calculate the cost of the maximum quantity
-        while (resources.food.total > cost) { // Continue until cost exceeds total food
-            const nextCost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.recruited + quantity) * (tier + 1);
-            if (foodRemaining >= nextCost) {
-                foodRemaining -= nextCost;
-                cost += nextCost;
-                quantity++;
-            } else {
-                break;
-            }
-        }
-    }
+    quantity = rounded(ant, (quantity === 'max') ? 0 : Number(quantity));
+    calculation = (calculation === 'max') ? maximumQuantity(ant, quantity) : selectedQuantity(ant, quantity);
 
     // Set the minimum quantity and cost if no ants can be recruited
-    cost = (cost === 0) ? ant.cost : Number(cost);
-    return { quantity, cost };
+    calculation.cost = (calculation.cost === 0) ? ant.cost : Number(calculation.cost);
+    return { calculation };
 }
 
-function roundedQuantity(ant, quantity) {
+function rounded(ant, quantity) {
     const remainder = ant.recruited % quantity;
     const difference = quantity - remainder;
     return (conditions.rounding === false)
@@ -65,6 +48,32 @@ function roundedQuantity(ant, quantity) {
             : (ant.recruited % quantity === 0)
                 ? quantity // return if the quantity is already rounded
                 : difference; // return the rounded quantity
+}
+
+function maximumQuantity(ant, quantity) {
+    let foodRemaining = Number(game.util.numbers(resources.food.total));
+    let cost = 0;
+    while (resources.food.total > cost) {
+        const nextCost = (1 * Math.pow(10, ant.tier * 2)) * Math.pow(1.12, ant.recruited + quantity) * (ant.tier + 1);
+        if (foodRemaining >= nextCost) {
+            foodRemaining -= nextCost;
+            cost += nextCost;
+            quantity++;
+        } else {
+            break;
+        }
+    }
+
+    return { quantity, cost };
+}
+
+function selectedQuantity(ant, quantity) {
+    let cost = 0;
+    for (let i = 0; i < quantity; i++) {
+        const nextCost = (1 * Math.pow(10, ant.tier * 2)) * Math.pow(1.12, ant.recruited + i) * (ant.tier + 1);
+        cost += nextCost;
+    }
+    return { quantity, cost };
 }
 
 function resourceProduction(multiplier) {

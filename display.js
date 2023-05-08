@@ -31,16 +31,15 @@ function updateAnt(ant) {
     game.util.elementProperty(`.${ant.id}-data`, 'style.display', '');
 
     const totalProduction = game.calculate.totalProduction(ant);
-    const q = game.calculate.costByQuantity(ant, ant.tier);
+    const c = game.calculate.costByQuantity(ant).calculation;
 
     const elements = {
         recruited: { selector: `#${ant.id}-recruited`, value: game.util.numbers(ant.recruited) },
         acquired: { selector: `#${ant.id}-acquired`, value: game.util.numbers(ant.acquired) },
         production: { selector: `#${ant.id}-production`, value: totalProduction },
-        cost: { selector: `#${ant.id}-cost`, value: game.util.numbers(q.cost) },
-        quantity: { selector: `#${ant.id}-quantity`, value: game.util.numbers(q.quantity) }
+        cost: { selector: `#${ant.id}-cost`, value: game.util.numbers(c.cost) },
+        quantity: { selector: `#${ant.id}-quantity`, value: game.util.numbers(c.quantity) }
     };
-
     for (const [, element] of Object.values(elements).entries()) {
         game.util.elementProperty(element.selector, 'innerHTML', element.value);
     }
