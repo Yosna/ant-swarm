@@ -87,18 +87,21 @@ function resourceProduction(multiplier) {
     resources.food.production = foodPerSecond;
 }
 
+function totalProduction(ant) {
+    const production = (1 + (ant.boost * ant.recruited)) * ant.production * ant.acquired;
+    return production + ' ' + ant.prod_abb;
+}
+
 function upgrades() {
     antUpgrades();
 }
 
 function antUpgrades() {
-    for (const [, ants] of Object.values(recruits).entries()) {
-        for (const [tier, ant] of Object.values(ants).entries()) {
-            if (antUpgradeUnlocked(ant) && antUpgradeHidden(ant)) {
-                const upgrade = getAntUpgradeBoost(ant);
-                upgrade.cost = getAntUpgradeCost(ant, tier);
-                game.display.antUpgradeElement(ant, upgrade);
-            }
+    for (const ant of game.getAnts()) {
+        if (antUpgradeUnlocked(ant) && antUpgradeHidden(ant)) {
+            const upgrade = getAntUpgradeBoost(ant);
+            upgrade.cost = getAntUpgradeCost(ant);
+            game.display.antUpgradeElement(ant, upgrade);
         }
     }
 }
@@ -120,9 +123,9 @@ function antUpgradeHidden(ant) {
     return true;
 }
 
-function getAntUpgradeCost(ant, tier) {
+function getAntUpgradeCost(ant) {
     const breakpoint = [10, 25, 50, 100, 200, 300, 400, 500, 750, 1000];
-    const antCostAtBreakpoint = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, breakpoint[ant.upgrades]) * (tier + 1);
+    const antCostAtBreakpoint = (1 * Math.pow(10, ant.tier * 2)) * Math.pow(1.12, breakpoint[ant.upgrades]) * (ant.tier + 1);
     const upgradeCost = (antCostAtBreakpoint * 12) * Math.pow(1.2, ant.upgrades);
     return upgradeCost < 10000 ? Math.floor(upgradeCost) : upgradeCost;
 }
@@ -137,5 +140,6 @@ export default {
     offlineProgress,
     costByQuantity,
     resourceProduction,
+    totalProduction,
     upgrades
 };

@@ -4,51 +4,50 @@ import calculate from './calculate.js';
 import display from './display.js';
 import init from './init.js';
 
-// Gather food by foraging
+function * getAnts() {
+    for (const [, ants] of Object.values(recruits).entries()) {
+        for (const [, ant] of Object.values(ants).entries()) {
+            yield ant;
+        }
+    }
+}
+
 function forage() {
     resources.food.total += (stats.foraging.rate * stats.foraging.boost);
     document.getElementById('food-total').innerHTML = util.numbers(resources.food.total);
+    util.elementProperty('#forage-button', 'innerHTML', 'Foraged!');
 }
 
-// Recruit an ant
 function recruit(target) {
-    for (const [, ants] of Object.values(recruits).entries()) {
-        for (const [tier, ant] of Object.values(ants).entries()) {
-            const targetName = target.innerText.substring(0, ant.name.length);
-
-            if (ant.name === targetName) {
-                const q = calculate.costByQuantity(ant, tier);
-
-                // Check if the food is sufficient; util.numbers() fixes floating point number precision
-                if (util.numbers(resources.food.total) < q.cost) {
-                    return;
-                }
+    for (const ant of getAnts()) {
+        const targetName = target.innerText.substring(0, ant.name.length);
+        if (ant.name === targetName) {
+            const q = calculate.costByQuantity(ant, ant.tier);
+            if (util.numbers(resources.food.total) >= q.cost) {
                 resources.food.total -= q.cost;
                 ant.recruited += q.quantity;
                 ant.acquired += q.quantity;
-                ant.cost = (1 * Math.pow(10, tier * 2)) * Math.pow(1.12, ant.recruited) * (tier + 1);
+                ant.cost = (1 * Math.pow(10, ant.tier * 2)) * Math.pow(1.12, ant.recruited) * (ant.tier + 1);
             }
         }
     }
 }
 
 function buyUpgrade(antToUpgrade) {
-    for (const [, ants] of Object.entries(recruits)) {
-        for (const [, ant] of Object.entries(ants)) {
-            // Determine which ant to upgrade
-            if (ant.id === antToUpgrade) {
-                const upgrade = document.getElementById(ant.id + '-upgrade');
-                const upgradeCost = Number(upgrade.getAttribute('data-cost'));
-                const upgradeBoost = Number(upgrade.getAttribute('data-boost'));
+    for (const ant of getAnts()) {
+        // Determine which ant to upgrade
+        if (ant.id === antToUpgrade) {
+            const upgrade = document.getElementById(ant.id + '-upgrade');
+            const upgradeCost = Number(upgrade.getAttribute('data-cost'));
+            const upgradeBoost = Number(upgrade.getAttribute('data-boost'));
 
-                if (resources.food.total >= upgradeCost) {
-                    // Apply the upgrade
-                    resources.food.total -= upgradeCost;
-                    ant.boost += upgradeBoost;
-                    ant.upgrades++;
+            if (resources.food.total >= upgradeCost) {
+                // Apply the upgrade
+                resources.food.total -= upgradeCost;
+                ant.boost += upgradeBoost;
+                ant.upgrades++;
 
-                    upgrade.remove();
-                }
+                upgrade.remove();
             }
         }
     }
@@ -70,6 +69,7 @@ export {
     calculate,
     display,
     forage,
+    getAnts,
     recruit,
     buyUpgrade,
     progression

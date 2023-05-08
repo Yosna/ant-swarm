@@ -8,9 +8,8 @@ const scientificNotation = new Intl.NumberFormat('en-US', {
     roundingMode: 'trunc'
 });
 
-// Number format handling
+// Number handling - check the value and return the appropriate format
 function numbers(number) {
-    // Check the value of the number and return the appropriate format
     switch (true) {
         case number < 100:
             return parseFloat(number.toFixed(2));
@@ -129,6 +128,7 @@ function exportToClipboard(exported) {
 
 function deleteSave() {
     localStorage.clear();
+    location.reload();
 }
 
 function toggleRounding() {
@@ -153,6 +153,17 @@ function resetTimers() {
 
     setTimers();
 }
+function elementProperty(selector, property, value) {
+    const elements = document.querySelectorAll(selector);
+    for (const element of elements) {
+        const p = property.split('.');
+        let obj = element;
+        for (let i = 0; i < p.length - 1; i++) {
+            obj = obj[p[i]];
+        }
+        obj[p[p.length - 1]] = value;
+    }
+}
 
 export default {
     numbers,
@@ -166,5 +177,6 @@ export default {
     deleteSave,
     toggleRounding,
     setTimers,
-    resetTimers
+    resetTimers,
+    elementProperty
 };

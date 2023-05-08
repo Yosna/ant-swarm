@@ -1,96 +1,12 @@
-import { recruits, resources, stats, conditions, timers } from './index.js';
+import { recruits, resources, stats, conditions } from './index.js';
 import * as game from './game.js';
 
 function load() {
-    // Create event listeners for button functionality
-    const forageButton = document.getElementById('forage-button');
-    forageButton.addEventListener('click', game.forage);
-
-    const recruitButtons = document.getElementsByClassName('recruit-button');
-    const recruitButton = Array.from(recruitButtons);
-    recruitButton.forEach(button => {
-        button.addEventListener('click', e => {
-            game.recruit(e.target)
-        });
-    });
-
-    const quantitySelection = document.getElementById('quantity-selection');
-    quantitySelection.addEventListener('change', () => {
-        for (let [type, ants] of Object.values(recruits).entries()) {
-            for (let [tier, ant] of Object.values(ants).entries()) {
-                game.calculate.costByQuantity(ant, tier);
-                quantitySelection.blur()
-            };
-        };
-    });
-
-    const roundingButtons = document.getElementById('rounding-button');
-    roundingButtons.addEventListener('click', game.util.toggleRounding)
-
-    const clearLogButton = document.getElementById('clear-log-button');
-    clearLogButton.addEventListener('click', game.util.clearLogs);
-
-    const saveButton = document.getElementById('save-button');
-    saveButton.addEventListener('click', game.util.save);
-
-    const importExportButtons = document.getElementsByClassName('import-export-toggle');
-    const importExportButton = Array.from(importExportButtons);
-    importExportButton.forEach(button => {
-        button.addEventListener('click', () => {
-            game.display.importExportModal();
-        })
-    });
-
-    const deleteButton = document.getElementById('delete-button');
-    deleteButton.addEventListener('click', game.util.deleteSave);
-
-    const autoSaveButton = document.getElementById('autosave-button');
-    autoSaveButton.addEventListener('click', game.util.toggleAutoSave);
-
-    const importButton = document.getElementById('import-button');
-    importButton.addEventListener('click', game.util.importSave);
-
-    const exportButtons = document.getElementsByClassName('export-button');
-    const exportButton = Array.from(exportButtons);
-    exportButton.forEach(button => {
-        button.addEventListener('click', e => {
-            game.util.exportSave(e.target.innerHTML);
-        });
-    });
-
-    const settingsMenuButtons = document.getElementsByClassName('settings-toggle');
-    const settingsMenuButton = Array.from(settingsMenuButtons);
-    settingsMenuButton.forEach(button => {
-        button.addEventListener('click', e => {
-            const display = e.target.innerText === 'Settings' ? true : false;
-            game.display.settings(display);
-        });
-    });
-
-    // Active window detection
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            conditions.activeWindow = true;
-            game.calculate.offlineProgress();
-        } else if (document.visibilityState === 'hidden') {
-            conditions.activeWindow = false;
-        };
-    });
-
-    // Upgrade Container event listener to change the default axial scroll direction
-    const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
-    upgradeContainer.addEventListener('wheel', function(e) {
-
-        // Determine which axis is being scrolled
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-
-            // Prevent attempted scrolling on the y-axis
-            e.preventDefault();
-
-            // Redirect the y-axis scroll distance to the x-axis
-            upgradeContainer.scrollLeft += e.deltaY;
-        };
-    });
+    gameEventListeners();
+    menuEventListeners();
+    saveEventListeners();
+    settingsEventListeners();
+    utilityEventListeners();
 
     const saveFound = localStorage.getItem('saveData');
     saveFound ? game.init.getSave(saveFound) : game.init.newSave();
@@ -99,9 +15,8 @@ function load() {
     conditions.rounding = !conditions.rounding;
     game.util.toggleAutoSave();
     game.util.toggleRounding();
-
     game.util.setTimers();
-};
+}
 
 function getSave(encodedData) {
     game.util.log('Loading save data...');
@@ -118,37 +33,92 @@ function getSave(encodedData) {
     } catch (error) {
         game.util.log('Invalid save data detected! Aborting...');
         return false;
-    };
-};
+    }
+}
 
 function newSave() {
     game.util.log('Creating new save data...');
 
-    for (let [type, ants] of Object.values(recruits).entries()) {
-        for (let [tier, ant] of Object.values(ants).entries()) {
+    for (const [type, ants] of Object.values(recruits).entries()) {
+        for (const [tier, ant] of Object.values(ants).entries()) {
+            ant.visible = false;
             ant.recruited = 0;
             ant.acquired = 0;
-            ant.production = .1;
+            ant.production = 0.1;
             ant.boost = 0;
             ant.upgrades = 0;
+            ant.type = type;
+            ant.tier = tier;
             ant.cost = (1 * Math.pow(10, tier * 2)) * (tier + 1);
-            ant.visible = false;
-        };
-    };
-
+        }
+    }
     game.util.save();
-};
+}
 
-function antUpgradeEventListener(ant) {
-    const upgradeButton = document.getElementById(ant.id + '-upgrade');
-    upgradeButton.addEventListener('click', () => {
-        game.buyUpgrade(ant.id);
+function eventListener(selector, event, callback) {
+    if (selector) {
+        const elements = document.querySelectorAll(selector);
+        for (const element of elements) {
+            element.addEventListener(event, callback);
+        }
+    } else {
+        document.addEventListener(event, callback);
+    }
+}
+
+function gameEventListeners() {
+    eventListener('#forage-button', 'click', game.forage);
+    eventListener('.recruit-button', 'click', e => {
+        game.recruit(e.target);
     });
-};
+}
+
+function menuEventListeners() {
+    eventListener('.import-export-toggle', 'click', game.display.importExportModal);
+    eventListener('.settings-toggle', 'click', e => {
+        const display = e.target.innerText === 'Settings';
+        game.display.settings(display);
+    });
+}
+
+function saveEventListeners() {
+    eventListener('#save-button', 'click', game.util.save);
+    eventListener('#delete-button', 'click', game.util.deleteSave);
+    eventListener('#import-button', 'click', game.util.importSave);
+    eventListener('.export-button', 'click', e => {
+        game.util.exportSave(e.target.innerHTML);
+    });
+}
+
+function settingsEventListeners() {
+    eventListener('#autosave-button', 'click', game.util.toggleAutoSave);
+    eventListener('#quantity-selection', 'change', e => {
+        for (const ant of game.getAnts()) {
+            game.calculate.costByQuantity(ant);
+            e.target.blur();
+        }
+    });
+    eventListener('#rounding-button', 'click', game.util.toggleRounding);
+    eventListener('#clear-log-button', 'click', game.util.clearLogs);
+}
+
+function utilityEventListeners() {
+    eventListener(null, 'visibilitychange', () => {
+        conditions.activeWindow = !conditions.activeWindow;
+        if (conditions.activeWindow) {
+            game.calculate.offlineProgress();
+        }
+    });
+    eventListener('.upgrade-container', 'wheel', e => {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.target.scrollLeft += e.deltaY;
+        }
+    });
+}
 
 export default {
     load,
     getSave,
     newSave,
-    antUpgradeEventListener,
+    eventListener
 };
