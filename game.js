@@ -15,7 +15,6 @@ function * getAnts() {
 function forage() {
     resources.food.total += (stats.foraging.rate * stats.foraging.boost);
     document.getElementById('food-total').innerHTML = util.numbers(resources.food.total);
-    util.elementProperty('#forage-button', 'innerHTML', 'Foraged!');
 }
 
 function recruit(target) {
