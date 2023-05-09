@@ -11,9 +11,10 @@
         "sourceType": "module"
     },
     "rules": {
-        "semi": ["error", "always"],
         "indent": ["error", 4, { "SwitchCase": 1 }],
+        "semi": ["error", "always"],
+        "no-extra-semi": "error",
         "space-before-function-paren": ["error", "never"],
-        "no-extra-semi": "error"
+        "no-multi-spaces": ["error", { "ignoreEOLComments": true, "exceptions": { "Property": true } }]
     }
 }
