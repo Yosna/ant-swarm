@@ -1,5 +1,6 @@
 import { recruits, resources, stats, conditions } from './index.js';
 import * as game from './game.js';
+import { number } from './util.js';
 
 function offlineProgress() {
     const elapsedTime = (Date.now() - stats.lastUpdate);
@@ -9,6 +10,7 @@ function offlineProgress() {
     const elapsedSeconds = Math.floor((((elapsedTime % 86400000) % 3600000) % 60000) / 1000);
     const elapsedTimeFormat = `${elapsedDays}d ${elapsedHours}h ${elapsedMinutes}m ${elapsedSeconds}s`;
     const elapsedTimeMessage = `Welcome back!\nYou were away for:\n${elapsedTimeFormat}`;
+    game.util.log(elapsedTimeMessage);
 
     let cycles = Math.floor(elapsedTime / stats.tickSpeed);
     let offlineMultiplier = 1;
@@ -18,30 +20,28 @@ function offlineProgress() {
         offlineMultiplier = cycles / 1000;
         cycles = 1000;
     }
-    game.util.log(elapsedTimeMessage);
 
-    // Add resources gained since last update
     for (let i = 0; i < cycles; i++) {
         resourceProduction(offlineMultiplier);
     }
 }
 
 function costByQuantity(ant) {
-    let calculation = document.getElementById('quantity-selection').value;
     let quantity = document.getElementById('quantity-selection').value;
+    let calculation = quantity;
 
     quantity = rounded(ant, (quantity === 'max') ? 0 : Number(quantity));
-    calculation = (calculation === 'max') ? maximumQuantity(ant, quantity) : selectedQuantity(ant, quantity);
+    calculation = (calculation === 'max')
+        ? maximumQuantity(ant, quantity)
+        : selectedQuantity(ant, quantity);
 
-    // Set the minimum quantity and cost if no ants can be recruited
-    calculation.cost = (calculation.cost === 0) ? ant.cost : Number(calculation.cost);
     return { calculation };
 }
 
 function rounded(ant, quantity) {
     const remainder = ant.recruited % quantity;
     const difference = quantity - remainder;
-    return (conditions.rounding === false)
+    return (!conditions.rounding)
         ? quantity // return if rounding is disabled
         : (quantity === 0)
             ? quantity // return if the quantity is 0
@@ -49,21 +49,18 @@ function rounded(ant, quantity) {
                 ? quantity // return if the quantity is already rounded
                 : difference; // return the rounded quantity
 }
-
 function maximumQuantity(ant, quantity) {
-    let foodRemaining = Number(game.util.numbers(resources.food.total));
-    let cost = 0;
+    let foodRemaining = Number(number(resources.food.total));
+    let cost = ant.cost;
     while (resources.food.total > cost) {
         const nextCost = (1 * Math.pow(10, ant.tier * 2)) * Math.pow(1.12, ant.recruited + quantity) * (ant.tier + 1);
         if (foodRemaining >= nextCost) {
             foodRemaining -= nextCost;
             cost += nextCost;
             quantity++;
-        } else {
-            break;
         }
     }
-
+    cost = (cost === 0) ? ant.cost : cost;
     return { quantity, cost };
 }
 
@@ -98,7 +95,7 @@ function resourceProduction(multiplier) {
 
 function totalProduction(ant) {
     const production = (1 + (ant.boost * ant.recruited)) * ant.production * ant.acquired;
-    return game.util.numbers(production) + ' ' + ant.prod_abb;
+    return number(production) + ' ' + ant.prod_abb;
 }
 
 function upgrades() {

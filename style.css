@@ -6,6 +6,9 @@
 } *::-webkit-scrollbar {  /* Hide scrollbar: Chrome, Safari, Opera */
     display: none;
 }
+.hidden {
+    visibility: hidden;
+}
 body {
     background-color: #1e4539;
 }

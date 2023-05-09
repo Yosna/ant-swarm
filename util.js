@@ -8,21 +8,19 @@ const scientificNotation = new Intl.NumberFormat('en-US', {
     roundingMode: 'trunc'
 });
 
-// Number handling - check the value and return the appropriate format
-function numbers(number) {
+function number(n) {
     switch (true) {
-        case number < 100:
-            return parseFloat(number.toFixed(2));
-        case number < 1000:
-            return parseFloat(number.toFixed(1));
-        case number < 10000:
-            return parseFloat(number.toFixed(1)).toLocaleString();
+        case n < 100:
+            return parseFloat(n.toFixed(2));
+        case n < 1000:
+            return parseFloat(n.toFixed(1));
+        case n < 10000:
+            return parseFloat(n.toFixed(1)).toLocaleString();
         default:
-            return scientificNotation.format(number).toLowerCase();
+            return scientificNotation.format(n).toLowerCase();
     }
 }
 
-// Log messages to the game's window
 function log() {
     const entry = createLogEntry(...arguments);
     addLogEntry(entry);
@@ -153,20 +151,9 @@ function resetTimers() {
 
     setTimers();
 }
-function elementProperty(selector, property, value) {
-    const elements = document.querySelectorAll(selector);
-    for (const element of elements) {
-        const p = property.split('.');
-        let obj = element;
-        for (let i = 0; i < p.length - 1; i++) {
-            obj = obj[p[i]];
-        }
-        obj[p[p.length - 1]] = value;
-    }
-}
 
 export default {
-    numbers,
+    number,
     log,
     clearLogs,
     timestamp,
@@ -177,6 +164,7 @@ export default {
     deleteSave,
     toggleRounding,
     setTimers,
-    resetTimers,
-    elementProperty
+    resetTimers
 };
+
+export { number };

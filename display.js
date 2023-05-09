@@ -1,5 +1,6 @@
 import { resources } from './index.js';
 import * as game from './game.js';
+import { number } from './util.js';
 
 // Updates to run after the progression cycle
 function update() {
@@ -8,62 +9,75 @@ function update() {
 }
 
 function resourceElements() {
-    document.getElementById('food-total').innerHTML = game.util.numbers(resources.food.total);
-    document.getElementById('food-production').innerHTML = game.util.numbers(resources.food.production);
+    updateElement('#food-total', 'innerHTML', number(resources.food.total));
+    updateElement('#food-production', 'innerHTML', number(resources.food.production));
 }
 
 function antElements() {
     for (const ant of game.getAnts()) {
-        ant.visible = unlockRequirement(ant) ? updateAnt(ant) : false;
-        if (!ant.visible) {
-            game.util.elementProperty(`.${ant.id}-data`, 'style.display', 'none');
-        }
+        ant.unlocked = unlockRequirement(ant) ? updateAnt(ant) : false;
     }
 }
 
 function unlockRequirement(ant) {
-    const requirement = (ant.acquired === 0) && (resources.food.total > (ant.cost / 4));
-    const unlocked = (requirement && !ant.visible);
-    return ant.visible ? true : unlocked;
+    const conditions =
+        (resources.food.total > (ant.cost / 4)) +
+        (ant.acquired === 0) +
+        !ant.unlocked;
+    if (conditions === 3) {
+        updateElement(`.${ant.id}-data`, 'style.visibility', 'visible');
+    }
+    return ant.unlocked ? true : conditions === 3;
 }
 
 function updateAnt(ant) {
-    game.util.elementProperty(`.${ant.id}-data`, 'style.display', '');
-
     const totalProduction = game.calculate.totalProduction(ant);
     const c = game.calculate.costByQuantity(ant).calculation;
 
     const elements = {
-        recruited: { selector: `#${ant.id}-recruited`, value: game.util.numbers(ant.recruited) },
-        acquired: { selector: `#${ant.id}-acquired`, value: game.util.numbers(ant.acquired) },
-        production: { selector: `#${ant.id}-production`, value: totalProduction },
-        cost: { selector: `#${ant.id}-cost`, value: game.util.numbers(c.cost) },
-        quantity: { selector: `#${ant.id}-quantity`, value: game.util.numbers(c.quantity) }
+        recruited: {
+            selector: `#${ant.id}-recruited`, value: number(ant.recruited)
+        },
+        acquired: {
+            selector: `#${ant.id}-acquired`, value: number(ant.acquired)
+        },
+        production: {
+            selector: `#${ant.id}-production`, value: totalProduction
+        },
+        cost: {
+            selector: `#${ant.id}-cost`, value: number(c.cost)
+        },
+        quantity: {
+            selector: `#${ant.id}-quantity`, value: number(c.quantity)
+        }
     };
+
     for (const [, element] of Object.values(elements).entries()) {
-        game.util.elementProperty(element.selector, 'innerHTML', element.value);
+        updateElement(element.selector, 'innerHTML', element.value);
     }
 
     return true;
 }
 
 function antUpgradeElement(ant, upgrade) {
-    const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
-    const buttonElement = document.createElement('button');
-    buttonElement.type = 'button';
-    buttonElement.className = 'upgrade-button';
-    buttonElement.id = `${ant.id}-upgrade`;
-    buttonElement.dataset.id = ant.id;
-    buttonElement.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades + 1)}
-        \nCost: ${game.util.numbers(upgrade.cost)}
-        \nBoosts production by ${upgrade.percent}\nfor every ${ant.id_abb} recruited`;
-    buttonElement.dataset.cost = upgrade.cost;
-    buttonElement.dataset.boost = upgrade.boost;
-    buttonElement.innerText = ant.id_abb;
-    upgradeContainer.appendChild(buttonElement);
+    const container = document.getElementsByClassName('upgrade-button-container')[0];
+    const button = document.createElement('button');
 
-    game.init.eventListener(`#${buttonElement.id}`, 'click', () => {
-        game.buyUpgrade(ant.id);
+    button.type = 'button';
+    button.className = 'upgrade-button';
+    button.id = `${ant.id}-upgrade`;
+    button.dataset.id = ant.id;
+    button.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades + 1)}
+        \nCost: ${number(upgrade.cost)}
+        \nBoosts production by ${upgrade.percent}\nfor every ${ant.id_abb} recruited`;
+    button.dataset.cost = upgrade.cost;
+    button.dataset.boost = upgrade.boost;
+    button.innerText = ant.id_abb;
+
+    container.appendChild(button);
+
+    game.init.eventListener(`#${button.id}`, 'click', () => {
+        game.buyAntUpgrade(ant.id);
     });
 }
 
@@ -86,9 +100,24 @@ function importExportModal() {
     modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
 }
 
+function updateElement(selector, property, value) {
+    const elements = document.querySelectorAll(selector);
+    for (const element of elements) {
+        const p = property.split('.');
+        let obj = element;
+        for (let i = 0; i < p.length - 1; i++) {
+            obj = obj[p[i]];
+        }
+        obj[p[p.length - 1]] = value;
+    }
+}
+
 export default {
     update,
     antUpgradeElement,
     settings,
-    importExportModal
+    importExportModal,
+    updateElement
 };
+
+export { updateElement };

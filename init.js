@@ -41,7 +41,7 @@ function newSave() {
 
     for (const [type, ants] of Object.values(recruits).entries()) {
         for (const [tier, ant] of Object.values(ants).entries()) {
-            ant.visible = false;
+            ant.unlocked = false;
             ant.recruited = 0;
             ant.acquired = 0;
             ant.production = 0.1;
