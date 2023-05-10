@@ -51,7 +51,6 @@ function maximumQuantity(ant, quantity) {
     let foodRemaining = Number(number(resources.food.total));
     let cost = 0;
     let nextCost = ant.cost;
-    console.log('start of loop', foodRemaining, nextCost, quantity);
     while (foodRemaining >= nextCost) {
         nextCost = (
             (1 * Math.pow(10, ant.tier * 2)) *
@@ -62,12 +61,9 @@ function maximumQuantity(ant, quantity) {
             foodRemaining -= nextCost;
             cost += nextCost;
             quantity++;
-            console.log('inside if', foodRemaining, nextCost, quantity);
         }
-        console.log('inside while', foodRemaining, nextCost, quantity);
     }
     cost = (cost === 0) ? ant.cost : cost;
-    console.log('end of loop', foodRemaining, nextCost, quantity);
     return { quantity, cost };
 }
 
