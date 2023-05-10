@@ -27,15 +27,12 @@ function offlineProgress() {
 }
 
 function costByQuantity(ant) {
-    let quantity = document.getElementById('quantity-selection').value;
-    let calculation = quantity;
-
-    quantity = rounded(ant, (quantity === 'max') ? 0 : Number(quantity));
-    calculation = (calculation === 'max')
-        ? maximumQuantity(ant, quantity)
-        : selectedQuantity(ant, quantity);
-
-    return { calculation };
+    const method = document.getElementById('quantity-selection').value;
+    const amount = rounded(ant, (method === 'max') ? 0 : Number(method));
+    const { quantity, cost } = (method === 'max')
+        ? maximumQuantity(ant, amount)
+        : selectedQuantity(ant, amount);
+    return { quantity, cost };
 }
 
 function rounded(ant, quantity) {
@@ -49,25 +46,39 @@ function rounded(ant, quantity) {
                 ? quantity // return if the quantity is already rounded
                 : difference; // return the rounded quantity
 }
+
 function maximumQuantity(ant, quantity) {
     let foodRemaining = Number(number(resources.food.total));
-    let cost = ant.cost;
-    while (resources.food.total > cost) {
-        const nextCost = (1 * Math.pow(10, ant.tier * 2)) * Math.pow(1.12, ant.recruited + quantity) * (ant.tier + 1);
+    let cost = 0;
+    let nextCost = ant.cost;
+    console.log('start of loop', foodRemaining, nextCost, quantity);
+    while (foodRemaining >= nextCost) {
+        nextCost = (
+            (1 * Math.pow(10, ant.tier * 2)) *
+            Math.pow(1.12, ant.recruited + quantity) *
+            (ant.tier + 1)
+        );
         if (foodRemaining >= nextCost) {
             foodRemaining -= nextCost;
             cost += nextCost;
             quantity++;
+            console.log('inside if', foodRemaining, nextCost, quantity);
         }
+        console.log('inside while', foodRemaining, nextCost, quantity);
     }
     cost = (cost === 0) ? ant.cost : cost;
+    console.log('end of loop', foodRemaining, nextCost, quantity);
     return { quantity, cost };
 }
 
 function selectedQuantity(ant, quantity) {
     let cost = 0;
     for (let i = 0; i < quantity; i++) {
-        const nextCost = (1 * Math.pow(10, ant.tier * 2)) * Math.pow(1.12, ant.recruited + i) * (ant.tier + 1);
+        const nextCost = (
+            (1 * Math.pow(10, ant.tier * 2)) *
+            Math.pow(1.12, ant.recruited + i) *
+            (ant.tier + 1)
+        );
         cost += nextCost;
     }
     return { quantity, cost };
@@ -76,25 +87,31 @@ function selectedQuantity(ant, quantity) {
 function resourceProduction(multiplier) {
     let foodPerSecond = 0;
 
-    for (const [type, ants] of Object.values(recruits).entries()) {
-        for (const [tier, ant] of Object.values(ants).entries()) {
-            const productionBoost = 1 + (ant.boost * ant.recruited);
-            const productionPerTick = ant.production * ant.acquired * productionBoost * (stats.tickSpeed / 1000);
-            const lastAnt = Object.values(recruits)[type][Object.keys(ants)[tier - 1]];
+    for (const { ant, colony } of game.getAnts()) {
+        const productionBoost = 1 + (ant.boost * ant.recruited);
+        const productionPerTick = (
+            ant.production *
+            ant.acquired *
+            productionBoost *
+            (stats.tickSpeed / 1000)
+        );
+        const lastAnt = Object.values(recruits)[ant.type][Object.keys(colony)[ant.tier - 1]];
 
-            try {
-                lastAnt.acquired += productionPerTick * multiplier;
-            } catch {
-                resources.food.total += productionPerTick * multiplier;
-                foodPerSecond += ant.production * ant.acquired * productionBoost;
-            }
+        try {
+            lastAnt.acquired += productionPerTick * multiplier;
+        } catch {
+            resources.food.total += productionPerTick * multiplier;
+            foodPerSecond += ant.production * ant.acquired * productionBoost;
         }
     }
     resources.food.production = foodPerSecond;
 }
 
 function totalProduction(ant) {
-    const production = (1 + (ant.boost * ant.recruited)) * ant.production * ant.acquired;
+    const production = (
+        (1 + (ant.boost * ant.recruited)) *
+        (ant.production * ant.acquired)
+    );
     return number(production) + ' ' + ant.prod_abb;
 }
 
@@ -103,7 +120,7 @@ function upgrades() {
 }
 
 function antUpgrades() {
-    for (const ant of game.getAnts()) {
+    for (const { ant } of game.getAnts()) {
         if (antUpgradeUnlocked(ant) && antUpgradeHidden(ant)) {
             const upgrade = getAntUpgradeBoost(ant);
             upgrade.cost = getAntUpgradeCost(ant);
@@ -131,8 +148,15 @@ function antUpgradeHidden(ant) {
 
 function getAntUpgradeCost(ant) {
     const breakpoint = [10, 25, 50, 100, 200, 300, 400, 500, 750, 1000];
-    const antCostAtBreakpoint = (1 * Math.pow(10, ant.tier * 2)) * Math.pow(1.12, breakpoint[ant.upgrades]) * (ant.tier + 1);
-    const upgradeCost = (antCostAtBreakpoint * 12) * Math.pow(1.2, ant.upgrades);
+    const antCostAtBreakpoint = (
+        (1 * Math.pow(10, ant.tier * 2)) *
+        Math.pow(1.12, breakpoint[ant.upgrades]) *
+        (ant.tier + 1)
+    );
+    const upgradeCost = (
+        (antCostAtBreakpoint * 12) *
+        Math.pow(1.2, ant.upgrades)
+    );
     return upgradeCost < 10000 ? Math.floor(upgradeCost) : upgradeCost;
 }
 

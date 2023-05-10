@@ -137,7 +137,6 @@ function toggleRounding() {
     log('Rounding:', conditions.rounding ? 'enabled' : 'disabled');
 }
 
-// Create the timers for the game cycle and auto saving
 function setTimers() {
     timers.progression = setInterval(game.progression, stats.tickSpeed);
     timers.autoSave = setInterval(function() {

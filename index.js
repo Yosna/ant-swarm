@@ -14,7 +14,7 @@ const recruits = {
 
 const resources = {
     food: {
-        total: 100000000000000000000000000000,
+        total: 0,
         production: 0
     }
 };

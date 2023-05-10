@@ -1,21 +1,16 @@
 import { recruits, resources, stats, conditions } from './index.js';
 import * as game from './game.js';
+import { updateElement } from './display.js';
 
 function load() {
+    const saveFound = localStorage.getItem('saveData');
+    saveFound ? getSave(saveFound) : newSave();
+    setElements();
     gameEventListeners();
     menuEventListeners();
     saveEventListeners();
     settingsEventListeners();
     utilityEventListeners();
-
-    const saveFound = localStorage.getItem('saveData');
-    saveFound ? game.init.getSave(saveFound) : game.init.newSave();
-
-    conditions.autoSave = !conditions.autoSave;
-    conditions.rounding = !conditions.rounding;
-    game.util.toggleAutoSave();
-    game.util.toggleRounding();
-    game.util.setTimers();
 }
 
 function getSave(encodedData) {
@@ -53,6 +48,19 @@ function newSave() {
         }
     }
     game.util.save();
+}
+
+function setElements() {
+    for (const { ant } of game.getAnts()) {
+        if (ant.unlocked) {
+            updateElement(`.${ant.id}-data`, 'style.visibility', 'visible');
+        }
+    }
+    conditions.autoSave = !conditions.autoSave;
+    conditions.rounding = !conditions.rounding;
+    game.util.toggleAutoSave();
+    game.util.toggleRounding();
+    game.util.setTimers();
 }
 
 function eventListener(selector, event, callback) {
@@ -93,7 +101,7 @@ function saveEventListeners() {
 function settingsEventListeners() {
     eventListener('#autosave-button', 'click', game.util.toggleAutoSave);
     eventListener('#quantity-selection', 'change', e => {
-        for (const ant of game.getAnts()) {
+        for (const { ant } of game.getAnts()) {
             game.calculate.costByQuantity(ant);
             e.target.blur();
         }

@@ -14,7 +14,7 @@ function resourceElements() {
 }
 
 function antElements() {
-    for (const ant of game.getAnts()) {
+    for (const { ant } of game.getAnts()) {
         ant.unlocked = unlockRequirement(ant) ? updateAnt(ant) : false;
     }
 }
@@ -32,7 +32,7 @@ function unlockRequirement(ant) {
 
 function updateAnt(ant) {
     const totalProduction = game.calculate.totalProduction(ant);
-    const c = game.calculate.costByQuantity(ant).calculation;
+    const { quantity, cost } = game.calculate.costByQuantity(ant);
 
     const elements = {
         recruited: {
@@ -45,10 +45,10 @@ function updateAnt(ant) {
             selector: `#${ant.id}-production`, value: totalProduction
         },
         cost: {
-            selector: `#${ant.id}-cost`, value: number(c.cost)
+            selector: `#${ant.id}-cost`, value: number(cost)
         },
         quantity: {
-            selector: `#${ant.id}-quantity`, value: number(c.quantity)
+            selector: `#${ant.id}-quantity`, value: number(quantity)
         }
     };
 
