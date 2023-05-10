@@ -44,7 +44,10 @@ function newSave() {
             ant.upgrades = 0;
             ant.type = type;
             ant.tier = tier;
-            ant.cost = (1 * Math.pow(10, tier * 2)) * (tier + 1);
+            ant.cost = (
+                (1 * Math.pow(10, tier * 2)) *
+                (tier + 1)
+            );
         }
     }
     game.util.save();
@@ -126,7 +129,5 @@ function utilityEventListeners() {
 
 export default {
     load,
-    getSave,
-    newSave,
     eventListener
 };
