@@ -44,10 +44,7 @@ function newSave() {
             ant.upgrades = 0;
             ant.type = type;
             ant.tier = tier;
-            ant.cost = (
-                (1 * Math.pow(10, tier * 2)) *
-                (tier + 1)
-            );
+            ant.cost = game.calculate.antBaseCost(ant);
         }
     }
     game.util.save();

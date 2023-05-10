@@ -49,13 +49,23 @@ function updateAnt(ant) {
         },
         quantity: {
             selector: `#${ant.id}-quantity`, value: number(quantity)
+        },
+        button: {
+            selector: `#${ant.id}-button`
         }
     };
 
-    for (const [, element] of Object.values(elements).entries()) {
-        updateElement(element.selector, 'innerHTML', element.value);
+    for (const [, element] of Object.entries(elements)) {
+        if (element.value === undefined) {
+            if (cost > number(resources.food.total)) {
+                updateElement(element.selector, 'style.backgroundColor', '#455b55');
+            } else {
+                updateElement(element.selector, 'style.backgroundColor', '#2c8172');
+            }
+        } else {
+            updateElement(element.selector, 'innerHTML', element.value);
+        }
     }
-
     return true;
 }
 

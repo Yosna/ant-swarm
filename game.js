@@ -26,11 +26,6 @@ function recruit(target) {
                 resources.food.total -= cost;
                 ant.recruited += quantity;
                 ant.acquired += quantity;
-                ant.cost = (
-                    (1 * Math.pow(10, ant.tier * 2)) *
-                    Math.pow(1.12, ant.recruited) *
-                    (ant.tier + 1)
-                );
             }
         }
     }
