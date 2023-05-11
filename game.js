@@ -14,6 +14,12 @@ function * getAnts() {
 
 function forage() {
     resources.food.total += (stats.foraging.rate * stats.foraging.boost);
+
+    // This fixes floating point decimal precision errors
+    if (resources.food.total.toString().length > 5 && resources.food.total < 10000) {
+        resources.food.total = Number(resources.food.total.toFixed(1));
+    }
+
     document.getElementById('food-total').innerHTML = number(resources.food.total);
 }
 

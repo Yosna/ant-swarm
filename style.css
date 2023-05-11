@@ -5,12 +5,23 @@
     scrollbar-width: none;  /* Hide scrollbar: Firefox */
 } *::-webkit-scrollbar {  /* Hide scrollbar: Chrome, Safari, Opera */
     display: none;
+} * > button {
+    background-image: url('images/soft-wallpaper.png');
+} * > select {
+    background-image: url('images/soft-wallpaper.png');
 }
 .hidden {
     visibility: hidden;
 }
+.bold {
+    font-weight: bold;
+}
+.underline {
+    text-decoration-line: underline;
+}
 body {
-    background-color: #1e4539;
+    background: url('images/buried.png');
+    background-color: #245f4e;
 }
 #title-header {
     text-align: center;
@@ -48,14 +59,16 @@ body {
     width: 90%
 }
 .main-container {
-    background-color: #2c4c3b;
+    background-color: #014f1a;
+    background-image: url('images/honeycomb.png');
     display: flex;
     margin: auto;
     height: 90vh;
     width: 90vw;
 }
 .game-container {
-    background-color: #455b55;
+    background: url('images/black-paper.png');
+    background-color: #509786; /*009970*/ 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -64,8 +77,9 @@ body {
     width: 60%;
 }
 .resource-container {
-    height: 15%;
+    font-size: 18px;
     text-align: center;
+    height: 15%;
 }
 .ant-recruit-container {
     display: flex;
@@ -80,11 +94,12 @@ body {
     width: 25%;
 }
 .ant-recruit-cell {
+    font-size: 18px;
     display: flex;
     height: 14%;
 } .ant-recruit-cell > button {
-    background-color: #2c8172;
-    font-size: 16px;
+    background-color: #455b55;
+    font-size: 18px;
     height: 100%;
     width: 100%;
 }
@@ -107,7 +122,7 @@ body {
     width: 30%;
     overflow: auto;
 } .upgrade-button-container > button {
-    background-color: #2c8172;
+    background-color: #455b55;
     border-radius: 20px;
     font-size: 14px;
     text-align: center;

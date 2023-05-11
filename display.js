@@ -16,6 +16,9 @@ function resourceElements() {
 function antElements() {
     for (const { ant } of game.getAnts()) {
         ant.unlocked = unlockRequirement(ant) ? updateAnt(ant) : false;
+        if (ant.unlocked) {
+            antUpgrades(ant);
+        }
     }
 }
 
@@ -57,10 +60,10 @@ function updateAnt(ant) {
 
     for (const [, element] of Object.entries(elements)) {
         if (element.value === undefined) {
-            if (cost > number(resources.food.total)) {
-                updateElement(element.selector, 'style.backgroundColor', '#455b55');
-            } else {
+            if (resources.food.total >= cost) {
                 updateElement(element.selector, 'style.backgroundColor', '#2c8172');
+            } else {
+                updateElement(element.selector, 'style.backgroundColor', '#455b55');
             }
         } else {
             updateElement(element.selector, 'innerHTML', element.value);
@@ -69,12 +72,24 @@ function updateAnt(ant) {
     return true;
 }
 
+function antUpgrades(ant) {
+    const upgrade = document.getElementById(`${ant.id}-upgrade`);
+    if (upgrade) {
+        const cost = Number(upgrade.getAttribute('data-cost'));
+        if (resources.food.total >= cost) {
+            updateElement(`#${ant.id}-upgrade`, 'style.backgroundColor', '#009963');
+        } else {
+            updateElement(`#${ant.id}-upgrade`, 'style.backgroundColor', '#455b55');
+        }
+    }
+}
+
 function antUpgradeElement(ant, upgrade) {
-    const container = document.getElementsByClassName('upgrade-button-container')[0];
+    const container = document.getElementsByClassName('upgrade-button-container')[ant.type];
     const button = document.createElement('button');
 
     button.type = 'button';
-    button.className = 'upgrade-button';
+    button.className = 'ant-upgrade-button';
     button.id = `${ant.id}-upgrade`;
     button.dataset.id = ant.id;
     button.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades + 1)}

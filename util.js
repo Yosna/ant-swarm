@@ -1,5 +1,6 @@
 import { recruits, resources, stats, conditions, timers } from './index.js';
 import * as game from './game.js';
+import { updateElement } from './display.js';
 
 const scientificNotation = new Intl.NumberFormat('en-US', {
     notation: 'scientific',
@@ -133,7 +134,8 @@ function toggleRounding() {
     conditions.rounding = !conditions.rounding;
     const roundingStatus = document.getElementById('rounding-status');
     roundingStatus.innerHTML = conditions.rounding ? 'on' : 'off';
-
+    const color = conditions.rounding ? '#009963' : 'inherit';
+    updateElement('#rounding-button', 'style.backgroundColor', color);
     log('Rounding:', conditions.rounding ? 'enabled' : 'disabled');
 }
 

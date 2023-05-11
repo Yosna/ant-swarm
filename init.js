@@ -15,7 +15,6 @@ function load() {
 
 function getSave(encodedData) {
     game.util.log('Loading save data...');
-
     try {
         const saveData = JSON.parse(atob(encodedData));
         Object.assign(recruits, saveData.recruits);
@@ -117,14 +116,19 @@ function utilityEventListeners() {
             game.calculate.offlineProgress();
         }
     });
-    eventListener('.upgrade-container', 'wheel', e => {
+    eventListener('.upgrade-button-container', 'wheel', e => {
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            e.target.scrollLeft += e.deltaY;
+            e.preventDefault();
+            const target = e.target.tagName === 'DIV'
+                ? e.target
+                : e.target.parentElement;
+            target.scrollLeft += e.deltaY;
         }
     });
 }
 
 export default {
     load,
+    getSave,
     eventListener
 };

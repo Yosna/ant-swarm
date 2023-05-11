@@ -34,8 +34,8 @@ function antBaseCost(ant) {
     );
 }
 
-function antCostMultiplier(multiplier) {
-    return Math.pow(1.12, multiplier);
+function antNextCost(ant, multiplier) {
+    return ant.cost * Math.pow(1.12, multiplier);
 }
 
 function costByQuantity(ant) {
@@ -60,25 +60,27 @@ function rounded(ant, quantity) {
 }
 
 function maximumQuantity(ant, quantity) {
-    let foodRemaining = Number(number(resources.food.total));
+    let foodRemaining = resources.food.total;
     let cost = 0;
     let nextCost = ant.cost;
     while (foodRemaining >= nextCost) {
-        nextCost = antBaseCost(ant) * antCostMultiplier(ant.recruited + quantity);
+        nextCost = antNextCost(ant, ant.recruited + quantity);
         if (foodRemaining >= nextCost) {
             foodRemaining -= nextCost;
             cost += nextCost;
             quantity++;
         }
     }
-    cost = (cost === 0) ? ant.cost : cost;
+    cost = (cost === 0)
+        ? antNextCost(ant, ant.recruited)
+        : cost;
     return { quantity, cost };
 }
 
 function selectedQuantity(ant, quantity) {
     let cost = 0;
     for (let i = 0; i < quantity; i++) {
-        const nextCost = antBaseCost(ant) * antCostMultiplier(ant.recruited + i);
+        const nextCost = antNextCost(ant, ant.recruited + i);
         cost += nextCost;
     }
     return { quantity, cost };
@@ -169,7 +171,7 @@ function getAntUpgradeBoost(ant) {
 export default {
     offlineProgress,
     antBaseCost,
-    antCostMultiplier,
+    antNextCost,
     costByQuantity,
     resourceProduction,
     totalProduction,
