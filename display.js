@@ -2,6 +2,22 @@ import { resources } from './index.js';
 import * as game from './game.js';
 import { number } from './util.js';
 
+const modals = {
+    settings: function() {
+        const modal = document.getElementById('settings-modal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    },
+    stats: function() {
+        const modal = document.getElementById('stats-modal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    },
+    importExport: function() {
+        document.getElementById('import-export-field').value = '';
+        const modal = document.getElementById('import-export-modal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
+};
+
 // Updates to run after the progression cycle
 function update() {
     resourceElements();
@@ -106,6 +122,7 @@ function antUpgradeElement(ant, upgrade) {
     });
 }
 
+/*
 function settings(display) {
     const defaultContainer = document.getElementById('main-container');
     const settingsContainer = document.getElementById('settings-container');
@@ -118,12 +135,7 @@ function settings(display) {
     const container = display ? settingsContainer : defaultContainer;
     container.style.display = 'flex';
 }
-
-function importExportModal() {
-    document.getElementById('import-export-field').value = '';
-    const modal = document.getElementById('import-export-modal');
-    modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-}
+*/
 
 function updateElement(selector, property, value) {
     const elements = document.querySelectorAll(selector);
@@ -138,10 +150,9 @@ function updateElement(selector, property, value) {
 }
 
 export default {
+    modals,
     update,
     antUpgradeElement,
-    settings,
-    importExportModal,
     updateElement
 };
 
