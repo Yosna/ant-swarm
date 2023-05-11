@@ -20,12 +20,21 @@ const resources = {
 };
 
 const stats = {
+    creationDate: new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true
+    }),
+    lastUpdate: Date.now(),
+    tickSpeed: 100,
     foraging: {
         rate: 0.1,
         boost: 1
-    },
-    tickSpeed: 100,
-    lastUpdate: Date.now()
+    }
 };
 
 const conditions = {

@@ -6,10 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ant Swarm</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 </head>
 
 <body>
@@ -18,7 +18,8 @@
         <div class="main-container" id="main-container">
             <div class="menu-container">
                 <div class="menu-button-container">
-
+                    <button type="button" class="menu-button" id="recruitment-container-button">Recruitment</button>
+                    <button type="button" class="menu-button" id="garden-container-button">Garden</button>
                 </div>
                 <div class="save-button-container">
                     <p>Save Options</p>
@@ -27,10 +28,11 @@
                     <button type="button" id="delete-button" style="width:40%;">Delete</button>
                 </div>
                 <div class="settings-button-container">
-                    <button type="button" class="settings-toggle">Settings</button>
+                    <button type="button" class="settings-toggle" style="width:60%">Settings</button>
+                    <button type="button" class="stats-toggle" style="width:40%">Stats</button>
                 </div>
             </div>
-            <div class="game-container">
+            <div class="game-container" id="recruitment-container">
                 <div class="resource-container">
                     <p class="resource"><span class="underline">Food</span>: <span id="food-total">0</span> (<span id="food-production">0</span>/s)</p>
                 </div>
@@ -202,18 +204,23 @@
                 </div>
             </div>
         </div>
-        <div class="main-container" id="settings-container">
-            <div id="settings-container-header">
-                <button type="button" class="settings-toggle">X</button>
-            </div>
-            <div id="settings-container-body">
-                <button type="button" id="autosave-button">Autosave (<span id="autosave-status">on</span>)</button><hr>
+    </div>
+    <div class="modal" id="settings-modal">
+        <h3 class="underline">Settings</h3>
+        <div id="settings-modal-body">
+            <button type="button" id="autosave-button">Autosave (<span id="autosave-status">on</span>)</button><hr>
+        </div>
+    </div>
+    <div class="modal" id="stats-modal">
+        <h3 class="underline">Stats</h3>
+        <div id="stats-modal-body">
+            <div class="stat-cell">
+                <p class="stat-entry">Creation Date: <span id="creation-date"></span></p>
             </div>
         </div>
     </div>
-
     <div class="modal" id="import-export-modal">
-        <h3>Import/Export</h3>
+        <h3 class="underline">Import/Export</h3>
         <textarea id="import-export-field"></textarea>
         <div id="import-export-button-container">
             <button type="button" id="import-button">Import Save</button>

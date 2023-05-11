@@ -22,6 +22,14 @@ function number(n) {
     }
 }
 
+function getElement(selector) {
+    return document.querySelector(selector);
+}
+
+function getElements(selector) {
+    return document.querySelectorAll(selector);
+}
+
 function log() {
     const entry = createLogEntry(...arguments);
     addLogEntry(entry);
@@ -155,6 +163,8 @@ function resetTimers() {
 
 export default {
     number,
+    getElement,
+    getElements,
     log,
     clearLogs,
     timestamp,
@@ -168,4 +178,7 @@ export default {
     resetTimers
 };
 
-export { number };
+export {
+    number,
+    getElement
+};
