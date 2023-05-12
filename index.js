@@ -14,27 +14,16 @@ const recruits = {
 
 const resources = {
     food: {
-        total: 0,
-        production: 0
+        total: new Decimal('0'),
+        production: new Decimal('0')
     }
 };
 
 const stats = {
-    creationDate: new Date().toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        hour12: true
-    }),
-    lastUpdate: Date.now(),
-    tickSpeed: 100,
     foraging: {
-        rate: 0.1,
-        boost: 1,
-        total: 0
+        rate: new Decimal('0.1'),
+        boost: new Decimal('1.0'),
+        total: new Decimal('0')
     }
 };
 

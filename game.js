@@ -13,14 +13,15 @@ function * getAnts() {
 }
 
 function forage() {
-    resources.food.total += (stats.foraging.rate * stats.foraging.boost);
+    resources.food.total = Decimal.add(resources.food.total, Decimal.mul(stats.foraging.rate, stats.foraging.boost));
+
     stats.foraging.total++;
     // This fixes floating point decimal precision errors
     if (resources.food.total.toString().length > 5 && resources.food.total < 10000) {
         resources.food.total = Number(resources.food.total.toFixed(1));
     }
-    getElement('#food-total').innerHTML = number(resources.food.total);
-    getElement('#forage-total').innerHTML = number(stats.foraging.total);
+    getElement('#food-total').innerHTML = (resources.food.total);
+    getElement('#forage-total').innerHTML = (stats.foraging.total);
 }
 
 function recruit(target) {
