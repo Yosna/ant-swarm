@@ -1,7 +1,8 @@
 {
     "globals": {
       "$": true,
-      "jQuery": true
+      "jQuery": true,
+      "Decimal": true
     },
     "env": {
         "browser": true,
