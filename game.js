@@ -1,5 +1,5 @@
 import { recruits, resources, stats, conditions } from './index.js';
-import util, { number } from './util.js';
+import util, { number, getElement } from './util.js';
 import calculate from './calculate.js';
 import display from './display.js';
 import init from './init.js';
@@ -14,13 +14,13 @@ function * getAnts() {
 
 function forage() {
     resources.food.total += (stats.foraging.rate * stats.foraging.boost);
-
+    stats.foraging.total++;
     // This fixes floating point decimal precision errors
     if (resources.food.total.toString().length > 5 && resources.food.total < 10000) {
         resources.food.total = Number(resources.food.total.toFixed(1));
     }
-
-    document.getElementById('food-total').innerHTML = number(resources.food.total);
+    getElement('#food-total').innerHTML = number(resources.food.total);
+    getElement('#forage-total').innerHTML = number(stats.foraging.total);
 }
 
 function recruit(target) {

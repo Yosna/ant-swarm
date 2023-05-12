@@ -33,7 +33,8 @@ const stats = {
     tickSpeed: 100,
     foraging: {
         rate: 0.1,
-        boost: 1
+        boost: 1,
+        total: 0
     }
 };
 
