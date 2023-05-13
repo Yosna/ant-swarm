@@ -2,23 +2,17 @@ import { recruits, resources, stats, conditions, timers } from './index.js';
 import * as game from './game.js';
 import { updateElement } from './display.js';
 
-const scientificNotation = new Intl.NumberFormat('en-US', {
-    notation: 'scientific',
-    minimumSignificantDigits: 4,
-    maximumSignificantDigits: 4,
-    roundingMode: 'trunc'
-});
-
+const DecimalRoundDown = Decimal.clone({ rounding: Decimal.ROUND_DOWN });
 function number(n) {
     switch (true) {
-        case n < 100:
+        case n.lessThan(100):
             return parseFloat(n.toFixed(2));
-        case n < 1000:
+        case n.lessThan(1000):
             return parseFloat(n.toFixed(1));
-        case n < 10000:
+        case n.lessThan(10000):
             return parseFloat(n.toFixed(1)).toLocaleString();
         default:
-            return scientificNotation.format(n).toLowerCase();
+            return DecimalRoundDown(n).toExponential(3);
     }
 }
 
@@ -74,7 +68,6 @@ function save() {
         stats,
         conditions
     };
-
     const encodedData = btoa(JSON.stringify(saveData));
     localStorage.setItem('saveData', encodedData);
 

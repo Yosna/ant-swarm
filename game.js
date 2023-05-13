@@ -13,15 +13,11 @@ function * getAnts() {
 }
 
 function forage() {
-    resources.food.total = Decimal.add(resources.food.total, Decimal.mul(stats.foraging.rate, stats.foraging.boost));
+    resources.food.total = resources.food.total.plus(stats.foraging.rate.times(stats.foraging.boost));
+    stats.foraging.total = stats.foraging.total.plus(1);
 
-    stats.foraging.total++;
-    // This fixes floating point decimal precision errors
-    if (resources.food.total.toString().length > 5 && resources.food.total < 10000) {
-        resources.food.total = Number(resources.food.total.toFixed(1));
-    }
-    getElement('#food-total').innerHTML = (resources.food.total);
-    getElement('#forage-total').innerHTML = (stats.foraging.total);
+    getElement('#food-total').innerHTML = number(resources.food.total);
+    getElement('#forage-total').innerHTML = number(stats.foraging.total);
 }
 
 function recruit(target) {
@@ -29,10 +25,10 @@ function recruit(target) {
         const targetName = target.innerText.substring(0, ant.name.length);
         if (ant.name === targetName) {
             const { quantity, cost } = calculate.costByQuantity(ant);
-            if (number(resources.food.total) >= cost) {
-                resources.food.total -= cost;
-                ant.recruited += quantity;
-                ant.acquired += quantity;
+            if (resources.food.total.greaterThanOrEqualTo(cost)) {
+                resources.food.total = resources.food.total.minus(cost);
+                ant.recruited = ant.recruited.plus(quantity);
+                ant.acquired = ant.acquired.plus(quantity);
             }
         }
     }
@@ -42,13 +38,13 @@ function buyAntUpgrade(antToUpgrade) {
     for (const { ant } of getAnts()) {
         if (ant.id === antToUpgrade) {
             const upgrade = document.getElementById(ant.id + '-upgrade');
-            const upgradeCost = Number(upgrade.getAttribute('data-cost'));
-            const upgradeBoost = Number(upgrade.getAttribute('data-boost'));
+            const upgradeCost = new Decimal((upgrade.getAttribute('data-cost')).replace(/,/g, ''));
+            const upgradeBoost = new Decimal(upgrade.getAttribute('data-boost'));
 
-            if (resources.food.total >= upgradeCost) {
-                resources.food.total -= upgradeCost;
-                ant.boost += upgradeBoost;
-                ant.upgrades++;
+            if (resources.food.total.greaterThanOrEqualTo(upgradeCost)) {
+                resources.food.total = resources.food.total.minus(upgradeCost);
+                ant.boost = ant.boost.plus(upgradeBoost);
+                ant.upgrades = ant.upgrades.plus(1);
 
                 upgrade.remove();
             }

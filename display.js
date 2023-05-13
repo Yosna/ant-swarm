@@ -40,8 +40,8 @@ function antElements() {
 
 function unlockRequirement(ant) {
     const conditions =
-        (resources.food.total > (ant.cost / 4)) +
-        (ant.acquired === 0) +
+        (resources.food.total.greaterThan(ant.cost.div(4))) +
+        (ant.acquired.eq(0)) +
         !ant.unlocked;
     if (conditions === 3) {
         updateElement(`.${ant.id}-data`, 'style.visibility', 'visible');
@@ -76,7 +76,7 @@ function updateAnt(ant) {
 
     for (const [, element] of Object.entries(elements)) {
         if (element.value === undefined) {
-            if (resources.food.total >= cost) {
+            if (resources.food.total.greaterThanOrEqualTo(cost)) {
                 updateElement(element.selector, 'style.backgroundColor', '#2c8172');
             } else {
                 updateElement(element.selector, 'style.backgroundColor', '#455b55');
@@ -91,8 +91,8 @@ function updateAnt(ant) {
 function antUpgrades(ant) {
     const upgrade = document.getElementById(`${ant.id}-upgrade`);
     if (upgrade) {
-        const cost = Number(upgrade.getAttribute('data-cost'));
-        if (resources.food.total >= cost) {
+        const cost = new Decimal((upgrade.getAttribute('data-cost')).replace(/,/g, ''));
+        if (resources.food.total.greaterThanOrEqualTo(cost)) {
             updateElement(`#${ant.id}-upgrade`, 'style.backgroundColor', '#009963');
         } else {
             updateElement(`#${ant.id}-upgrade`, 'style.backgroundColor', '#455b55');
@@ -108,8 +108,8 @@ function antUpgradeElement(ant, upgrade) {
     button.className = 'ant-upgrade-button';
     button.id = `${ant.id}-upgrade`;
     button.dataset.id = ant.id;
-    button.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades + 1)}
-        \nCost: ${number(upgrade.cost)}
+    button.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades.plus(1))}
+        \nCost: ${upgrade.cost}
         \nBoosts production by ${upgrade.percent}\nfor every ${ant.id_abb} recruited`;
     button.dataset.cost = upgrade.cost;
     button.dataset.boost = upgrade.boost;

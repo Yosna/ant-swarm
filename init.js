@@ -74,11 +74,14 @@ function load() {
 function getSave(encodedData) {
     game.util.log('Loading save data...');
     try {
-        const saveData = JSON.parse(atob(encodedData));
+        const saveData = deserialize(JSON.parse(atob(encodedData)));
+
         Object.assign(recruits, saveData.recruits);
         Object.assign(resources, saveData.resources);
         Object.assign(stats, saveData.stats);
         Object.assign(conditions, saveData.conditions);
+
+        setElements();
         game.calculate.offlineProgress();
         return true;
     } catch (error) {
@@ -89,25 +92,44 @@ function getSave(encodedData) {
 
 function newSave() {
     game.util.log('Creating new save data...');
-
     for (const [type, ants] of Object.values(recruits).entries()) {
         for (const [tier, ant] of Object.values(ants).entries()) {
             ant.unlocked = false;
-            ant.recruited = 0;
-            ant.acquired = 0;
-            ant.production = 0.1;
-            ant.boost = 0;
-            ant.upgrades = 0;
-            ant.type = type;
-            ant.tier = tier;
+            ant.recruited = new Decimal(0);
+            ant.acquired = new Decimal(0);
+            ant.production = new Decimal(0.1);
+            ant.boost = new Decimal(0);
+            ant.upgrades = new Decimal(0);
+            ant.type = new Decimal(type);
+            ant.tier = new Decimal(tier);
             ant.cost = game.calculate.antBaseCost(ant);
         }
     }
     game.util.save();
 }
 
+function deserialize(data) {
+    const converted = {};
+    for (const key in data) {
+        if (typeof data[key] === 'object' && data[key] !== null) {
+            converted[key] = deserialize(data[key]);
+        } else {
+            converted[key] = convertData(data[key], key);
+        }
+    }
+    return converted;
+}
+
+function convertData(data, key) {
+    if (!isNaN(Number(data)) && typeof data !== 'boolean') {
+        return new Decimal(data);
+    }
+    return data;
+}
+
 function setElements() {
     getElement('#creation-date').innerHTML = stats.creationDate;
+    getElement('#forage-total').innerHTML = stats.foraging.total;
     for (const { ant } of game.getAnts()) {
         if (ant.unlocked) {
             updateElement(`.${ant.id}-data`, 'style.visibility', 'visible');
