@@ -16,10 +16,10 @@
     <div class="window-container">
         <h1 id="title-header">Ant Swarm</h1>
         <div class="main-container" id="main-container">
-            <div class="menu-container">
+            <div class="menu-container" id="main-menu">
                 <div class="menu-button-container">
                     <button type="button" class="menu-button" id="recruitment-container-button">Recruitment</button>
-                    <button type="button" class="menu-button" id="garden-container-button">Garden</button>
+                    <button type="button" class="menu-button hidden" id="garden-container-button">Garden</button>
                 </div>
                 <div class="save-button-container">
                     <p>Save Options</p>
@@ -32,168 +32,173 @@
                     <button type="button" class="stats-toggle" style="width:40%">Stats</button>
                 </div>
             </div>
-            <div class="game-container" id="recruitment-container">
-                <div class="resource-container">
+            <div class="game-container">
+                <div class="game-container-header" id="resource-container">
                     <p class="resource"><span class="underline">Food</span>: <span id="food-total">0</span> (<span id="food-production">0</span>/s)</p>
                 </div>
-                <div class="ant-recruit-container">
-                    <div class="ant-recruit-column garden-ant-recruited">
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text small-garden-worker-data hidden">
-                                <p><span class="underline">Recruited</span>: <span id="small-garden-worker-recruited">0</span></p>
-                                <p><span class="underline">Acquired</span>:  <span id="small-garden-worker-acquired">0</span></p>
+                <div class="game-container-body" id="recruitment-container">
+                    <div id="recruitment-container-body">
+                        <div class="recruitment-column garden-colony">
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text small-garden-worker-data hidden">
+                                    <p><span class="underline">Recruited</span>: <span id="small-garden-worker-recruited">0</span></p>
+                                    <p><span class="underline">Acquired</span>:  <span id="small-garden-worker-acquired">0</span></p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text regular-garden-worker-data hidden">
+                                    <p><span class="underline">Recruited</span>: <span id="regular-garden-worker-recruited">0</span></p>
+                                    <p><span class="underline">Acquired</span>:  <span id="regular-garden-worker-acquired">0</span></p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text large-garden-worker-data hidden">
+                                    <p><span class="underline">Recruited</span>: <span id="large-garden-worker-recruited">0</span></p>
+                                    <p><span class="underline">Acquired</span>:  <span id="large-garden-worker-acquired">0</span></p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text small-garden-drone-data hidden">
+                                    <p><span class="underline">Recruited</span>: <span id="small-garden-drone-recruited">0</span></p>
+                                    <p><span class="underline">Acquired</span>:  <span id="small-garden-drone-acquired">0</span></p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text regular-garden-drone-data hidden">
+                                    <p><span class="underline">Recruited</span>: <span id="regular-garden-drone-recruited">0</span></p>
+                                    <p><span class="underline">Acquired</span>:  <span id="regular-garden-drone-acquired">0</span></p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text large-garden-drone-data hidden">
+                                    <p><span class="underline">Recruited</span>: <span id="large-garden-drone-recruited">0</span></p>
+                                    <p><span class="underline">Acquired</span>:  <span id="large-garden-drone-acquired">0</span></p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text garden-ant-queen-data hidden">
+                                    <p><span class="underline">Recruited</span>: <span id="garden-ant-queen-recruited">0</span></p>
+                                    <p><span class="underline">Acquired</span>:  <span id="garden-ant-queen-acquired">0</span></p>
+                                </div>
                             </div>
                         </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text regular-garden-worker-data hidden">
-                                <p><span class="underline">Recruited</span>: <span id="regular-garden-worker-recruited">0</span></p>
-                                <p><span class="underline">Acquired</span>:  <span id="regular-garden-worker-acquired">0</span></p>
+                        <div class="recruitment-column garden-colony">
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text small-garden-worker-data hidden">
+                                    <p><span class="underline">Cost</span>: <span id="small-garden-worker-cost">0</span></p>
+                                    <p><span class="underline">Prod</span>: <span id="small-garden-worker-production">0</span> /s</p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text regular-garden-worker-data hidden">
+                                    <p><span class="underline">Cost</span>: <span id="regular-garden-worker-cost">0</span></p>
+                                    <p><span class="underline">Prod</span>: <span id="regular-garden-worker-production">0</span> /s</p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text large-garden-worker-data hidden">
+                                    <p><span class="underline">Cost</span>: <span id="large-garden-worker-cost">0</span></p>
+                                    <p><span class="underline">Prod</span>: <span id="large-garden-worker-production">0</span> /s</p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text small-garden-drone-data hidden">
+                                    <p><span class="underline">Cost</span>: <span id="small-garden-drone-cost">0</span></p>
+                                    <p><span class="underline">Prod</span>: <span id="small-garden-drone-production">0</span> /s</p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text regular-garden-drone-data hidden">
+                                    <p><span class="underline">Cost</span>: <span id="regular-garden-drone-cost">0</span></p>
+                                    <p><span class="underline">Prod</span>: <span id="regular-garden-drone-production">0</span> /s</p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text large-garden-drone-data hidden">
+                                    <p><span class="underline">Cost</span>: <span id="large-garden-drone-cost">0</span></p>
+                                    <p><span class="underline">Prod</span>: <span id="large-garden-drone-production">0</span> /s</p>
+                                </div>
+                            </div>
+                            <div class="recruitment-cell">
+                                <div class="recruitment-text garden-ant-queen-data hidden">
+                                    <p><span class="underline">Cost</span>: <span id="garden-ant-queen-cost">0</span></p>
+                                    <p><span class="underline">Prod</span>: <span id="garden-ant-queen-production">0</span> /s</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text large-garden-worker-data hidden">
-                                <p><span class="underline">Recruited</span>: <span id="large-garden-worker-recruited">0</span></p>
-                                <p><span class="underline">Acquired</span>:  <span id="large-garden-worker-acquired">0</span></p>
+                        <div class="recruitment-column garden-colony">
+                            <div class="recruitment-cell">
+                                <button type="button" class="recruit-button small-garden-worker-data hidden" id="small-garden-worker-button">
+                                    Small Garden Worker<br>(x<span id="small-garden-worker-quantity">1</span>)
+                                </button>
                             </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text small-garden-drone-data hidden">
-                                <p><span class="underline">Recruited</span>: <span id="small-garden-drone-recruited">0</span></p>
-                                <p><span class="underline">Acquired</span>:  <span id="small-garden-drone-acquired">0</span></p>
+                            <div class="recruitment-cell">
+                                <button type="button" class="recruit-button regular-garden-worker-data hidden" id="regular-garden-worker-button">
+                                    Regular Garden Worker<br>(x<span id="regular-garden-worker-quantity">1</span>)
+                                </button>
                             </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text regular-garden-drone-data hidden">
-                                <p><span class="underline">Recruited</span>: <span id="regular-garden-drone-recruited">0</span></p>
-                                <p><span class="underline">Acquired</span>:  <span id="regular-garden-drone-acquired">0</span></p>
+                            <div class="recruitment-cell">
+                                <button type="button" class="recruit-button large-garden-worker-data hidden" id="large-garden-worker-button">
+                                    Large Garden Worker<br>(x<span id="large-garden-worker-quantity">1</span>)
+                                </button>
                             </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text large-garden-drone-data hidden">
-                                <p><span class="underline">Recruited</span>: <span id="large-garden-drone-recruited">0</span></p>
-                                <p><span class="underline">Acquired</span>:  <span id="large-garden-drone-acquired">0</span></p>
+                            <div class="recruitment-cell">
+                                <button type="button" class="recruit-button small-garden-drone-data hidden" id="small-garden-drone-button">
+                                    Small Garden Drone<br>(x<span id="small-garden-drone-quantity">1</span>)
+                                </button>
                             </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text garden-ant-queen-data hidden">
-                                <p><span class="underline">Recruited</span>: <span id="garden-ant-queen-recruited">0</span></p>
-                                <p><span class="underline">Acquired</span>:  <span id="garden-ant-queen-acquired">0</span></p>
+                            <div class="recruitment-cell">
+                                <button type="button" class="recruit-button regular-garden-drone-data hidden" id="regular-garden-drone-button">
+                                    Regular Garden Drone<br>(x<span id="regular-garden-drone-quantity">1</span>)
+                                </button>
+                            </div>
+                            <div class="recruitment-cell">
+                                <button type="button" class="recruit-button large-garden-drone-data hidden" id="large-garden-drone-button">
+                                    Large Garden Drone<br>(x<span id="large-garden-drone-quantity">1</span>)
+                                </button>
+                            </div>
+                            <div class="recruitment-cell">
+                                <button type="button" class="recruit-button garden-ant-queen-data hidden" id="garden-ant-queen-button">
+                                    Garden Ant Queen<br>(x<span id="garden-ant-queen-quantity">1</span>)
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="ant-recruit-column garden-ant-recruited">
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text small-garden-worker-data hidden">
-                                <p><span class="underline">Cost</span>: <span id="small-garden-worker-cost">0</span></p>
-                                <p><span class="underline">Prod</span>: <span id="small-garden-worker-production">0</span> /s</p>
+                    <div class="game-container-footer" id="recruitment-container-footer">
+                        <div class="upgrade-button-container">
+                        </div>
+                        <div class="forage-button-container">
+                            <button type="button" id="forage-button">Forage</button>
+                        </div>
+                        <div class="recruit-quantity-container">
+                            <div id="quantity-column">
+                                <span style="text-decoration: underline;">Quantity:</span>
+                                <select class="quantity-options" id="quantity-selection">
+                                    <option value="1">Buy 1</option>
+                                    <option value="5">Buy 5</option>
+                                    <option value="10">Buy 10</option>
+                                    <option value="25">Buy 25</option>
+                                    <option value="50">Buy 50</option>
+                                    <option value="100">Buy 100</option>
+                                    <option value="max">Buy Max</option>
+                                </select>
                             </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text regular-garden-worker-data hidden">
-                                <p><span class="underline">Cost</span>: <span id="regular-garden-worker-cost">0</span></p>
-                                <p><span class="underline">Prod</span>: <span id="regular-garden-worker-production">0</span> /s</p>
+                            <div id="rounding-column">
+                                <span style="text-decoration: underline;">Rounding:</span>
+                                <button type="button" class="quantity-options" id="rounding-button" style="background-color:#009970;">
+                                    <span id="rounding-status">off</span>
+                                </button>
                             </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text large-garden-worker-data hidden">
-                                <p><span class="underline">Cost</span>: <span id="large-garden-worker-cost">0</span></p>
-                                <p><span class="underline">Prod</span>: <span id="large-garden-worker-production">0</span> /s</p>
-                            </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text small-garden-drone-data hidden">
-                                <p><span class="underline">Cost</span>: <span id="small-garden-drone-cost">0</span></p>
-                                <p><span class="underline">Prod</span>: <span id="small-garden-drone-production">0</span> /s</p>
-                            </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text regular-garden-drone-data hidden">
-                                <p><span class="underline">Cost</span>: <span id="regular-garden-drone-cost">0</span></p>
-                                <p><span class="underline">Prod</span>: <span id="regular-garden-drone-production">0</span> /s</p>
-                            </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text large-garden-drone-data hidden">
-                                <p><span class="underline">Cost</span>: <span id="large-garden-drone-cost">0</span></p>
-                                <p><span class="underline">Prod</span>: <span id="large-garden-drone-production">0</span> /s</p>
-                            </div>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <div class="ant-recruit-text garden-ant-queen-data hidden">
-                                <p><span class="underline">Cost</span>: <span id="garden-ant-queen-cost">0</span></p>
-                                <p><span class="underline">Prod</span>: <span id="garden-ant-queen-production">0</span> /s</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="ant-recruit-column garden-ant-recruited">
-                        <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button small-garden-worker-data hidden" id="small-garden-worker-button">
-                                Small Garden Worker<br>(x<span id="small-garden-worker-quantity">1</span>)
-                            </button>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button regular-garden-worker-data hidden" id="regular-garden-worker-button">
-                                Regular Garden Worker<br>(x<span id="regular-garden-worker-quantity">1</span>)
-                            </button>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button large-garden-worker-data hidden" id="large-garden-worker-button">
-                                Large Garden Worker<br>(x<span id="large-garden-worker-quantity">1</span>)
-                            </button>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button small-garden-drone-data hidden" id="small-garden-drone-button">
-                                Small Garden Drone<br>(x<span id="small-garden-drone-quantity">1</span>)
-                            </button>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button regular-garden-drone-data hidden" id="regular-garden-drone-button">
-                                Regular Garden Drone<br>(x<span id="regular-garden-drone-quantity">1</span>)
-                            </button>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button large-garden-drone-data hidden" id="large-garden-drone-button">
-                                Large Garden Drone<br>(x<span id="large-garden-drone-quantity">1</span>)
-                            </button>
-                        </div>
-                        <div class="ant-recruit-cell">
-                            <button type="button" class="recruit-button garden-ant-queen-data hidden" id="garden-ant-queen-button">
-                                Garden Ant Queen<br>(x<span id="garden-ant-queen-quantity">1</span>)
-                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="game-footer">
-                    <div class="upgrade-button-container">
-                    </div>
-                    <div class="forage-button-container">
-                        <button type="button" id="forage-button">Forage</button>
-                    </div>
-                    <div class="recruit-quantity-container">
-                        <div id="quantity-column">
-                            <span style="text-decoration: underline;">Quantity:</span>
-                            <select class="quantity-options" id="quantity-selection">
-                                <option value="1">Buy 1</option>
-                                <option value="5">Buy 5</option>
-                                <option value="10">Buy 10</option>
-                                <option value="25">Buy 25</option>
-                                <option value="50">Buy 50</option>
-                                <option value="100">Buy 100</option>
-                                <option value="max">Buy Max</option>
-                            </select>
-                        </div>
-                        <div id="rounding-column">
-                            <span style="text-decoration: underline;">Rounding:</span>
-                            <button type="button" class="quantity-options" id="rounding-button" style="background-color:#009970;">
-                                <span id="rounding-status">off</span>
-                            </button>
-                        </div>
-                    </div>
+                <div class="game-container-body collapse" id="garden-container">
                 </div>
             </div>
-            <div class="species-container">
-                <div class="species-button-container">
-
+            <div class="menu-container" id="sub-menu">
+                <div class="submenu-button-container">
+                    <button type="button" class="menu-button recruitment-submenu-button"id="garden-ant-submenu-button">Garden Ants</button>
+                    <button type="button" class="menu-button recruitment-submenu-button hidden" id="harvester-ant-submenu-button">Harvester Ants</button>
                 </div>
                 <div class="message-log-container">
                     <div class="message-log-header">
@@ -208,15 +213,75 @@
     <div class="modal" id="settings-modal">
         <h3 class="underline">Settings</h3>
         <div id="settings-modal-body">
-            <button type="button" id="autosave-button">Autosave (<span id="autosave-status">on</span>)</button><hr>
+            <div class="modal-list" id="settings-list"><hr>
+                <button type="button" id="offline-progress-button">Offline Progress (<span id="offline-progress-status">on</span>)</button><hr>
+                <button type="button" id="autosave-button">Autosave (<span id="autosave-status">on</span>)</button><hr>
+            </div>
         </div>
     </div>
     <div class="modal" id="stats-modal">
         <h3 class="underline">Stats</h3>
         <div id="stats-modal-body">
-            <div class="stat-list">
-                <p class="stat-entry">Creation Date: <span id="creation-date"></span></p>
-                <p class="stat-entry">Times Foraged: <span id="forage-total"></span></p>
+            <div class="modal-list" id="stat-list"><hr>
+                <div class="stat-entry">
+                    <span class="underline">Creation Date</span>:
+                    <span class="stat-entry-value" id="creation-date">0</span>
+                </div><hr>
+                <div class="stat-entry">
+                    <span class="underline">Time Since Creation</span>:
+                    <span class="stat-entry-value" id="time-since-creation">0</span>
+                </div><hr>
+                <div class="stat-entry">
+                    <span class="underline">Foraged</span>:
+                    <span class="stat-entry-value">
+                        <span id="forage-total">0</span> times
+                    </span>
+                </div><hr>
+                <div class="stat-entry" id="garden-ant-stats">
+                    <span class="underline">Garden Ants</span>:
+                        <span class="stat-entry-value">
+                            <span id="garden-ant-total">0</span>&nbsp;
+                            <span class="arrow-pointer" id="garden-ant-arrow">&#9650;</span>
+                        </span>
+                    <div class="stat-subentries collapse" id="garden-ant-subentries">
+                        <div>&#x2502;</div>
+                        <div class="collapse" id="small-garden-worker-stats">
+                            <span id="SGW-se-char">&#x2514;&#x2500;</span> 
+                            <span class="underline">Small Workers</span>:
+                            <span class="stat-subentry-value" id="small-garden-worker-stat">0</span>
+                        </div>
+                        <div class="collapse" id="regular-garden-worker-stats">
+                            <span id="RGW-se-char">&#x2514;&#x2500;</span> 
+                            <span class="underline">Regular Workers</span>:
+                            <span class="stat-subentry-value" id="regular-garden-worker-stat">0</span>
+                        </div>
+                        <div class="collapse" id="large-garden-worker-stats">
+                            <span id="LGW-se-char">&#x2514;&#x2500;</span> 
+                            <span class="underline">Large Workers</span>:
+                            <span class="stat-subentry-value" id="large-garden-worker-stat">0</span>
+                        </div>
+                        <div class="collapse" id="small-garden-drone-stats">
+                            <span id="SGD-se-char">&#x2514;&#x2500;</span> 
+                            <span class="underline">Small Drones</span>:
+                            <span class="stat-subentry-value" id="small-garden-drone-stat">0</span>
+                        </div>
+                        <div class="collapse" id="regular-garden-drone-stats">
+                            <span id="RGD-se-char">&#x2514;&#x2500;</span> 
+                            <span class="underline">Regular Drones</span>:
+                            <span class="stat-subentry-value" id="regular-garden-drone-stat">0</span>
+                        </div>
+                        <div class="collapse" id="large-garden-drone-stats">
+                            <span id="LGD-se-char">&#x2514;&#x2500;</span> 
+                            <span class="underline">Large Drones</span>:
+                            <span class="stat-subentry-value" id="large-garden-drone-stat">0</span>
+                        </div>
+                        <div class="collapse" id="garden-ant-queen-stats">
+                            <span id="GQ-se-char">&#x2514;&#x2500;</span> 
+                            <span class="underline">Queens</span>:
+                            <span class="stat-subentry-value" id="garden-ant-queen-stat">0</span>
+                        </div>
+                    </div>
+                </div><hr>
             </div>
         </div>
     </div>

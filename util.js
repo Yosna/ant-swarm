@@ -1,6 +1,54 @@
-import { recruits, resources, stats, conditions, timers } from './index.js';
+import { colonies, resources, stats, conditions, timers } from './index.js';
 import * as game from './game.js';
-import { updateElement } from './display.js';
+import { element } from './display.js';
+
+const save = {
+    game: function() {
+        const saveData = {
+            colonies,
+            resources,
+            stats,
+            conditions
+        };
+        const encodedData = btoa(JSON.stringify(saveData));
+        localStorage.setItem('saveData', encodedData);
+
+        log('Game saved!');
+    },
+    auto: function() {
+        conditions.autoSave = !conditions.autoSave;
+        const autoSaveStatus = document.getElementById('autosave-status');
+        autoSaveStatus.innerHTML = conditions.autoSave ? 'on' : 'off';
+
+        log('Autosave:', conditions.autoSave ? 'enabled' : 'disabled');
+    },
+    import: function() {
+        const imported = document.getElementById('import-export-field');
+        const importStatus = game.init.getSave(imported.value)
+            ? log('Import success! Save data has been loaded')
+            : log('Import failed! Please check the save string and try again');
+        return importStatus;
+    },
+    export: function(method) {
+        const exported = document.getElementById('import-export-field');
+        const saveData = {
+            colonies,
+            resources,
+            stats,
+            conditions
+        };
+        const encodedData = btoa(JSON.stringify(saveData));
+        exported.value = encodedData;
+        const exportStatus = method.includes('File')
+            ? exportToFile(exported)
+            : exportToClipboard(exported);
+        return exportStatus;
+    },
+    delete: function() {
+        localStorage.clear();
+        location.reload();
+    }
+};
 
 const DecimalRoundDown = Decimal.clone({ rounding: Decimal.ROUND_DOWN });
 function number(n) {
@@ -53,57 +101,14 @@ function addLogEntry(entry) {
     }
 }
 
-function clearLogs() {
+function clearLog() {
     document.querySelector('.message-log').innerHTML = '';
 }
 
 function timestamp() {
     stats.lastUpdate = Date.now();
-}
-
-function save() {
-    const saveData = {
-        recruits,
-        resources,
-        stats,
-        conditions
-    };
-    const encodedData = btoa(JSON.stringify(saveData));
-    localStorage.setItem('saveData', encodedData);
-
-    log('Game saved!');
-}
-
-function toggleAutoSave() {
-    conditions.autoSave = !conditions.autoSave;
-    const autoSaveStatus = document.getElementById('autosave-status');
-    autoSaveStatus.innerHTML = conditions.autoSave ? 'on' : 'off';
-
-    log('Autosave:', conditions.autoSave ? 'enabled' : 'disabled');
-}
-
-function importSave() {
-    const imported = document.getElementById('import-export-field');
-    const importStatus = game.init.getSave(imported.value)
-        ? log('Import success! Save data has been loaded')
-        : log('Import failed! Please check the save string and try again');
-    return importStatus;
-}
-
-function exportSave(method) {
-    const exported = document.getElementById('import-export-field');
-    const saveData = {
-        recruits,
-        resources,
-        stats,
-        conditions
-    };
-    const encodedData = btoa(JSON.stringify(saveData));
-    exported.value = encodedData;
-    const exportStatus = method.includes('File')
-        ? exportToFile(exported)
-        : exportToClipboard(exported);
-    return exportStatus;
+    const playtime = getElement('#time-since-creation');
+    playtime.innerHTML = game.calculate.elapsedTime(stats.firstUpdate).format;
 }
 
 function exportToFile(exported) {
@@ -126,24 +131,27 @@ function exportToClipboard(exported) {
     return log('Success! Save data copied to clipboard');
 }
 
-function deleteSave() {
-    localStorage.clear();
-    location.reload();
-}
-
-function toggleRounding() {
+function rounding() {
     conditions.rounding = !conditions.rounding;
     const roundingStatus = document.getElementById('rounding-status');
     roundingStatus.innerHTML = conditions.rounding ? 'on' : 'off';
     const color = conditions.rounding ? '#009963' : 'inherit';
-    updateElement('#rounding-button', 'style.backgroundColor', color);
+    element.update('#rounding-button', 'style.backgroundColor', color);
     log('Rounding:', conditions.rounding ? 'enabled' : 'disabled');
+}
+
+function toggleOfflineProgress() {
+    conditions.offlineProgress = !conditions.offlineProgress;
+    const offlineProgress = document.getElementById('offline-progress-status');
+    offlineProgress.innerHTML = conditions.offlineProgress ? 'on' : 'off';
+
+    log('Offline Progression:', conditions.offlineProgress ? 'enabled' : 'disabled');
 }
 
 function setTimers() {
     timers.progression = setInterval(game.progression, stats.tickSpeed);
     timers.autoSave = setInterval(function() {
-        if (conditions.autoSave && conditions.activeWindow) save();
+        if (conditions.autoSave && conditions.activeWindow) save.game();
     }, 180000);
 }
 
@@ -159,16 +167,13 @@ export default {
     getElement,
     getElements,
     log,
-    clearLogs,
+    clearLog,
     timestamp,
-    save,
-    toggleAutoSave,
-    importSave,
-    exportSave,
-    deleteSave,
-    toggleRounding,
+    rounding,
+    toggleOfflineProgress,
     setTimers,
-    resetTimers
+    resetTimers,
+    save
 };
 
 export {

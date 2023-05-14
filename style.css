@@ -2,17 +2,24 @@
     overflow: none;
     font-family: 'Consolas';
     -ms-overflow-style: none; /* Hide scrollbar: Internet Explorer, Edge */
-    scrollbar-width: none;  /* Hide scrollbar: Firefox */
-} *::-webkit-scrollbar {  /* Hide scrollbar: Chrome, Safari, Opera */
-    display: none;
+    scrollbar-width: none; /* Hide scrollbar: Firefox */
+} *::-webkit-scrollbar {  
+    display: none; /* Hide scrollbar: Chrome, Safari, Opera */
 } * > button {
     background-image: url('images/soft-wallpaper.png');
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 } * > select {
     background-image: url('images/soft-wallpaper.png');
+} * > hr {
+    background-color: black;
+    border-color: black;
+    width: 100%;
 }
 .hidden {
     visibility: hidden;
+}
+.collapse {
+    display: none;
 }
 .bold {
     font-weight: bold;
@@ -39,19 +46,17 @@ body {
     width: 20%;
     margin: auto;
 }
+.menu-button {
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 1);
+    font-size: 18px;
+    height: 3em;
+    width: 100%;
+}
 .menu-button-container {
-    display: flex;
-    flex-direction: column;
     height: 80%;
     width: 100%;
 } .menu-button-container > button {
-    background-color: #696969;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 1);
-    font-size: 18px;
-    height: 8%;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+    background-color: #00be88;
 }
 .save-button-container {
     text-align: center;
@@ -100,39 +105,50 @@ body {
         inset 0 0 50px rgba(0, 0, 0, 0.5),
         0 0 40px #50978627;
 }
-.resource-container {
+.game-container-header {
     font-size: 18px;
     text-align: center;
     height: 15%;
 }
-.ant-recruit-container {
-    display: flex;
-    justify-content: right;
-    height: 100%;
+.game-container-body {
+    height: 85%;
     width: 100%;
     overflow: auto;
 }
-.ant-recruit-column {
+#recruitment-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+#recruitment-container-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    height: 90%;
+    width: 100%;
+}
+.recruitment-column {
     display: flex;
     flex-direction: column;
     width: 25%;
 }
-.ant-recruit-cell {
+.recruitment-cell {
     font-size: 18px;
     display: flex;
     height: 14%;
-} .ant-recruit-cell > button {
+} .recruitment-cell > button {
     background-color: #455b55;
     font-size: 18px;
     height: 100%;
     width: 100%;
 }
-.ant-recruit-text {
+.recruitment-text {
     margin-left: 10px;
-} .ant-recruit-text > p {
+} .recruitment-text > p {
     white-space: pre-wrap;
 }
-.game-footer {
+.game-container-footer {
     display: flex;
     justify-content: flex-end;
     height: 10%;
@@ -207,13 +223,11 @@ body {
     height: 50%;
     width: 80%;
 }
-.species-container {
-    height: 95%;
-    width: 20%;
-}
-.species-button-container {
+.submenu-button-container {
     height: 75%;
     width: 100%;
+} .submenu-button-container > button {
+    background-color: #0bab5b;
 }
 .message-log-container {
     height: 25%;
@@ -255,9 +269,9 @@ body {
     margin-left: 1em;
 }
 .modal {
-    background-color: rgba(150, 150, 150, 0.75);
+    background-color: rgba(150, 150, 150, 0.9);
     border: 4px inset rgba(0, 0, 0, 0.65);
-    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.75);
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
     display: none;
     flex-direction: column;
     align-items: center;
@@ -269,35 +283,38 @@ body {
     z-index: 1;
 }
 #settings-modal-body {
+    height: 100%;
+    width: 90%;
+}
+.modal-list {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
-    overflow: auto;
-} #settings-modal-body > hr {
-    background-color: black;
-    border-color: black;
-    width: 60%;
-} #settings-modal-body > button {
-    background-color: #696969;
-    width: 25%;
     margin-left: auto;
     margin-right: auto;
+    width: 60%;
+}
+#settings-list > button {
+    background-color: #696969;
+    width: 33%;
+    margin: auto;
 }
 #stats-modal-body {
     height: 100%;
     width: 90%;
 }
-.stat-list {
-    margin-left: auto;
-    margin-right: auto;
-    width: 75%;
-    line-height: 0;
-} 
-.stat-entry {
-    border-bottom: 2px solid black;
-    padding-bottom: 12px
-} .stat-entry > span {
+.stat-entry-value {
+    float: right;
+}
+.stat-subentries {
+    flex-direction: column;
+    margin-left: 5%;
+    width: 95%;
+}
+.stat-subentry-value {
+    float: right;
+    margin-right: calc(1em + 1px);
+}
+.arrow-pointer {
     float: right;
 }
 #import-export-modal {

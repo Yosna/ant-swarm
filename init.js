@@ -1,7 +1,7 @@
-import { recruits, resources, stats, conditions } from './index.js';
+import { colonies, resources, stats, conditions } from './index.js';
 import * as game from './game.js';
 import { getElement } from './util.js';
-import { updateElement } from './display.js';
+import { element } from './display.js';
 
 const eventListeners = getEventListeners({
     gameEvents: {
@@ -16,23 +16,24 @@ const eventListeners = getEventListeners({
         stats: eventListener('.stats-toggle', 'click', game.display.modals.stats)
     },
     saveEvents: {
-        save: eventListener('#save-button', 'click', game.util.save),
-        del: eventListener('#delete-button', 'click', game.util.deleteSave),
-        import: eventListener('#import-button', 'click', game.util.importSave),
+        save: eventListener('#save-button', 'click', game.util.save.game),
+        del: eventListener('#delete-button', 'click', game.util.save.delete),
+        import: eventListener('#import-button', 'click', game.util.save.import),
         export: eventListener('.export-button', 'click', e => {
-            game.util.exportSave(e.target.innerHTML);
+            game.util.save.export(e.target.innerHTML);
         })
     },
     settingsEvents: {
-        autoSave: eventListener('#autosave-button', 'click', game.util.toggleAutoSave),
+        offline: eventListener('#offline-progress-button', 'click', game.util.toggleOfflineProgress),
+        autoSave: eventListener('#autosave-button', 'click', game.util.save.auto),
         quantity: eventListener('#quantity-selection', 'change', e => {
             for (const { ant } of game.getAnts()) {
-                game.calculate.costByQuantity(ant);
+                game.calculate.ants.quantityCost(ant);
                 e.target.blur();
             }
         }),
-        rounding: eventListener('#rounding-button', 'click', game.util.toggleRounding),
-        clearLog: eventListener('#clear-log-button', 'click', game.util.clearLogs)
+        rounding: eventListener('#rounding-button', 'click', game.util.rounding),
+        clearLog: eventListener('#clear-log-button', 'click', game.util.clearLog)
     },
     utilityEvents: {
         visibility: eventListener(null, 'visibilitychange', () => {
@@ -61,6 +62,11 @@ const eventListeners = getEventListeners({
                 hideIfNotActive('#import-export-modal', e.target, 'import-export-toggle');
             })
         }
+    },
+    statMenuEvents: {
+        ants: {
+            garden: eventListener('#garden-ant-stats', 'click', game.display.stat.ants.garden)
+        }
     }
 });
 
@@ -76,23 +82,23 @@ function getSave(encodedData) {
     try {
         const saveData = deserialize(JSON.parse(atob(encodedData)));
 
-        Object.assign(recruits, saveData.recruits);
+        Object.assign(colonies, saveData.colonies);
         Object.assign(resources, saveData.resources);
         Object.assign(stats, saveData.stats);
         Object.assign(conditions, saveData.conditions);
-
-        setElements();
         game.calculate.offlineProgress();
+
         return true;
     } catch (error) {
         game.util.log('Invalid save data detected! Aborting...');
+        console.log(error);
         return false;
     }
 }
 
 function newSave() {
     game.util.log('Creating new save data...');
-    for (const [type, ants] of Object.values(recruits).entries()) {
+    for (const [type, ants] of Object.values(colonies).entries()) {
         for (const [tier, ant] of Object.values(ants).entries()) {
             ant.unlocked = false;
             ant.recruited = new Decimal(0);
@@ -102,10 +108,11 @@ function newSave() {
             ant.upgrades = new Decimal(0);
             ant.type = new Decimal(type);
             ant.tier = new Decimal(tier);
-            ant.cost = game.calculate.antBaseCost(ant);
+            ant.colony = Object.keys(colonies)[type];
+            ant.cost = game.calculate.ants.baseCost(ant);
         }
     }
-    game.util.save();
+    game.util.save.game();
 }
 
 function deserialize(data) {
@@ -114,13 +121,13 @@ function deserialize(data) {
         if (typeof data[key] === 'object' && data[key] !== null) {
             converted[key] = deserialize(data[key]);
         } else {
-            converted[key] = convertData(data[key], key);
+            converted[key] = conversion(data[key]);
         }
     }
     return converted;
 }
 
-function convertData(data, key) {
+function conversion(data) {
     if (!isNaN(Number(data)) && typeof data !== 'boolean') {
         return new Decimal(data);
     }
@@ -132,14 +139,21 @@ function setElements() {
     getElement('#forage-total').innerHTML = stats.foraging.total;
     for (const { ant } of game.getAnts()) {
         if (ant.unlocked) {
-            updateElement(`.${ant.id}-data`, 'style.visibility', 'visible');
+            element.update(`.${ant.id}-data`, 'style.visibility', 'visible');
         }
     }
+    setToggles();
+    game.util.setTimers();
+}
+
+function setToggles() {
     conditions.autoSave = !conditions.autoSave;
     conditions.rounding = !conditions.rounding;
-    game.util.toggleAutoSave();
-    game.util.toggleRounding();
-    game.util.setTimers();
+    conditions.offlineProgress = !conditions.offlineProgress;
+
+    game.util.save.auto();
+    game.util.rounding();
+    game.util.toggleOfflineProgress();
 }
 
 function * getEventListeners() {
@@ -160,9 +174,9 @@ function setEventListeners() {
 
 function eventListener(selector, event, callback) {
     if (selector) {
-        const elements = document.querySelectorAll(selector);
-        for (const element of elements) {
-            element.addEventListener(event, callback);
+        const selected = document.querySelectorAll(selector);
+        for (const key of selected) {
+            key.addEventListener(event, callback);
         }
     } else {
         document.addEventListener(event, callback);
@@ -170,12 +184,12 @@ function eventListener(selector, event, callback) {
 }
 
 function hideIfNotActive(selector, target, exception) {
-    const element = $(selector);
-    if (!$(target).is(element) &&
-        !element.has(target).length &&
+    const selected = $(selector);
+    if (!$(target).is(selected) &&
+        !selected.has(target).length &&
         target.className !== exception
     ) {
-        element.hide();
+        selected.hide();
     }
 }
 

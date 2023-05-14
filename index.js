@@ -1,6 +1,8 @@
 import * as game from './game.js';
 
-const recruits = {
+const version = 'v0.2.1';
+
+const colonies = {
     garden: {
         smallWorker: { name: 'Small Garden Worker', id: 'small-garden-worker', id_abb: 'SGW', product: 'food', prod_abb: 'F' },
         regularWorker: { name: 'Regular Garden Worker', id: 'regular-garden-worker', id_abb: 'RGW', product: 'small garden workers', prod_abb: 'SGW' },
@@ -29,16 +31,21 @@ const stats = {
         second: 'numeric',
         hour12: true
     }),
+    firstUpdate: Date.now(),
     lastUpdate: Date.now(),
     tickSpeed: new Decimal(100),
     foraging: {
         rate: new Decimal(0.1),
         boost: new Decimal(1),
         total: new Decimal(0)
+    },
+    ants: {
+        garden: new Decimal(0)
     }
 };
 
 const conditions = {
+    offlineProgress: true,
     activeWindow: true,
     autoSave: true,
     rounding: false
@@ -49,6 +56,6 @@ const timers = {
     autoSave: null
 };
 
-export { recruits, resources, stats, conditions, timers };
+export { version, colonies, resources, stats, conditions, timers };
 
 window.onload = game.init.load();

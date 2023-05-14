@@ -1,6 +1,27 @@
 import { resources } from './index.js';
 import * as game from './game.js';
-import { number } from './util.js';
+import { number, getElement } from './util.js';
+
+const element = {
+    update: function(selector, property, value) {
+        const selected = document.querySelectorAll(selector);
+        for (const key of selected) {
+            const p = property.split('.');
+            let obj = key;
+            for (let i = 0; i < p.length - 1; i++) {
+                obj = obj[p[i]];
+            }
+            obj[p[p.length - 1]] = value;
+        }
+    },
+    hide: (target) => target.classList.toggle('hidden'),
+    collapse: (target) => target.classList.toggle('collapse'),
+    arrow: function(target) {
+        target.innerHTML === '▲'
+            ? target.innerHTML = '▼'
+            : target.innerHTML = '▲';
+    }
+};
 
 const modals = {
     settings: function() {
@@ -18,6 +39,16 @@ const modals = {
     }
 };
 
+const stat = {
+    update: (id, value) => (getElement(id).innerHTML = value),
+    ants: {
+        garden: () => {
+            element.collapse(getElement('#garden-ant-subentries'));
+            element.arrow(getElement('#garden-ant-arrow'));
+        }
+    }
+};
+
 // Updates to run after the progression cycle
 function update() {
     resourceElements();
@@ -25,33 +56,38 @@ function update() {
 }
 
 function resourceElements() {
-    updateElement('#food-total', 'innerHTML', number(resources.food.total));
-    updateElement('#food-production', 'innerHTML', number(resources.food.production));
+    element.update('#food-total', 'innerHTML', number(resources.food.total));
+    element.update('#food-production', 'innerHTML', number(resources.food.production));
 }
 
 function antElements() {
-    for (const { ant } of game.getAnts()) {
-        ant.unlocked = unlockRequirement(ant) ? updateAnt(ant) : false;
+    for (const { ant, lastAnt } of game.getAnts()) {
+        ant.unlocked = unlockRequirement(ant, lastAnt) ? updateAnt(ant) : false;
         if (ant.unlocked) {
             antUpgrades(ant);
         }
     }
 }
 
-function unlockRequirement(ant) {
+function unlockRequirement(ant, lastAnt) {
     const conditions =
         (resources.food.total.greaterThan(ant.cost.div(4))) +
         (ant.acquired.eq(0)) +
         !ant.unlocked;
     if (conditions === 3) {
-        updateElement(`.${ant.id}-data`, 'style.visibility', 'visible');
+        if (lastAnt) {
+            const char = getElement(`#${lastAnt.id_abb}-se-char`);
+            char.innerHTML = '\u251C\u2500';
+        }
+        element.update(`.${ant.id}-data`, 'style.visibility', 'visible');
+        element.collapse(getElement(`#${ant.id}-stats`));
     }
     return ant.unlocked ? true : conditions === 3;
 }
 
 function updateAnt(ant) {
-    const totalProduction = game.calculate.totalProduction(ant);
-    const { quantity, cost } = game.calculate.costByQuantity(ant);
+    const production = game.calculate.ants.production(ant);
+    const { quantity, cost } = game.calculate.ants.quantityCost(ant);
 
     const elements = {
         recruited: {
@@ -61,7 +97,7 @@ function updateAnt(ant) {
             selector: `#${ant.id}-acquired`, value: number(ant.acquired)
         },
         production: {
-            selector: `#${ant.id}-production`, value: totalProduction
+            selector: `#${ant.id}-production`, value: production
         },
         cost: {
             selector: `#${ant.id}-cost`, value: number(cost)
@@ -74,17 +110,19 @@ function updateAnt(ant) {
         }
     };
 
-    for (const [, element] of Object.entries(elements)) {
-        if (element.value === undefined) {
+    for (const [, antElement] of Object.entries(elements)) {
+        if (antElement.value === undefined) { // Update the button element's color
             if (resources.food.total.greaterThanOrEqualTo(cost)) {
-                updateElement(element.selector, 'style.backgroundColor', '#2c8172');
+                element.update(antElement.selector, 'style.backgroundColor', '#2c8172');
             } else {
-                updateElement(element.selector, 'style.backgroundColor', '#455b55');
+                element.update(antElement.selector, 'style.backgroundColor', '#455b55');
             }
         } else {
-            updateElement(element.selector, 'innerHTML', element.value);
+            element.update(antElement.selector, 'innerHTML', antElement.value);
         }
     }
+    stat.update(`#${ant.id}-stat`, number(ant.acquired.floor()));
+    // game.calculate.ants.stats(ant.colony);
     return true;
 }
 
@@ -93,9 +131,9 @@ function antUpgrades(ant) {
     if (upgrade) {
         const cost = new Decimal((upgrade.getAttribute('data-cost')).replace(/,/g, ''));
         if (resources.food.total.greaterThanOrEqualTo(cost)) {
-            updateElement(`#${ant.id}-upgrade`, 'style.backgroundColor', '#009963');
+            element.update(`#${ant.id}-upgrade`, 'style.backgroundColor', '#009963');
         } else {
-            updateElement(`#${ant.id}-upgrade`, 'style.backgroundColor', '#455b55');
+            element.update(`#${ant.id}-upgrade`, 'style.backgroundColor', '#455b55');
         }
     }
 }
@@ -118,7 +156,7 @@ function antUpgradeElement(ant, upgrade) {
     container.appendChild(button);
 
     game.init.eventListener(`#${button.id}`, 'click', () => {
-        game.buyAntUpgrade(ant.id);
+        game.antUpgrades.buy(ant.id);
     });
 }
 
@@ -137,23 +175,12 @@ function settings(display) {
 }
 */
 
-function updateElement(selector, property, value) {
-    const elements = document.querySelectorAll(selector);
-    for (const element of elements) {
-        const p = property.split('.');
-        let obj = element;
-        for (let i = 0; i < p.length - 1; i++) {
-            obj = obj[p[i]];
-        }
-        obj[p[p.length - 1]] = value;
-    }
-}
-
 export default {
-    modals,
     update,
     antUpgradeElement,
-    updateElement
+    element,
+    modals,
+    stat
 };
 
-export { updateElement };
+export { element };

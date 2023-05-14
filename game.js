@@ -1,13 +1,54 @@
-import { recruits, resources, stats, conditions } from './index.js';
+import { colonies, resources, stats, conditions } from './index.js';
 import util, { number, getElement } from './util.js';
 import calculate from './calculate.js';
 import display from './display.js';
 import init from './init.js';
 
+const antUpgrades = {
+    unlocked: function(ant) {
+        const breakpoint = [10, 25, 50, 100, 200, 300, 400, 500, 750, 1000];
+        const unlocked = (
+            (ant.upgrades.lessThan(10)) &&
+            (ant.recruited.greaterThanOrEqualTo(breakpoint[ant.upgrades]))
+        );
+        return unlocked;
+    },
+    hidden: function(ant) {
+        const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
+        const upgradesUnlocked = upgradeContainer.querySelectorAll('*');
+        for (let i = 0; i < (upgradesUnlocked.length); i++) {
+            if (upgradesUnlocked[i].id === (ant.id + '-upgrade')) {
+                return false;
+            }
+        }
+
+        return true;
+    },
+    buy: function(antToUpgrade) {
+        for (const { ant } of getAnts()) {
+            if (ant.id === antToUpgrade) {
+                const upgrade = document.getElementById(ant.id + '-upgrade');
+                const upgradeCost = new Decimal((upgrade.getAttribute('data-cost')).replace(/,/g, ''));
+                const upgradeBoost = new Decimal(upgrade.getAttribute('data-boost'));
+
+                if (resources.food.total.greaterThanOrEqualTo(upgradeCost)) {
+                    resources.food.total = resources.food.total.minus(upgradeCost);
+                    ant.boost = ant.boost.plus(upgradeBoost);
+                    ant.upgrades = ant.upgrades.plus(1);
+
+                    upgrade.remove();
+                }
+            }
+        }
+    }
+};
+
 function * getAnts() {
-    for (const [, colony] of Object.values(recruits).entries()) {
+    for (const [, colony] of Object.values(colonies).entries()) {
+        let lastAnt;
         for (const [, ant] of Object.values(colony).entries()) {
-            yield { ant, colony };
+            yield { ant, lastAnt };
+            lastAnt = ant;
         }
     }
 }
@@ -24,7 +65,7 @@ function recruit(target) {
     for (const { ant } of getAnts()) {
         const targetName = target.innerText.substring(0, ant.name.length);
         if (ant.name === targetName) {
-            const { quantity, cost } = calculate.costByQuantity(ant);
+            const { quantity, cost } = calculate.ants.quantityCost(ant);
             if (resources.food.total.greaterThanOrEqualTo(cost)) {
                 resources.food.total = resources.food.total.minus(cost);
                 ant.recruited = ant.recruited.plus(quantity);
@@ -34,20 +75,16 @@ function recruit(target) {
     }
 }
 
-function buyAntUpgrade(antToUpgrade) {
+function determineUnlockedContent() {
+    determineUnlockedUpgrades();
+}
+
+function determineUnlockedUpgrades() {
     for (const { ant } of getAnts()) {
-        if (ant.id === antToUpgrade) {
-            const upgrade = document.getElementById(ant.id + '-upgrade');
-            const upgradeCost = new Decimal((upgrade.getAttribute('data-cost')).replace(/,/g, ''));
-            const upgradeBoost = new Decimal(upgrade.getAttribute('data-boost'));
-
-            if (resources.food.total.greaterThanOrEqualTo(upgradeCost)) {
-                resources.food.total = resources.food.total.minus(upgradeCost);
-                ant.boost = ant.boost.plus(upgradeBoost);
-                ant.upgrades = ant.upgrades.plus(1);
-
-                upgrade.remove();
-            }
+        if (antUpgrades.unlocked(ant) && antUpgrades.hidden(ant)) {
+            const upgrade = calculate.ants.upgradeBoost(ant);
+            upgrade.cost = calculate.ants.upgradeCost(ant);
+            display.antUpgradeElement(ant, upgrade);
         }
     }
 }
@@ -55,7 +92,7 @@ function buyAntUpgrade(antToUpgrade) {
 // Create the cycle for continuous progression
 function progression() {
     if (conditions.activeWindow) {
-        calculate.upgrades();
+        determineUnlockedContent();
         calculate.resourceProduction(1);
         display.update();
         util.timestamp();
@@ -70,6 +107,6 @@ export {
     forage,
     getAnts,
     recruit,
-    buyAntUpgrade,
-    progression
+    progression,
+    antUpgrades
 };
