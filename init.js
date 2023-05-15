@@ -145,7 +145,7 @@ function conversion(data) {
 
 function setElements() {
     getElement('#creation-date').innerHTML = stats.creationDate;
-    getElement('#forage-total').innerHTML = stats.foraging.total;
+    getElement('#forage-total').innerHTML = stats.forage.total;
     for (const { ant, lastAnt } of game.getAnts()) {
         if (ant.unlocked) {
             if (lastAnt) {

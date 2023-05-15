@@ -108,35 +108,31 @@ body {
 .game-container-header {
     font-size: 18px;
     text-align: center;
-    height: 15%;
+    height: 12%;
 }
 .game-container-body {
-    height: 85%;
+    height: 88%;
     width: 100%;
     overflow: auto;
 }
-#recruitment-container {
+.recruitment-container-body {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
-}
-#recruitment-container-body {
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
     height: 90%;
     width: 100%;
 }
-.recruitment-column {
+.recruitment-row {
     display: flex;
-    flex-direction: column;
-    width: 25%;
+    flex-direction: row;
+    justify-content: flex-end;
+    height: 14%;
+    width: 100%;
 }
 .recruitment-cell {
     font-size: 18px;
     display: flex;
-    height: 14%;
+    height: 100%;
+    width: 25%;
 } .recruitment-cell > button {
     background-color: #455b55;
     font-size: 18px;
@@ -144,7 +140,7 @@ body {
     width: 100%;
 }
 .recruitment-text {
-    margin-left: 10px;
+    margin-left: 10%;
 } .recruitment-text > p {
     white-space: pre-wrap;
 }

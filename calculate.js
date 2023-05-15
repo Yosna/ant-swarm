@@ -1,7 +1,17 @@
-import { resources, stats, conditions } from './index.js';
+import { resources, stats, upgrades, conditions } from './index.js';
 import * as game from './game.js';
 import { element } from './display.js';
 import { number, getElement } from './util.js';
+
+const forage = {
+    upgradeCost: function(upgrade) {
+        /*
+        const base = new Decimal(100);
+        const multiplier = upgrades.forage.yield.owned.plus(1);
+        const cost = base
+        */
+    }
+};
 
 const ants = {
     baseCost: function(ant) {
@@ -61,6 +71,7 @@ const ants = {
         const upgradeCost = antCostAtBreakpoint.times(12)
             .times(new Decimal(1.2).pow(ant.upgrades));
 
+        // Floor numbers not in scientific notation to remove decimals
         return upgradeCost.lessThan(10000)
             ? number(upgradeCost.floor())
             : number(upgradeCost);
@@ -218,5 +229,6 @@ export default {
     elapsedTime,
     resourceProduction,
     statistics,
+    forage,
     ants
 };

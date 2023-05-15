@@ -51,6 +51,35 @@ const statistics = {
     }
 };
 
+const upgradeElement = {
+    forage: {
+        yield: function() {
+            //
+        }
+    },
+    ants: function(ant, upgrade) {
+        const container = document.getElementsByClassName('upgrade-button-container')[ant.type];
+        const button = document.createElement('button');
+
+        button.type = 'button';
+        button.className = 'ant-upgrade-button';
+        button.id = `${ant.id}-upgrade`;
+        button.dataset.id = ant.id;
+        button.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades.plus(1))}
+            \nCost: ${upgrade.cost}
+            \nBoosts production by ${upgrade.percent}\nfor every ${ant.id_abb} recruited`;
+        button.dataset.cost = upgrade.cost;
+        button.dataset.boost = upgrade.boost;
+        button.innerText = ant.id_abb;
+
+        container.appendChild(button);
+
+        game.init.eventListener(`#${button.id}`, 'click', () => {
+            game.antUpgrades.buy(ant.id);
+        });
+    }
+};
+
 // Updates to run after the progression cycle
 function update() {
     resourceElements();
@@ -122,28 +151,6 @@ function antUpgrades(ant) {
     }
 }
 
-function antUpgradeElement(ant, upgrade) {
-    const container = document.getElementsByClassName('upgrade-button-container')[ant.type];
-    const button = document.createElement('button');
-
-    button.type = 'button';
-    button.className = 'ant-upgrade-button';
-    button.id = `${ant.id}-upgrade`;
-    button.dataset.id = ant.id;
-    button.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades.plus(1))}
-        \nCost: ${upgrade.cost}
-        \nBoosts production by ${upgrade.percent}\nfor every ${ant.id_abb} recruited`;
-    button.dataset.cost = upgrade.cost;
-    button.dataset.boost = upgrade.boost;
-    button.innerText = ant.id_abb;
-
-    container.appendChild(button);
-
-    game.init.eventListener(`#${button.id}`, 'click', () => {
-        game.antUpgrades.buy(ant.id);
-    });
-}
-
 /*
 function settings(display) {
     const defaultContainer = document.getElementById('main-container');
@@ -161,10 +168,10 @@ function settings(display) {
 
 export default {
     update,
-    antUpgradeElement,
     element,
     modals,
-    statistics
+    statistics,
+    upgradeElement
 };
 
 export { element };

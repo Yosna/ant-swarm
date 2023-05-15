@@ -34,13 +34,22 @@ const stats = {
     firstUpdate: Date.now(),
     lastUpdate: Date.now(),
     tickSpeed: new Decimal(100),
-    foraging: {
-        rate: new Decimal(0.1),
+    forage: {
+        yield: new Decimal(0.1),
         boost: new Decimal(1),
         total: new Decimal(0)
     },
     ants: {
         garden: new Decimal(0)
+    }
+};
+
+const upgrades = {
+    forage: {
+        yield: {
+            unlocked: new Decimal(0),
+            obtained: new Decimal(0)
+        }
     }
 };
 
@@ -75,6 +84,6 @@ const timers = {
     autoSave: null
 };
 
-export { version, colonies, resources, stats, conditions, timers };
+export { version, colonies, resources, stats, conditions, upgrades, timers };
 
 window.onload = game.init.load();
