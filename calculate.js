@@ -1,6 +1,7 @@
 import { resources, stats, conditions } from './index.js';
 import * as game from './game.js';
-import { number } from './util.js';
+import { element } from './display.js';
+import { number, getElement } from './util.js';
 
 const ants = {
     baseCost: function(ant) {
@@ -27,11 +28,32 @@ const ants = {
         return { quantity, cost };
     },
     production: function(ant) {
+        const boost = new Decimal(1).plus(ant.recruited.times(ant.boost));
+        const tick = ant.production
+            .times(ant.acquired)
+            .times(boost)
+            .times(stats.tickSpeed.div(1000));
         const production = new Decimal(1)
             .plus(ant.boost.times(ant.recruited))
             .times(ant.production)
             .times(ant.acquired);
-        return number(production) + ' ' + ant.prod_abb;
+        const total = number(production) + ' ' + ant.prod_abb;
+        return { boost, tick, total };
+    },
+    requirement: function(ant, lastAnt) {
+        const conditions =
+            (resources.food.total.greaterThan(ant.cost.div(4))) +
+            (ant.acquired.eq(0)) +
+            !ant.unlocked;
+        if (conditions === 3) {
+            if (lastAnt) {
+                const char = getElement(`#${lastAnt.id_abb}-se-char`);
+                char.innerHTML = '\u251C\u2500';
+            }
+            element.update(`.${ant.id}-data`, 'style.visibility', 'visible');
+            element.collapse(getElement(`#${ant.id}-stats`));
+        }
+        return ant.unlocked ? true : conditions === 3;
     },
     upgradeCost: function(ant) {
         const breakpoint = [10, 25, 50, 100, 200, 300, 400, 500, 750, 1000];
@@ -48,16 +70,16 @@ const ants = {
         const percent = boost.times(100).toFixed(1) + '%';
         return { boost, percent };
     },
-    stats: (colony) => {
+    stats: (colony) => { // CONSIDER MOVING THIS FUNCTION ELSEWHERE
         let acquiredTotal = new Decimal(0);
-        for (const ant of game.getAnts()) {
+        for (const { ant } of game.getAnts()) {
             if (ant.colony === colony) {
                 acquiredTotal = acquiredTotal.plus(ant.acquired);
             }
         }
         for (const key in stats.ants) {
             if (key === colony) {
-                game.display.stat.update(`${colony}-ant-total`, acquiredTotal);
+                game.display.statistics.update(`#${colony}-ant-total`, number(acquiredTotal.floor()));
             }
         }
     }
@@ -112,13 +134,13 @@ function elapsedTime(elapse) {
         }
     }
 
-    return { value: time, format: units.join(' ') };
+    return { value, format: units.join(' ') };
 }
 
 function rounded(ant, quantity) {
     const remainder = ant.recruited.mod(quantity);
     const difference = quantity.minus(remainder);
-    return (!conditions.rounding)
+    return (!conditions.rounding.status)
         ? quantity // return if rounding is disabled
         : quantity.eq(0)
             ? quantity // return if the quantity is 0
@@ -158,29 +180,43 @@ function resourceProduction(multiplier) {
     let foodPerSecond = new Decimal(0);
 
     for (const { ant, lastAnt } of game.getAnts()) {
-        const productionBoost = new Decimal(1).plus(ant.recruited.times(ant.boost));
-        const productionPerTick = ant.production
-            .times(ant.acquired)
-            .times(productionBoost)
-            .times(stats.tickSpeed.div(1000));
-
-        try {
-            lastAnt.acquired = lastAnt.acquired.plus(productionPerTick * multiplier);
-        } catch {
+        const production = ants.production(ant);
+        try { // Add production to the previous tier in the colony
+            lastAnt.acquired = lastAnt.acquired.plus(production.tick * multiplier);
+        } catch { // Add production to the base resource when no previous tier
             resources.food.total = resources.food.total.plus(
-                productionPerTick.times(multiplier)
+                production.tick.times(multiplier)
             );
             foodPerSecond = foodPerSecond.plus(
-                ant.production.times(ant.acquired).times(productionBoost)
+                ant.production.times(ant.acquired).times(production.boost)
             );
+        } finally {
+            autoRecruitment(ant);
         }
     }
     resources.food.production = foodPerSecond;
+}
+
+function statistics() {
+    for (const { ant } of game.getAnts()) {
+        game.display.statistics.update(`#${ant.id}-stat`, number(ant.acquired.floor()));
+        ants.stats(ant.colony);
+    }
+}
+
+function autoRecruitment(ant) {
+    if (conditions.autoRecruit.status === false) {
+        return;
+    }
+    if (resources.food.total.greaterThanOrEqualTo(ants.nextCost(ant, ant.recruited).times(10))) {
+        document.getElementById(`${ant.id}-button`).click();
+    }
 }
 
 export default {
     offlineProgress,
     elapsedTime,
     resourceProduction,
+    statistics,
     ants
 };

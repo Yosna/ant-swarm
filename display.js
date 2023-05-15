@@ -28,7 +28,7 @@ const modals = {
         const modal = document.getElementById('settings-modal');
         modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
     },
-    stats: function() {
+    statistics: function() {
         const modal = document.getElementById('stats-modal');
         modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
     },
@@ -39,10 +39,12 @@ const modals = {
     }
 };
 
-const stat = {
-    update: (id, value) => (getElement(id).innerHTML = value),
+const statistics = {
+    update: function(id, value) {
+        (getElement(id).innerHTML = value);
+    },
     ants: {
-        garden: () => {
+        garden: function() {
             element.collapse(getElement('#garden-ant-subentries'));
             element.arrow(getElement('#garden-ant-arrow'));
         }
@@ -62,27 +64,10 @@ function resourceElements() {
 
 function antElements() {
     for (const { ant, lastAnt } of game.getAnts()) {
-        ant.unlocked = unlockRequirement(ant, lastAnt) ? updateAnt(ant) : false;
-        if (ant.unlocked) {
-            antUpgrades(ant);
-        }
+        ant.unlocked = game.calculate.ants.requirement(ant, lastAnt)
+            ? updateAnt(ant)
+            : false;
     }
-}
-
-function unlockRequirement(ant, lastAnt) {
-    const conditions =
-        (resources.food.total.greaterThan(ant.cost.div(4))) +
-        (ant.acquired.eq(0)) +
-        !ant.unlocked;
-    if (conditions === 3) {
-        if (lastAnt) {
-            const char = getElement(`#${lastAnt.id_abb}-se-char`);
-            char.innerHTML = '\u251C\u2500';
-        }
-        element.update(`.${ant.id}-data`, 'style.visibility', 'visible');
-        element.collapse(getElement(`#${ant.id}-stats`));
-    }
-    return ant.unlocked ? true : conditions === 3;
 }
 
 function updateAnt(ant) {
@@ -97,7 +82,7 @@ function updateAnt(ant) {
             selector: `#${ant.id}-acquired`, value: number(ant.acquired)
         },
         production: {
-            selector: `#${ant.id}-production`, value: production
+            selector: `#${ant.id}-production`, value: production.total
         },
         cost: {
             selector: `#${ant.id}-cost`, value: number(cost)
@@ -121,8 +106,7 @@ function updateAnt(ant) {
             element.update(antElement.selector, 'innerHTML', antElement.value);
         }
     }
-    stat.update(`#${ant.id}-stat`, number(ant.acquired.floor()));
-    // game.calculate.ants.stats(ant.colony);
+    antUpgrades(ant);
     return true;
 }
 
@@ -180,7 +164,7 @@ export default {
     antUpgradeElement,
     element,
     modals,
-    stat
+    statistics
 };
 
 export { element };

@@ -45,10 +45,29 @@ const stats = {
 };
 
 const conditions = {
-    offlineProgress: true,
-    activeWindow: true,
-    autoSave: true,
-    rounding: false
+    activeWindow: {
+        status: true
+    },
+    offlineProgress: {
+        name: 'Offline Progress',
+        id: 'offline-progress-button',
+        status: true
+    },
+    autoRecruit: {
+        name: 'Auto Recruit',
+        id: 'auto-recruit-button',
+        status: false
+    },
+    autoSave: {
+        name: 'Autosave',
+        id: 'autosave-button',
+        status: true
+    },
+    rounding: {
+        name: 'Rounding',
+        id: 'rounding-button',
+        status: false
+    }
 };
 
 const timers = {

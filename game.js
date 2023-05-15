@@ -56,7 +56,6 @@ function * getAnts() {
 function forage() {
     resources.food.total = resources.food.total.plus(stats.foraging.rate.times(stats.foraging.boost));
     stats.foraging.total = stats.foraging.total.plus(1);
-
     getElement('#food-total').innerHTML = number(resources.food.total);
     getElement('#forage-total').innerHTML = number(stats.foraging.total);
 }
@@ -75,11 +74,11 @@ function recruit(target) {
     }
 }
 
-function determineUnlockedContent() {
-    determineUnlockedUpgrades();
+function handleUnlockedContent() {
+    handleUnlockedUpgrades();
 }
 
-function determineUnlockedUpgrades() {
+function handleUnlockedUpgrades() {
     for (const { ant } of getAnts()) {
         if (antUpgrades.unlocked(ant) && antUpgrades.hidden(ant)) {
             const upgrade = calculate.ants.upgradeBoost(ant);
@@ -91,9 +90,10 @@ function determineUnlockedUpgrades() {
 
 // Create the cycle for continuous progression
 function progression() {
-    if (conditions.activeWindow) {
-        determineUnlockedContent();
+    if (conditions.activeWindow.status) {
+        handleUnlockedContent();
         calculate.resourceProduction(1);
+        calculate.statistics();
         display.update();
         util.timestamp();
     }

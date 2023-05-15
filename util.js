@@ -15,13 +15,6 @@ const save = {
 
         log('Game saved!');
     },
-    auto: function() {
-        conditions.autoSave = !conditions.autoSave;
-        const autoSaveStatus = document.getElementById('autosave-status');
-        autoSaveStatus.innerHTML = conditions.autoSave ? 'on' : 'off';
-
-        log('Autosave:', conditions.autoSave ? 'enabled' : 'disabled');
-    },
     import: function() {
         const imported = document.getElementById('import-export-field');
         const importStatus = game.init.getSave(imported.value)
@@ -131,27 +124,26 @@ function exportToClipboard(exported) {
     return log('Success! Save data copied to clipboard');
 }
 
-function rounding() {
-    conditions.rounding = !conditions.rounding;
-    const roundingStatus = document.getElementById('rounding-status');
-    roundingStatus.innerHTML = conditions.rounding ? 'on' : 'off';
-    const color = conditions.rounding ? '#009963' : 'inherit';
-    element.update('#rounding-button', 'style.backgroundColor', color);
-    log('Rounding:', conditions.rounding ? 'enabled' : 'disabled');
-}
+function toggleSetting(condition, color) {
+    condition.status = !condition.status;
 
-function toggleOfflineProgress() {
-    conditions.offlineProgress = !conditions.offlineProgress;
-    const offlineProgress = document.getElementById('offline-progress-status');
-    offlineProgress.innerHTML = conditions.offlineProgress ? 'on' : 'off';
+    // Update the button text to reflect the status
+    const setting = getElement(`#${condition.id}`);
+    const status = condition.status ? 'on' : 'off';
+    setting.innerHTML = `${setting.getAttribute('data-name')} (${status})`;
 
-    log('Offline Progression:', conditions.offlineProgress ? 'enabled' : 'disabled');
+    // Update the button color to reflect the status
+    color = condition.status ? color : '';
+    element.update(`#${setting.id}`, 'style.backgroundColor', color);
+    log(`${condition.name}:`, condition.status ? 'enabled' : 'disabled');
 }
 
 function setTimers() {
     timers.progression = setInterval(game.progression, stats.tickSpeed);
     timers.autoSave = setInterval(function() {
-        if (conditions.autoSave && conditions.activeWindow) save.game();
+        if (conditions.autoSave.status && conditions.activeWindow.status) {
+            save.game();
+        }
     }, 180000);
 }
 
@@ -169,8 +161,7 @@ export default {
     log,
     clearLog,
     timestamp,
-    rounding,
-    toggleOfflineProgress,
+    toggleSetting,
     setTimers,
     resetTimers,
     save

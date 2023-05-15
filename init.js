@@ -13,7 +13,7 @@ const eventListeners = getEventListeners({
     menuEvents: {
         importExport: eventListener('.import-export-toggle', 'click', game.display.modals.importExport),
         settings: eventListener('.settings-toggle', 'click', game.display.modals.settings),
-        stats: eventListener('.stats-toggle', 'click', game.display.modals.stats)
+        stats: eventListener('.stats-toggle', 'click', game.display.modals.statistics)
     },
     saveEvents: {
         save: eventListener('#save-button', 'click', game.util.save.game),
@@ -24,21 +24,30 @@ const eventListeners = getEventListeners({
         })
     },
     settingsEvents: {
-        offline: eventListener('#offline-progress-button', 'click', game.util.toggleOfflineProgress),
-        autoSave: eventListener('#autosave-button', 'click', game.util.save.auto),
+        offline: eventListener('#offline-progress-button', 'click', () => {
+            game.util.toggleSetting(conditions.offlineProgress, '#898989');
+        }),
+        autoRecruit: eventListener('#auto-recruit-button', 'click', () => {
+            game.util.toggleSetting(conditions.autoRecruit, '#898989');
+        }),
+        autoSave: eventListener('#autosave-button', 'click', () => {
+            game.util.toggleSetting(conditions.autoSave, '#898989');
+        }),
         quantity: eventListener('#quantity-selection', 'change', e => {
             for (const { ant } of game.getAnts()) {
                 game.calculate.ants.quantityCost(ant);
                 e.target.blur();
             }
         }),
-        rounding: eventListener('#rounding-button', 'click', game.util.rounding),
+        rounding: eventListener('#rounding-button', 'click', () => {
+            game.util.toggleSetting(conditions.rounding, '#009963');
+        }),
         clearLog: eventListener('#clear-log-button', 'click', game.util.clearLog)
     },
     utilityEvents: {
         visibility: eventListener(null, 'visibilitychange', () => {
-            conditions.activeWindow = !conditions.activeWindow;
-            if (conditions.activeWindow) {
+            conditions.activeWindow.status = !conditions.activeWindow.status;
+            if (conditions.activeWindow.status) {
                 game.calculate.offlineProgress();
             }
         }),
@@ -65,7 +74,7 @@ const eventListeners = getEventListeners({
     },
     statMenuEvents: {
         ants: {
-            garden: eventListener('#garden-ant-stats', 'click', game.display.stat.ants.garden)
+            garden: eventListener('#garden-ant-stats', 'click', game.display.statistics.ants.garden)
         }
     }
 });
@@ -137,9 +146,14 @@ function conversion(data) {
 function setElements() {
     getElement('#creation-date').innerHTML = stats.creationDate;
     getElement('#forage-total').innerHTML = stats.foraging.total;
-    for (const { ant } of game.getAnts()) {
+    for (const { ant, lastAnt } of game.getAnts()) {
         if (ant.unlocked) {
+            if (lastAnt) {
+                const char = getElement(`#${lastAnt.id_abb}-se-char`);
+                char.innerHTML = '\u251C\u2500';
+            }
             element.update(`.${ant.id}-data`, 'style.visibility', 'visible');
+            element.collapse(getElement(`#${ant.id}-stats`));
         }
     }
     setToggles();
@@ -147,13 +161,14 @@ function setElements() {
 }
 
 function setToggles() {
-    conditions.autoSave = !conditions.autoSave;
-    conditions.rounding = !conditions.rounding;
-    conditions.offlineProgress = !conditions.offlineProgress;
-
-    game.util.save.auto();
-    game.util.rounding();
-    game.util.toggleOfflineProgress();
+    conditions.autoSave.status = !conditions.autoSave.status;
+    conditions.rounding.status = !conditions.rounding.status;
+    conditions.offlineProgress.status = !conditions.offlineProgress.status;
+    conditions.autoRecruit.status = !conditions.autoRecruit.status;
+    game.util.toggleSetting(conditions.autoSave, '#898989');
+    game.util.toggleSetting(conditions.rounding, '#009963');
+    game.util.toggleSetting(conditions.offlineProgress, '#898989');
+    game.util.toggleSetting(conditions.autoRecruit, '#898989');
 }
 
 function * getEventListeners() {
