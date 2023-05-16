@@ -4,12 +4,19 @@ import { element } from './display.js';
 import { number, getElement } from './util.js';
 
 const forage = {
-    upgradeCost: function(upgrade) {
-        /*
-        const base = new Decimal(100);
-        const multiplier = upgrades.forage.yield.owned.plus(1);
-        const cost = base
-        */
+    upgradeCost: function() {
+        const multiplier = upgrades.forage.rate.obtained.plus(1);
+        const cost = new Decimal(20)
+            .times(multiplier)
+            .times(Decimal.pow(100, multiplier))
+            .div(100);
+        return cost.floor();
+    },
+    upgradeBoost: function() {
+        const multiplier = upgrades.forage.rate.obtained.plus(1);
+        const boost = new Decimal(10)
+            .times(multiplier.pow(1.6));
+        return boost.floor();
     }
 };
 
@@ -71,17 +78,14 @@ const ants = {
         const upgradeCost = antCostAtBreakpoint.times(12)
             .times(new Decimal(1.2).pow(ant.upgrades));
 
-        // Floor numbers not in scientific notation to remove decimals
-        return upgradeCost.lessThan(10000)
-            ? number(upgradeCost.floor())
-            : number(upgradeCost);
+        return upgradeCost.floor();
     },
     upgradeBoost: function(ant) {
         const boost = new Decimal(0.001).times((ant.upgrades.plus(1)));
         const percent = boost.times(100).toFixed(1) + '%';
         return { boost, percent };
     },
-    stats: (colony) => { // CONSIDER MOVING THIS FUNCTION ELSEWHERE
+    stats: function(colony) { // CONSIDER MOVING THIS FUNCTION ELSEWHERE
         let acquiredTotal = new Decimal(0);
         for (const { ant } of game.getAnts()) {
             if (ant.colony === colony) {
@@ -220,7 +224,7 @@ function autoRecruitment(ant) {
         return;
     }
     if (resources.food.total.greaterThanOrEqualTo(ants.nextCost(ant, ant.recruited).times(10))) {
-        document.getElementById(`${ant.id}-button`).click();
+        game.recruit(document.getElementById(`${ant.id}-button`));
     }
 }
 

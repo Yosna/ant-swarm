@@ -35,7 +35,7 @@ const stats = {
     lastUpdate: Date.now(),
     tickSpeed: new Decimal(100),
     forage: {
-        yield: new Decimal(0.1),
+        rate: new Decimal(0.1),
         boost: new Decimal(1),
         total: new Decimal(0)
     },
@@ -46,7 +46,7 @@ const stats = {
 
 const upgrades = {
     forage: {
-        yield: {
+        rate: {
             unlocked: new Decimal(0),
             obtained: new Decimal(0)
         }

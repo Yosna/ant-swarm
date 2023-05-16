@@ -8,22 +8,36 @@ const forageUpgrades = {
     unlocked: function() {
         let available = new Decimal(0);
         for (const { ant } of getAnts()) {
-            if (ant.recruited.greaterThan(25) && available.lessThan(7)) {
+            if (ant.recruited.greaterThanOrEqualTo(25) && available.lessThan(ant.tier)) {
                 available = available.plus(1);
             }
         }
-        upgrades.forage.yield.unlocked = available;
-        return (upgrades.forage.yield.unlocked.minus(available));
+        upgrades.forage.rate.unlocked = available;
+        return (upgrades.forage.rate.unlocked
+            .minus(upgrades.forage.rate.obtained));
     },
     hidden: function() {
         const upgradeContainer = document.getElementsByClassName('upgrade-button-container')[0];
         const upgradesUnlocked = upgradeContainer.querySelectorAll('*');
         for (let i = 0; i < (upgradesUnlocked.length); i++) {
-            if (upgradesUnlocked[i].id === ('forage-yield-upgrade')) {
+            if (upgradesUnlocked[i].id === ('forage-rate-upgrade')) {
                 return false;
             }
         }
         return true;
+    },
+    buy: function() {
+        const upgrade = document.getElementById('forage-rate-upgrade');
+        const upgradeCost = new Decimal(upgrade.getAttribute('data-cost'));
+        const upgradeBoost = new Decimal(upgrade.getAttribute('data-boost'));
+
+        if (resources.food.total.greaterThanOrEqualTo(upgradeCost)) {
+            resources.food.total = resources.food.total.minus(upgradeCost);
+            stats.forage.rate = stats.forage.rate.times(upgradeBoost);
+            upgrades.forage.rate.obtained = upgrades.forage.rate.obtained.plus(1);
+
+            upgrade.remove();
+        }
     }
 };
 
@@ -50,7 +64,7 @@ const antUpgrades = {
         for (const { ant } of getAnts()) {
             if (ant.id === antToUpgrade) {
                 const upgrade = document.getElementById(ant.id + '-upgrade');
-                const upgradeCost = new Decimal((upgrade.getAttribute('data-cost')).replace(/,/g, ''));
+                const upgradeCost = new Decimal(upgrade.getAttribute('data-cost'));
                 const upgradeBoost = new Decimal(upgrade.getAttribute('data-boost'));
 
                 if (resources.food.total.greaterThanOrEqualTo(upgradeCost)) {
@@ -76,7 +90,7 @@ function * getAnts() {
 }
 
 function forage() {
-    resources.food.total = resources.food.total.plus(stats.forage.yield.times(stats.forage.boost));
+    resources.food.total = resources.food.total.plus(stats.forage.rate.times(stats.forage.boost));
     stats.forage.total = stats.forage.total.plus(1);
     getElement('#food-total').innerHTML = number(resources.food.total);
     getElement('#forage-total').innerHTML = number(stats.forage.total);
@@ -107,8 +121,11 @@ function unlockedUpgradesHandler() {
 
 function forageUpgradeHandler() {
     if (forageUpgrades.unlocked().greaterThan(0) && forageUpgrades.hidden()) {
-        const upgrade = calculate.forage.upgradeCost();
-        display.upgradeElement.forage(upgrade);
+        const upgrade = {
+            cost: calculate.forage.upgradeCost(),
+            boost: calculate.forage.upgradeBoost()
+        };
+        display.upgradeElement.forage.rate(upgrade);
     }
 }
 

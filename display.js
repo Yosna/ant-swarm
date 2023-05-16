@@ -1,4 +1,4 @@
-import { resources } from './index.js';
+import { resources, upgrades } from './index.js';
 import * as game from './game.js';
 import { number, getElement } from './util.js';
 
@@ -53,12 +53,30 @@ const statistics = {
 
 const upgradeElement = {
     forage: {
-        yield: function() {
-            //
+        rate: function(upgrade) {
+            const container = document.querySelector('.upgrade-button-container');
+            const button = document.createElement('button');
+
+            button.type = 'button';
+            button.className = 'forage-upgrade-button';
+            button.id = 'forage-rate-upgrade';
+            button.dataset.string = `Forage Rate
+                Upgrade ${(upgrades.forage.rate.obtained.plus(1))}
+                \nCost: ${number(upgrade.cost)}
+                \nMultiplies forage rate by ${number(upgrade.boost)}`;
+            button.dataset.cost = upgrade.cost;
+            button.dataset.boost = upgrade.boost;
+            button.innerText = 'FR';
+
+            container.appendChild(button);
+
+            game.init.eventListener('#forage-rate-upgrade', 'click', () => {
+                game.forageUpgrades.buy();
+            });
         }
     },
     ants: function(ant, upgrade) {
-        const container = document.getElementsByClassName('upgrade-button-container')[ant.type];
+        const container = document.querySelector('.upgrade-button-container');
         const button = document.createElement('button');
 
         button.type = 'button';
@@ -66,7 +84,7 @@ const upgradeElement = {
         button.id = `${ant.id}-upgrade`;
         button.dataset.id = ant.id;
         button.dataset.string = `${ant.name}\nUpgrade ${(ant.upgrades.plus(1))}
-            \nCost: ${upgrade.cost}
+            \nCost: ${number(upgrade.cost)}
             \nBoosts production by ${upgrade.percent}\nfor every ${ant.id_abb} recruited`;
         button.dataset.cost = upgrade.cost;
         button.dataset.boost = upgrade.boost;
@@ -84,6 +102,7 @@ const upgradeElement = {
 function update() {
     resourceElements();
     antElements();
+    upgradeElements();
 }
 
 function resourceElements() {
@@ -135,18 +154,36 @@ function updateAnt(ant) {
             element.update(antElement.selector, 'innerHTML', antElement.value);
         }
     }
-    antUpgrades(ant);
     return true;
 }
 
-function antUpgrades(ant) {
-    const upgrade = document.getElementById(`${ant.id}-upgrade`);
+function upgradeElements() {
+    forageUpgrades();
+    antUpgrades();
+}
+
+function forageUpgrades() {
+    const upgrade = document.getElementById('forage-rate-upgrade');
     if (upgrade) {
-        const cost = new Decimal((upgrade.getAttribute('data-cost')).replace(/,/g, ''));
+        const cost = new Decimal(upgrade.getAttribute('data-cost'));
         if (resources.food.total.greaterThanOrEqualTo(cost)) {
-            element.update(`#${ant.id}-upgrade`, 'style.backgroundColor', '#009963');
+            element.update('#forage-rate-upgrade', 'style.backgroundColor', '#009940');
         } else {
-            element.update(`#${ant.id}-upgrade`, 'style.backgroundColor', '#455b55');
+            element.update('#forage-rate-upgrade', 'style.backgroundColor', '#455b55');
+        }
+    }
+}
+
+function antUpgrades(ant) {
+    for (const { ant } of game.getAnts()) {
+        const upgrade = document.getElementById(`${ant.id}-upgrade`);
+        if (upgrade) {
+            const cost = new Decimal(upgrade.getAttribute('data-cost'));
+            if (resources.food.total.greaterThanOrEqualTo(cost)) {
+                element.update(`#${ant.id}-upgrade`, 'style.backgroundColor', '#009963');
+            } else {
+                element.update(`#${ant.id}-upgrade`, 'style.backgroundColor', '#455b55');
+            }
         }
     }
 }
