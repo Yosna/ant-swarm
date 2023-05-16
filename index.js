@@ -68,8 +68,8 @@ const conditions = {
         status: false
     },
     autoSave: {
-        name: 'Autosave',
-        id: 'autosave-button',
+        name: 'Auto Save',
+        id: 'auto-save-button',
         status: true
     },
     rounding: {

@@ -1,4 +1,4 @@
-import { colonies, resources, stats, conditions } from './index.js';
+import { colonies, resources, stats, upgrades, conditions } from './index.js';
 import * as game from './game.js';
 import { getElement } from './util.js';
 import { element } from './display.js';
@@ -30,7 +30,7 @@ const eventListeners = getEventListeners({
         autoRecruit: eventListener('#auto-recruit-button', 'click', () => {
             game.util.toggleSetting(conditions.autoRecruit, '#898989');
         }),
-        autoSave: eventListener('#autosave-button', 'click', () => {
+        autoSave: eventListener('#auto-save-button', 'click', () => {
             game.util.toggleSetting(conditions.autoSave, '#898989');
         }),
         quantity: eventListener('#quantity-selection', 'change', e => {
@@ -94,6 +94,7 @@ function getSave(encodedData) {
         Object.assign(colonies, saveData.colonies);
         Object.assign(resources, saveData.resources);
         Object.assign(stats, saveData.stats);
+        Object.assign(upgrades, saveData.upgrades);
         Object.assign(conditions, saveData.conditions);
         game.calculate.offlineProgress();
 

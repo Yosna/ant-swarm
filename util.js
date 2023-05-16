@@ -1,4 +1,4 @@
-import { colonies, resources, stats, conditions, timers } from './index.js';
+import { colonies, resources, stats, upgrades, conditions, timers } from './index.js';
 import * as game from './game.js';
 import { element } from './display.js';
 
@@ -8,6 +8,7 @@ const save = {
             colonies,
             resources,
             stats,
+            upgrades,
             conditions
         };
         const encodedData = btoa(JSON.stringify(saveData));
@@ -100,8 +101,6 @@ function clearLog() {
 
 function timestamp() {
     stats.lastUpdate = Date.now();
-    const playtime = getElement('#time-since-creation');
-    playtime.innerHTML = game.calculate.elapsedTime(stats.firstUpdate).format;
 }
 
 function exportToFile(exported) {

@@ -40,9 +40,6 @@ const modals = {
 };
 
 const statistics = {
-    update: function(id, value) {
-        (getElement(id).innerHTML = value);
-    },
     ants: {
         garden: function() {
             element.collapse(getElement('#garden-ant-subentries'));

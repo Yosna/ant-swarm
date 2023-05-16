@@ -94,7 +94,7 @@ const ants = {
         }
         for (const key in stats.ants) {
             if (key === colony) {
-                game.display.statistics.update(`#${colony}-ant-total`, number(acquiredTotal.floor()));
+                getElement(`#${colony}-ant-total`).innerHTML = number(acquiredTotal.floor());
             }
         }
     }
@@ -213,8 +213,13 @@ function resourceProduction(multiplier) {
 }
 
 function statistics() {
+    const playtime = getElement('#time-since-creation');
+    playtime.innerHTML = game.calculate.elapsedTime(stats.firstUpdate).format;
+
+    getElement('#forage-rate').innerHTML = number(stats.forage.rate);
+
     for (const { ant } of game.getAnts()) {
-        game.display.statistics.update(`#${ant.id}-stat`, number(ant.acquired.floor()));
+        getElement(`#${ant.id}-stat`).innerHTML = number(ant.acquired.floor());
         ants.stats(ant.colony);
     }
 }
@@ -224,7 +229,9 @@ function autoRecruitment(ant) {
         return;
     }
     if (resources.food.total.greaterThanOrEqualTo(ants.nextCost(ant, ant.recruited).times(10))) {
-        game.recruit(document.getElementById(`${ant.id}-button`));
+        if (ant.recruited.lessThan(100)) {
+            game.recruit(document.getElementById(`${ant.id}-button`));
+        }
     }
 }
 

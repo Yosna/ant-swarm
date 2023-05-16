@@ -6,13 +6,15 @@ import init from './init.js';
 
 const forageUpgrades = {
     unlocked: function() {
-        let available = new Decimal(0);
         for (const { ant } of getAnts()) {
-            if (ant.recruited.greaterThanOrEqualTo(25) && available.lessThan(ant.tier)) {
-                available = available.plus(1);
+            if (
+                ant.recruited.greaterThanOrEqualTo(25) &&
+                upgrades.forage.rate.unlocked.lessThan(ant.tier.plus(1))
+            ) {
+                upgrades.forage.rate.unlocked = upgrades.forage.rate.unlocked.plus(1);
             }
         }
-        upgrades.forage.rate.unlocked = available;
+
         return (upgrades.forage.rate.unlocked
             .minus(upgrades.forage.rate.obtained));
     },
