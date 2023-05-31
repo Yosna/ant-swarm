@@ -1,4 +1,3 @@
-import Decimal from './decimal.js';
 import number from '../utilities/number.js';
 import dom from '../utilities/dom.js';
 import { stats, conditions } from '../index.js';
