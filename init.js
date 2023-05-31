@@ -1,176 +1,118 @@
-import { colonies, resources, stats, upgrades, conditions } from './index.js';
-import * as game from './game.js';
-import { getElement } from './util.js';
-import { element } from './display.js';
+import save from './utilities/save.js';
+import logger from './utilities/logger.js';
+import dom from './utilities/dom.js';
+import { stats, conditions, timers } from './index.js';
+import { colonies, getAntByName } from './colonies.js';
+import { gather } from './forage.js';
+import { offlineProgress, gameProgression } from './game.js';
+
+const events = {
+    onGather: () => {
+        gather();
+    },
+    onRecruit: (event) => {
+        getAntByName(event.target.dataset.name).recruit();
+    },
+    onSaveGame: () => {
+        save.game();
+    },
+    onSaveReset: () => {
+        save.reset();
+    },
+    onSaveImported: () => {
+        save.imported();
+    },
+    onSaveExported: (event) => {
+        save.exported(event.target.innerHTML);
+    },
+    onAutoSave: () => {
+        dom.toggleSetting(conditions.autoSave);
+    },
+    onRounding: () => {
+        dom.toggleSetting(conditions.rounding);
+    },
+    onOfflineProgression: () => {
+        dom.toggleSetting(conditions.offlineProgression);
+    },
+    onAutoRecruit: () => {
+        dom.toggleSetting(conditions.autoRecruit);
+    },
+    onClearLog: () => {
+        dom.getElement('.message-log').innerHTML = '';
+    },
+    onNewQuantity: (event) => {
+        event.target.blur();
+    },
+    toggleModal: (event) => {
+        if (event.target.dataset.modal === 'import-export-modal') {
+            document.dom.getElementById('import-export-field').value = '';
+        }
+        dom.toggleModal(event.target);
+    },
+    hideInactiveWindow: (event) => {
+        const modals = ['settings', 'stats', 'import-export'];
+        for (const modal in modals) {
+            const selector = `#${modals[modal]}-modal`;
+            const exception = `${modals[modal]}-toggle`;
+            if (!event.target.matches(selector) &&
+                !dom.getElement(selector).contains(event.target) &&
+                !event.target.classList.contains(exception)
+            ) {
+                dom.getElement(selector).classList.add('collapse');
+            }
+        }
+    },
+    toggleGardenColony: (event) => {
+        console.log(event.target.id.length);
+        colonies.garden.toggleStatSubentries(event.target);
+    },
+    detectVisibility: () => {
+        conditions.activeWindow.status = !conditions.activeWindow.status;
+
+        // This is only for development; it corrects the condition
+        // whenever the window is reloaded while inactive.
+        if (document.visibilityState === 'visible' && !conditions.activeWindow.status) {
+            conditions.activeWindow.status = true;
+        }
+
+        if (conditions.activeWindow.status) {
+            // calculate.offlineProgress();
+        }
+    },
+    horizontalScroll: (event) => {
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+            event.preventDefault();
+            // Target the parent element if the cursor
+            // is hovering over a button element
+            const target = event.target.tagName === 'DIV'
+                ? event.target
+                : event.target.parentElement;
+            target.scrollLeft += event.deltaY;
+        }
+    }
+};
 
 const eventListeners = getEventListeners({
-    gameEvents: {
-        forage: eventListener('#forage-button', 'click', game.forage),
-        recruit: eventListener('.recruit-button', 'click', e => {
-            game.recruit(e.target);
-        })
-    },
-    menuEvents: {
-        importExport: eventListener('.import-export-toggle', 'click', game.display.modals.importExport),
-        settings: eventListener('.settings-toggle', 'click', game.display.modals.settings),
-        stats: eventListener('.stats-toggle', 'click', game.display.modals.statistics)
-    },
-    saveEvents: {
-        save: eventListener('#save-button', 'click', game.util.save.game),
-        del: eventListener('#delete-button', 'click', game.util.save.delete),
-        import: eventListener('#import-button', 'click', game.util.save.import),
-        export: eventListener('.export-button', 'click', e => {
-            game.util.save.export(e.target.innerHTML);
-        })
-    },
-    settingsEvents: {
-        offline: eventListener('#offline-progress-button', 'click', () => {
-            game.util.toggleSetting(conditions.offlineProgress, '#898989');
-        }),
-        autoRecruit: eventListener('#auto-recruit-button', 'click', () => {
-            game.util.toggleSetting(conditions.autoRecruit, '#898989');
-        }),
-        autoSave: eventListener('#auto-save-button', 'click', () => {
-            game.util.toggleSetting(conditions.autoSave, '#898989');
-        }),
-        quantity: eventListener('#quantity-selection', 'change', e => {
-            for (const { ant } of game.getAnts()) {
-                game.calculate.ants.quantityCost(ant);
-                e.target.blur();
-            }
-        }),
-        rounding: eventListener('#rounding-button', 'click', () => {
-            game.util.toggleSetting(conditions.rounding, '#009963');
-        }),
-        clearLog: eventListener('#clear-log-button', 'click', game.util.clearLog)
-    },
-    utilityEvents: {
-        visibility: eventListener(null, 'visibilitychange', () => {
-            conditions.activeWindow.status = !conditions.activeWindow.status;
-            if (conditions.activeWindow.status) {
-                game.calculate.offlineProgress();
-            }
-        }),
-        scroll: eventListener('.upgrade-button-container', 'wheel', e => {
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                e.preventDefault();
-                const target = e.target.tagName === 'DIV'
-                    ? e.target
-                    : e.target.parentElement;
-                target.scrollLeft += e.deltaY;
-            }
-        }),
-        modals: {
-            settings: eventListener(null, 'click', e => {
-                hideIfNotActive('#settings-modal', e.target, 'settings-toggle');
-            }),
-            stats: eventListener(null, 'click', e => {
-                hideIfNotActive('#stats-modal', e.target, 'stats-toggle');
-            }),
-            importExport: eventListener(null, 'click', e => {
-                hideIfNotActive('#import-export-modal', e.target, 'import-export-toggle');
-            })
-        }
-    },
-    statMenuEvents: {
-        ants: {
-            garden: eventListener('#garden-ant-stats', 'click', game.display.statistics.ants.garden)
-        }
-    }
+    gather: dom.eventListener('#forage-button', 'click', events.onGather),
+    recruit: dom.eventListener('.recruit-button', 'click', events.onRecruit),
+    save: dom.eventListener('#save-button', 'click', events.onSaveGame),
+    resetSave: dom.eventListener('#delete-button', 'click', events.onSaveReset),
+    importSave: dom.eventListener('#import-button', 'click', events.onSaveImported),
+    exportSave: dom.eventListener('.export-button', 'click', events.onSaveExported),
+    autoSave: dom.eventListener('#auto-save-button', 'click', events.onAutoSave),
+    rounding: dom.eventListener('#rounding-button', 'click', events.onRounding),
+    offlineProgression: dom.eventListener('#offline-progression-button', 'click', events.onOfflineProgression),
+    autoRecruit: dom.eventListener('#auto-recruit-button', 'click', events.onAutoRecruit),
+    clearLog: dom.eventListener('#clear-log-button', 'click', events.onClearLog),
+    newQuantity: dom.eventListener('#quantity-selection', 'change', events.onNewQuantity),
+    importExportModal: dom.eventListener('.import-export-toggle', 'click', events.toggleModal),
+    settingsModal: dom.eventListener('.settings-toggle', 'click', events.toggleModal),
+    statsModal: dom.eventListener('.stats-toggle', 'click', events.toggleModal),
+    activeModal: dom.eventListener(null, 'click', events.hideInactiveWindow),
+    gardenColonyStats: dom.eventListener('#garden-colony-stats', 'click', events.toggleGardenColony),
+    visibility: dom.eventListener(null, 'visibilitychange', events.detectVisibility),
+    overflow: dom.eventListener('.upgrade-button-container', 'wheel', events.horizontalScroll)
 });
-
-function load() {
-    const saveFound = localStorage.getItem('saveData');
-    saveFound ? getSave(saveFound) : newSave();
-    setElements();
-    setEventListeners();
-}
-
-function getSave(encodedData) {
-    game.util.log('Loading save data...');
-    try {
-        const saveData = deserialize(JSON.parse(atob(encodedData)));
-
-        Object.assign(colonies, saveData.colonies);
-        Object.assign(resources, saveData.resources);
-        Object.assign(stats, saveData.stats);
-        Object.assign(upgrades, saveData.upgrades);
-        Object.assign(conditions, saveData.conditions);
-        game.calculate.offlineProgress();
-
-        return true;
-    } catch (error) {
-        game.util.log('Invalid save data detected! Aborting...');
-        console.log(error);
-        return false;
-    }
-}
-
-function newSave() {
-    game.util.log('Creating new save data...');
-    for (const [type, ants] of Object.values(colonies).entries()) {
-        for (const [tier, ant] of Object.values(ants).entries()) {
-            ant.unlocked = false;
-            ant.recruited = new Decimal(0);
-            ant.acquired = new Decimal(0);
-            ant.production = new Decimal(0.1);
-            ant.boost = new Decimal(0);
-            ant.upgrades = new Decimal(0);
-            ant.type = new Decimal(type);
-            ant.tier = new Decimal(tier);
-            ant.colony = Object.keys(colonies)[type];
-            ant.cost = game.calculate.ants.baseCost(ant);
-        }
-    }
-    game.util.save.game();
-}
-
-function deserialize(data) {
-    const converted = {};
-    for (const key in data) {
-        if (typeof data[key] === 'object' && data[key] !== null) {
-            converted[key] = deserialize(data[key]);
-        } else {
-            converted[key] = conversion(data[key]);
-        }
-    }
-    return converted;
-}
-
-function conversion(data) {
-    if (!isNaN(Number(data)) && typeof data !== 'boolean') {
-        return new Decimal(data);
-    }
-    return data;
-}
-
-function setElements() {
-    getElement('#creation-date').innerHTML = stats.creationDate;
-    getElement('#forage-total').innerHTML = stats.forage.total;
-    for (const { ant, lastAnt } of game.getAnts()) {
-        if (ant.unlocked) {
-            if (lastAnt) {
-                const char = getElement(`#${lastAnt.id_abb}-se-char`);
-                char.innerHTML = '\u251C\u2500';
-            }
-            element.update(`.${ant.id}-data`, 'style.visibility', 'visible');
-            element.collapse(getElement(`#${ant.id}-stats`));
-        }
-    }
-    setToggles();
-    game.util.setTimers();
-}
-
-function setToggles() {
-    conditions.autoSave.status = !conditions.autoSave.status;
-    conditions.rounding.status = !conditions.rounding.status;
-    conditions.offlineProgress.status = !conditions.offlineProgress.status;
-    conditions.autoRecruit.status = !conditions.autoRecruit.status;
-    game.util.toggleSetting(conditions.autoSave, '#898989');
-    game.util.toggleSetting(conditions.rounding, '#009963');
-    game.util.toggleSetting(conditions.offlineProgress, '#898989');
-    game.util.toggleSetting(conditions.autoRecruit, '#898989');
-}
 
 function * getEventListeners() {
     for (const event in eventListeners) {
@@ -183,34 +125,41 @@ function * getEventListeners() {
 }
 
 function setEventListeners() {
-    for (const eventListener of getEventListeners()) {
+    for (const eventListener of eventListeners) {
         eventListener();
     }
 }
 
-function eventListener(selector, event, callback) {
-    if (selector) {
-        const selected = document.querySelectorAll(selector);
-        for (const key of selected) {
-            key.addEventListener(event, callback);
+function setToggles() {
+    for (const iteration in conditions) {
+        const condition = conditions[iteration];
+        if (condition.id) {
+            condition.status = !condition.status;
+            dom.toggleSetting(condition);
         }
-    } else {
-        document.addEventListener(event, callback);
     }
 }
 
-function hideIfNotActive(selector, target, exception) {
-    const selected = $(selector);
-    if (!$(target).is(selected) &&
-        !selected.has(target).length &&
-        target.className !== exception
-    ) {
-        selected.hide();
-    }
+function setTimers() {
+    timers.progression = setInterval(gameProgression, stats.tickSpeed);
+    timers.autoSave = setInterval(function() {
+        if (conditions.autoSave.status && conditions.activeWindow.status) {
+            save.game();
+        }
+    }, 180000);
 }
 
-export default {
-    load,
-    getSave,
-    eventListener
-};
+function load() {
+    const existingSave = localStorage.getItem('save');
+    const status = existingSave ? save.load(existingSave) : save.create();
+    logger(status);
+
+    if (existingSave) {
+        setToggles();
+        offlineProgress();
+    }
+    setEventListeners();
+    setTimers();
+}
+
+window.onload = load();
