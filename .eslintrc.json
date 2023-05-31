@@ -1,14 +1,19 @@
 {
     "globals": {
       "$": true,
-      "jQuery": true,
       "Decimal": true
     },
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "jest": true
     },
-    "extends": "standard",
+    "plugins": ["jest", "import"],
+    "extends": [
+        "standard",
+        "eslint:recommended",
+        "plugin:jest/recommended"
+    ],
     "overrides": [
     ],
     "parserOptions": {
@@ -20,6 +25,7 @@
         "semi": ["error", "always"],
         "no-extra-semi": "error",
         "space-before-function-paren": ["error", "never"],
-        "no-multi-spaces": ["error", { "ignoreEOLComments": true, "exceptions": { "Property": true } }]
+        "no-multi-spaces": ["error", { "ignoreEOLComments": true, "exceptions": { "Property": true } }],
+        "import/no-cycle": ["error", { "maxDepth": 100 }]
     }
 }
