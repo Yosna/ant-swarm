@@ -1,7 +1,8 @@
 import Decimal from '../classes/decimal.mjs';
 
 const DecimalRoundDown = Decimal.clone({ rounding: Decimal.ROUND_DOWN });
-function number(raw) {
+
+const number = (raw) => {
     switch (true) {
         case raw.lessThan(100):
             return parseFloat(raw.toFixed(2));
@@ -12,6 +13,6 @@ function number(raw) {
         default:
             return DecimalRoundDown(raw).toExponential(3);
     }
-}
+};
 
 export default number;

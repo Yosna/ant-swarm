@@ -32,21 +32,21 @@ function * iterateAnts(colony) {
     }
 }
 
-function getAntByName(target) {
+const getAntByName = (target) => {
     for (const iteration of iterateColonies(colonies)) {
         if (iteration.name === target) {
             return iteration;
         }
     }
-}
+};
 
-function colonyProgression() {
+const colonyProgression = () => {
     for (const iteration of iterateColonies()) {
         if (iteration instanceof Colony || Ant) {
             iteration.progression();
         }
     }
-}
+};
 
 export {
     colonies,

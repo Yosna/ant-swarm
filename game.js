@@ -62,7 +62,7 @@ function gameProgression() {
         dom.updateElements(gameStatElements);
         forageProgression();
         colonyProgression();
-        time.now();
+        time.update();
     }
 }
 

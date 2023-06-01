@@ -16,7 +16,7 @@ const log = {
         return { parent, wrapper };
     },
 
-    message: function(content) {
+    message: (content) => {
         const message = document.createElement('span');
         message.classList.add('message-text');
         message.textContent = `${content.join('')}`;

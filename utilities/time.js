@@ -2,7 +2,7 @@ import Decimal from '../classes/decimal.mjs';
 import { stats } from '../index.js';
 
 const time = {
-    now: () => (stats.lastUpdate = Date.now()),
+    update: () => (stats.lastUpdate = Date.now()),
 
     elapsed: (elapse) => {
         const milliseconds = new Decimal(Date.now() - elapse);

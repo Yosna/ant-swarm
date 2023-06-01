@@ -62,25 +62,25 @@ const upgrades = {
     }
 };
 
-function gather() {
+const gather = () => {
     const rate = stats.gatherRate.value;
     const boost = new Decimal(upgrades.gatherRate.boost);
     const gathered = rate.times(boost).dividedBy(10);
     resources.food.total = resources.food.total.plus(gathered);
     stats.forage.total = stats.forage.total.plus(1);
-}
+};
 
-function isGatherRateUpgradeUnlocked(ant) {
+const isGatherRateUpgradeAvailable = (ant) => {
     const isRecruited = ant instanceof Ant
         ? ant.recruited.greaterThanOrEqualTo(25)
         : false;
-    const isUnlocked = stats.gatherRate.obtained
+    const isAvailable = stats.gatherRate.obtained
         .lessThanOrEqualTo(ant.antTier);
 
-    if (isRecruited && isUnlocked) return true;
-}
+    if (isRecruited && isAvailable) return true;
+};
 
-function isGatherRateUpgradeHidden(ant) {
+const isGatherRateUpgradeHidden = (ant) => {
     let isHidden = true;
     if (ant instanceof Ant) {
         const selector = `#${ant.colony.toLowerCase()}-upgrade-container`;
@@ -95,16 +95,16 @@ function isGatherRateUpgradeHidden(ant) {
         }
     }
     return isHidden;
-}
+};
 
-function isGatherRateUpgradeAvailable(ant) {
-    const isUnlocked = isGatherRateUpgradeUnlocked(ant);
+const isGatherRateUpgradeUnlocked = (ant) => {
+    const isAvailable = isGatherRateUpgradeAvailable(ant);
     const isHidden = isGatherRateUpgradeHidden(ant);
-    const isAvailable = isUnlocked && isHidden;
-    return isAvailable;
-}
+    const isUnlocked = isAvailable && isHidden;
+    return isUnlocked;
+};
 
-function createGatherRateUpgradeElement(selector) {
+const createGatherRateUpgradeElement = (selector) => {
     const container = dom.getElement(selector);
     const button = document.createElement('button');
     const cost = upgrades.gatherRate.cost;
@@ -123,11 +123,10 @@ function createGatherRateUpgradeElement(selector) {
     button.innerText = 'GR';
 
     container.appendChild(button);
-}
+};
 
-function upgradeGatherRate(selector) {
+const upgradeGatherRate = (selector) => {
     const upgrade = dom.getElement(`#${selector}`);
-    console.log(upgrade);
     const cost = new Decimal(upgrade.dataset.cost);
     const boost = new Decimal(upgrade.dataset.boost);
 
@@ -138,26 +137,26 @@ function upgradeGatherRate(selector) {
 
         upgrade.remove();
     }
-}
+};
 
-function forageUpgradeHandler() {
+const forageUpgradeHandler = () => {
     for (const ant of iterateColonies()) {
-        if (ant instanceof Ant && isGatherRateUpgradeAvailable(ant)) {
+        if (ant instanceof Ant && isGatherRateUpgradeUnlocked(ant)) {
             const container = `#${ant.colony.toLowerCase()}-upgrade-container`;
-            const selector = 'forage-rate-upgrade';
+            const selector = 'gather-rate-upgrade';
             createGatherRateUpgradeElement(container);
-
             dom.eventListener(selector, 'click', () => {
+                console.log('clicked')
                 upgradeGatherRate(selector);
             });
         }
     }
-}
+};
 
-function forageProgression() {
+const forageProgression = () => {
     dom.updateElements(forageElements);
     forageUpgradeHandler();
-}
+};
 
 export {
     gather,
