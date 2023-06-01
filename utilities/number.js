@@ -1,4 +1,4 @@
-import Decimal from '../classes/decimal.js';
+import Decimal from '../classes/decimal.mjs';
 
 const DecimalRoundDown = Decimal.clone({ rounding: Decimal.ROUND_DOWN });
 function number(raw) {

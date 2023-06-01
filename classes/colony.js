@@ -1,3 +1,4 @@
+import Decimal from '../classes/decimal.mjs';
 import Ant from './ant.js';
 import number from '../utilities/number.js';
 import dom from '../utilities/dom.js';

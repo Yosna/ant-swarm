@@ -1,3 +1,5 @@
+import Decimal from '../classes/decimal.mjs';
+
 const resources = {
     food: {
         name: 'food',

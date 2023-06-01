@@ -1,3 +1,4 @@
+import Decimal from '../classes/decimal.mjs';
 import Colony from '../classes/colony.js';
 import { resources, stats, conditions } from '../index.js';
 import { colonies } from '../colonies.js';

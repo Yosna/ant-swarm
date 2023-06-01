@@ -1,26 +1,45 @@
-const logger = (...args) => addLogger(createLogger(...args));
+import time from './time.js';
 
-const createLogger = (...args) => {
-    const d = new Date();
-    const time = document.createElement('span');
-    const text = document.createElement('span');
-    time.classList.add('message-time');
-    text.classList.add('message-text');
-    time.textContent = `[${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}]:`;
-    text.textContent = `${Array.from(...args).join('')}`;
-    const format = [time, text];
-    const message = document.createElement('div');
-    const log = document.createElement('pre');
-    message.append(...format);
-    log.appendChild(message);
-    return log;
-};
+const logger = (...content) => log.append(content);
 
-const addLogger = (log) => {
-    const element = document.querySelector('.message-log');
-    element.insertBefore(log, element.firstChild);
-    if (element.childElementCount > 50) {
-        element.removeChild(element.lastChild);
+const log = {
+    get timestamp() {
+        const timestamp = document.createElement('span');
+        timestamp.classList.add('message-timestamp');
+        timestamp.textContent = time.format;
+        return timestamp;
+    },
+
+    entry: () => {
+        const wrapper = document.createElement('div');
+        const parent = document.createElement('pre');
+        return { parent, wrapper };
+    },
+
+    message: function(content) {
+        const message = document.createElement('span');
+        message.classList.add('message-text');
+        message.textContent = `${content.join('')}`;
+        return message;
+    },
+
+    create: function(content) {
+        const entry = this.entry();
+        entry.wrapper.append(this.timestamp, this.message(content));
+        entry.parent.appendChild(entry.wrapper);
+        return entry.parent;
+    },
+
+    append: function(content) {
+        const entries = document.querySelector('.message-log');
+        const entry = this.create(content);
+
+        entries.insertBefore(entry, entries.firstChild);
+
+        if (entries.childElementCount > 100) {
+            entries.removeChild(entries.lastChild);
+        }
+        return this;
     }
 };
 

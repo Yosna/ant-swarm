@@ -272,7 +272,7 @@ body {
     margin-left: .5em;
 }
 .message-text {
-    margin-left: 1em;
+    margin-left: 0.5em;
 }
 .modal {
     background-color: rgba(150, 150, 150, 0.9);

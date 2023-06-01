@@ -92,43 +92,28 @@ const events = {
     }
 };
 
-const eventListeners = getEventListeners({
-    gather: dom.eventListener('#forage-button', 'click', events.onGather),
-    recruit: dom.eventListener('.recruit-button', 'click', events.onRecruit),
-    save: dom.eventListener('#save-button', 'click', events.onSaveGame),
-    resetSave: dom.eventListener('#delete-button', 'click', events.onSaveReset),
-    importSave: dom.eventListener('#import-button', 'click', events.onSaveImported),
-    exportSave: dom.eventListener('.export-button', 'click', events.onSaveExported),
-    autoSave: dom.eventListener('#auto-save-button', 'click', events.onAutoSave),
-    rounding: dom.eventListener('#rounding-button', 'click', events.onRounding),
-    offlineProgression: dom.eventListener('#offline-progression-button', 'click', events.onOfflineProgression),
-    autoRecruit: dom.eventListener('#auto-recruit-button', 'click', events.onAutoRecruit),
-    clearLog: dom.eventListener('#clear-log-button', 'click', events.onClearLog),
-    newQuantity: dom.eventListener('#quantity-selection', 'change', events.onNewQuantity),
-    importExportModal: dom.eventListener('.import-export-toggle', 'click', events.toggleModal),
-    settingsModal: dom.eventListener('.settings-toggle', 'click', events.toggleModal),
-    statsModal: dom.eventListener('.stats-toggle', 'click', events.toggleModal),
-    activeModal: dom.eventListener(null, 'click', events.hideInactiveWindow),
-    gardenColonyStats: dom.eventListener('#garden-colony-stats', 'click', events.toggleGardenColony),
-    visibility: dom.eventListener(null, 'visibilitychange', events.detectVisibility),
-    overflow: dom.eventListener('.upgrade-button-container', 'wheel', events.horizontalScroll)
-});
-
-function * getEventListeners() {
-    for (const event in eventListeners) {
-        if (typeof eventListeners[event] === 'function') {
-            yield eventListeners[event];
-        } else {
-            yield * getEventListeners(eventListeners[event]);
-        }
-    }
-}
-
-function setEventListeners() {
-    for (const eventListener of eventListeners) {
-        eventListener();
-    }
-}
+const eventListeners = [
+    () => dom.eventListener('#forage-button', 'click', events.onGather),
+    () => dom.eventListener('.recruit-button', 'click', events.onRecruit),
+    () => dom.eventListener('#save-button', 'click', events.onSaveGame),
+    () => dom.eventListener('#delete-button', 'click', events.onSaveReset),
+    () => dom.eventListener('#import-button', 'click', events.onSaveImported),
+    () => dom.eventListener('.export-button', 'click', events.onSaveExported),
+    () => dom.eventListener('#auto-save-button', 'click', events.onAutoSave),
+    () => dom.eventListener('#rounding-button', 'click', events.onRounding),
+    () => dom.eventListener('#offline-progression-button', 'click', events.onOfflineProgression),
+    () => dom.eventListener('#auto-recruit-button', 'click', events.onAutoRecruit),
+    () => dom.eventListener('#clear-log-button', 'click', events.onClearLog),
+    () => dom.eventListener('#quantity-selection', 'change', events.onNewQuantity),
+    () => dom.eventListener('.import-export-toggle', 'click', events.toggleModal),
+    () => dom.eventListener('.settings-toggle', 'click', events.toggleModal),
+    () => dom.eventListener('.stats-toggle', 'click', events.toggleModal),
+    () => dom.eventListener(null, 'click', events.hideInactiveWindow),
+    () => dom.eventListener('#garden-colony-stats', 'click', events.toggleGardenColony),
+    () => dom.eventListener(null, 'visibilitychange', events.detectVisibility),
+    () => dom.eventListener('.upgrade-button-container', 'wheel', events.horizontalScroll)
+];
+const initEventListeners = () => eventListeners.forEach((listener) => listener());
 
 function setToggles() {
     for (const iteration in conditions) {
@@ -158,7 +143,7 @@ function load() {
         setToggles();
         offlineProgress();
     }
-    setEventListeners();
+    initEventListeners();
     setTimers();
 }
 

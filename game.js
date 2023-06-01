@@ -1,3 +1,4 @@
+import Decimal from '../classes/decimal.mjs';
 import Ant from './classes/ant.js';
 import logger from './utilities/logger.js';
 import dom from './utilities/dom.js';
@@ -16,13 +17,13 @@ const gameStatElements = {
         selector: '#time-since-creation',
         property: 'innerHTML',
         get value() {
-            return time.elapsedTime(stats.firstUpdate).format;
+            return time.elapsed(stats.firstUpdate).format;
         }
     }
 };
 
 function offlineProgress() {
-    const offlineTime = time.elapsedTime(stats.lastUpdate);
+    const offlineTime = time.elapsed(stats.lastUpdate);
     const message = `Welcome back!\nYou were away for:\n${offlineTime.format}`;
     logger(message);
 
@@ -61,7 +62,7 @@ function gameProgression() {
         dom.updateElements(gameStatElements);
         forageProgression();
         colonyProgression();
-        time.timestamp();
+        time.now();
     }
 }
 
