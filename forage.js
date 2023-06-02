@@ -5,7 +5,7 @@ import dom from './utilities/dom.js';
 import { resources, stats } from './index.js';
 import { iterateColonies } from './colonies.js';
 
-const forageElements = {
+const elements = {
     foodTotal: {
         selector: '#food-total',
         property: 'innerHTML',
@@ -31,13 +31,9 @@ const forageElements = {
         selector: '#gather-rate-upgrade',
         property: 'style.backgroundColor',
         get value() {
-            const cost = upgrades.gatherRate.cost;
-            const grey = '#455b55';
-            const highlight = '#009940';
-            const color = resources.food.total.gte(cost)
-                ? highlight
-                : grey;
-            return color;
+            return dom.getColor(
+                resources.food.total, upgrades.gatherRate.cost, '#009940'
+            );
         }
     }
 };
@@ -146,7 +142,6 @@ const forageUpgradeHandler = () => {
             const selector = 'gather-rate-upgrade';
             createGatherRateUpgradeElement(container);
             dom.eventListener(selector, 'click', () => {
-                console.log('clicked')
                 upgradeGatherRate(selector);
             });
         }
@@ -154,7 +149,7 @@ const forageUpgradeHandler = () => {
 };
 
 const forageProgression = () => {
-    dom.updateElements(forageElements);
+    dom.updateElements(elements);
     forageUpgradeHandler();
 };
 

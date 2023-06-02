@@ -17,6 +17,8 @@ function game() {
     logger('Game saved!');
 }
 
+const now = () => conditions.autoSave.status && conditions.activeWindow.status;
+
 function create() {
     logger('Creating new save data...');
     game();
@@ -129,6 +131,7 @@ export default {
     game,
     create,
     load,
+    now,
     imported,
     exported,
     reset

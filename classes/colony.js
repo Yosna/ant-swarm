@@ -93,7 +93,7 @@ class Colony {
 
     assignReferences(resource) {
         this.resource = resource;
-        const references = [
+        const target = [
             this.resource,
             this.smallWorker,
             this.regularWorker,
@@ -104,15 +104,11 @@ class Colony {
             this.queen
         ];
 
-        for (let i = 0; i < references.length; i++) {
-            const iteration = references[i];
-            if (iteration instanceof Ant) {
-                iteration._product = references[i - 1];
-            }
-            if (iteration !== this.resource) {
-                iteration.resource = this.resource;
-            }
-        }
+        target.forEach(instance => {
+            if (instance === this.resource) return;
+            instance.resource = this.resource;
+            instance._product = target[target.indexOf(instance) - 1];
+        });
     }
 
     toggleStatSubentries() {

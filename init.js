@@ -45,7 +45,7 @@ const events = {
     },
     toggleModal: (event) => {
         if (event.target.dataset.modal === 'import-export-modal') {
-            document.dom.getElementById('import-export-field').value = '';
+            dom.getElement('#import-export-field').value = '';
         }
         dom.toggleModal(event.target);
     },
@@ -76,7 +76,7 @@ const events = {
         }
 
         if (conditions.activeWindow.status) {
-            // calculate.offlineProgress();
+            offlineProgress();
         }
     },
     horizontalScroll: (event) => {
@@ -115,7 +115,7 @@ const eventListeners = [
 ];
 const initEventListeners = () => eventListeners.forEach((listener) => listener());
 
-function setToggles() {
+const setToggles = () => {
     for (const iteration in conditions) {
         const condition = conditions[iteration];
         if (condition.id) {
@@ -123,18 +123,14 @@ function setToggles() {
             dom.toggleSetting(condition);
         }
     }
-}
+};
 
-function setTimers() {
+const setTimers = () => {
     timers.progression = setInterval(gameProgression, stats.tickSpeed);
-    timers.autoSave = setInterval(function() {
-        if (conditions.autoSave.status && conditions.activeWindow.status) {
-            save.game();
-        }
-    }, 180000);
-}
+    timers.autoSave = setInterval(() => save.now() ? save.game() : null, 180000);
+};
 
-function load() {
+const load = () => {
     const existingSave = localStorage.getItem('save');
     const status = existingSave ? save.load(existingSave) : save.create();
     logger(status);
@@ -145,6 +141,6 @@ function load() {
     }
     initEventListeners();
     setTimers();
-}
+};
 
 window.onload = load();

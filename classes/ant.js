@@ -1,5 +1,5 @@
 import Decimal from '../classes/decimal.mjs';
-import number from '../utilities/number.js';
+import { number, compare } from '../utilities/number.js';
 import dom from '../utilities/dom.js';
 import { stats, conditions } from '../index.js';
 
@@ -107,13 +107,11 @@ class Ant {
         const quantity = new Decimal(dom.getElement('#quantity-selection').value);
         const remainder = this.recruited.mod(quantity);
         const difference = quantity.minus(remainder);
-        return (!conditions.rounding.status)
-            ? quantity // return if rounding is disabled
-            : quantity.eq(0)
-                ? quantity // return if the quantity is 0
-                : this.recruited.mod(quantity).eq(0)
-                    ? quantity // return if quantity is already rounded
-                    : difference; // return the difference to round the quantity
+        return (quantity.eq(0))
+            ? quantity // return if the quantity is 0
+            : this.recruited.mod(quantity).eq(0)
+                ? quantity // return if quantity is already rounded
+                : difference; // return the difference to round the quantity
     }
 
     get elements() {
@@ -215,21 +213,15 @@ class Ant {
     }
 
     get elementColors() {
-        const grey = '#455b55';
-        const recruitHighlight = '#2c8172';
-        const upgradeHighlight = '#009963';
-
-        const recruitColor = this.resource.total.gte(this.costByQuantity.cost)
-            ? recruitHighlight
-            : grey;
-
         const upgrade = dom.getElement(`#${this.id}-upgrade`);
-        const upgradeColor = upgrade && upgrade.dataset.cost
-            ? this.resource.total.gte(upgrade.dataset.cost)
-                ? upgradeHighlight
-                : grey
-            : grey;
-
+        const recruitColor = dom.getColor(
+            this.resource.total, this.costByQuantity.cost, '#2c8172'
+        );
+        const upgradeColor = upgrade
+            ? dom.getColor(
+                this.resource.total, upgrade.dataset.cost, '#009963'
+            )
+            : '#455b55';
         return { recruitColor, upgradeColor };
     }
 
