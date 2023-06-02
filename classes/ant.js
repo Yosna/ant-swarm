@@ -1,5 +1,5 @@
 import Decimal from '../classes/decimal.mjs';
-import { number, compare } from '../utilities/number.js';
+import number from '../utilities/number.js';
 import dom from '../utilities/dom.js';
 import { stats, conditions } from '../index.js';
 
@@ -217,11 +217,9 @@ class Ant {
         const recruitColor = dom.getColor(
             this.resource.total, this.costByQuantity.cost, '#2c8172'
         );
-        const upgradeColor = upgrade
-            ? dom.getColor(
-                this.resource.total, upgrade.dataset.cost, '#009963'
-            )
-            : '#455b55';
+        const upgradeColor = dom.getColor(
+            this.resource.total, upgrade?.dataset.cost ?? 0, '#009963'
+        );
         return { recruitColor, upgradeColor };
     }
 
