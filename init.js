@@ -14,28 +14,28 @@ const events = {
         getAntByName(event.target.dataset.name).recruit();
     },
     onSaveGame: () => {
-        save.game();
+        logger(save.game());
     },
     onSaveReset: () => {
         save.reset();
     },
     onSaveImported: () => {
-        save.imported();
+        logger(save.imported());
     },
     onSaveExported: (event) => {
-        save.exported(event.target.innerHTML);
+        logger(save.exported(event.target.innerHTML));
     },
     onAutoSave: () => {
-        dom.toggleSetting(conditions.autoSave);
+        logger(dom.toggleSetting(conditions.autoSave));
     },
     onRounding: () => {
-        dom.toggleSetting(conditions.rounding);
+        logger(dom.toggleSetting(conditions.rounding));
     },
     onOfflineProgression: () => {
-        dom.toggleSetting(conditions.offlineProgression);
+        logger(dom.toggleSetting(conditions.offlineProgression));
     },
     onAutoRecruit: () => {
-        dom.toggleSetting(conditions.autoRecruit);
+        logger(dom.toggleSetting(conditions.autoRecruit));
     },
     onClearLog: () => {
         dom.getElement('.message-log').innerHTML = '';

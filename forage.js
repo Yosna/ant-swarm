@@ -41,7 +41,7 @@ const elements = {
 const upgrades = {
     gatherRate: {
         get multiplier() {
-            return stats.gatherRate.obtained.plus(1);
+            return stats.gatherRate.upgrades.plus(1);
         },
         get cost() {
             const cost = new Decimal(20)
@@ -59,10 +59,11 @@ const upgrades = {
 };
 
 const gather = () => {
-    const rate = stats.gatherRate.value;
-    const boost = new Decimal(upgrades.gatherRate.boost);
-    const gathered = rate.times(boost).dividedBy(10);
-    resources.food.total = resources.food.total.plus(gathered);
+    const gatherRate = stats.gatherRate.value;
+    const gatherBoost = new Decimal(upgrades.gatherRate.boost);
+    const gatheredFood = gatherRate.times(gatherBoost).dividedBy(10);
+
+    resources.food.total = resources.food.total.plus(gatheredFood);
     stats.forage.total = stats.forage.total.plus(1);
 };
 
@@ -70,7 +71,8 @@ const isGatherRateUpgradeAvailable = (ant) => {
     const isRecruited = ant instanceof Ant
         ? ant.recruited.greaterThanOrEqualTo(25)
         : false;
-    const isAvailable = stats.gatherRate.obtained
+
+    const isAvailable = stats.gatherRate.upgrades
         .lessThanOrEqualTo(ant.antTier);
 
     if (isRecruited && isAvailable) return true;
@@ -105,7 +107,7 @@ const createGatherRateUpgradeElement = (selector) => {
     const button = document.createElement('button');
     const cost = upgrades.gatherRate.cost;
     const boost = upgrades.gatherRate.boost;
-    const upgrade = stats.gatherRate.obtained.plus(1);
+    const upgrade = stats.gatherRate.upgrades.plus(1);
 
     button.type = 'button';
     button.className = 'gather-rate-upgrade-button';
@@ -129,7 +131,7 @@ const upgradeGatherRate = (selector) => {
     if (resources.food.total.greaterThanOrEqualTo(cost)) {
         resources.food.total = resources.food.total.minus(cost);
         stats.gatherRate.value = stats.gatherRate.value.times(boost);
-        stats.gatherRate.obtained = stats.gatherRate.obtained.plus(1);
+        stats.gatherRate.upgrades = stats.gatherRate.upgrades.plus(1);
 
         upgrade.remove();
     }
@@ -140,7 +142,9 @@ const forageUpgradeHandler = () => {
         if (ant instanceof Ant && isGatherRateUpgradeUnlocked(ant)) {
             const container = `#${ant.colony.toLowerCase()}-upgrade-container`;
             const selector = 'gather-rate-upgrade';
+
             createGatherRateUpgradeElement(container);
+
             dom.eventListener(selector, 'click', () => {
                 upgradeGatherRate(selector);
             });

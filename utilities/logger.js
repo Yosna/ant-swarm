@@ -6,7 +6,7 @@ const log = {
     get timestamp() {
         const timestamp = document.createElement('span');
         timestamp.classList.add('message-timestamp');
-        timestamp.textContent = time.format;
+        timestamp.textContent = time.timestamp;
         return timestamp;
     },
 

@@ -4,7 +4,7 @@ import { resources, stats, conditions } from '../index.js';
 import { colonies } from '../colonies.js';
 import logger from './logger.js';
 
-function game() {
+const game = () => {
     const save = {
         resources,
         stats,
@@ -14,18 +14,18 @@ function game() {
     const encoded = btoa(JSON.stringify(save));
     localStorage.setItem('save', encoded);
 
-    logger('Game saved!');
-}
+    return 'Game saved!';
+};
 
 const now = () => conditions.autoSave.status && conditions.activeWindow.status;
 
-function create() {
+const create = () => {
     logger('Creating new save data...');
     game();
     return 'Save data successfully created!';
-}
+};
 
-function load(data) {
+const load = (data) => {
     logger('Loading save data...');
     try {
         const save = transformDataFormat(JSON.parse(atob(data)));
@@ -42,17 +42,17 @@ function load(data) {
         console.log(error);
         return 'Save: Invalid!\nUnable to detect valid save data. Aborting...';
     }
-}
+};
 
-function imported() {
+const imported = () => {
     const data = document.getElementById('import-export-field');
     const status = load(data.value).includes('Success')
-        ? logger('Import: Success!\nSave data has been loaded')
-        : logger('Import: Failed!\nPlease check the save data and try again.');
+        ? 'Import: Success!\nSave data has been loaded'
+        : 'Import: Failed!\nPlease check the save data and try again.';
     return status;
-}
+};
 
-function exported(method) {
+const exported = (method) => {
     const data = document.getElementById('import-export-field');
     const save = {
         colonies,
@@ -66,9 +66,9 @@ function exported(method) {
         ? exportToFile(data)
         : exportToClipboard(data);
     return status;
-}
+};
 
-function exportToFile(data) {
+const exportToFile = (data) => {
     const d = new Date();
     const exportDate = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
     const exportTime = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
@@ -79,21 +79,21 @@ function exportToFile(data) {
     exportAnchor.download = exportFile;
     exportAnchor.target = '_blank';
     exportAnchor.click();
-    return logger('Export: Success! Save data exported to file');
-}
+    return 'Export: Success! Save data exported to file';
+};
 
-function exportToClipboard(data) {
+const exportToClipboard = (data) => {
     data.select();
     navigator.clipboard.writeText(data.value);
-    return logger('Export: Success! Save data copied to clipboard');
-}
+    return 'Export: Success! Save data copied to clipboard';
+};
 
-function reset() {
+const reset = () => {
     localStorage.clear();
     location.reload();
-}
+};
 
-function transformDataFormat(save) {
+const transformDataFormat = (save) => {
     const transformed = {};
     for (const data in save) {
         if (typeof save[data] === 'object') {
@@ -103,9 +103,9 @@ function transformDataFormat(save) {
         }
     }
     return transformed;
-}
+};
 
-function deserialize(save) {
+const deserialize = (save) => {
     const deserialized = {};
     for (const data in save) {
         if (save[data].validation === Colony.name) {
@@ -117,15 +117,15 @@ function deserialize(save) {
         }
     }
     return deserialized;
-}
+};
 
-function determineDataType(data) {
+const determineDataType = (data) => {
     // convert strings of valid numbers to a Decimal object
     if (typeof data === 'string' && !isNaN(Number(data))) {
         return new Decimal(data);
     }
     return data;
-}
+};
 
 export default {
     game,

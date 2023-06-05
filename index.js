@@ -4,7 +4,7 @@ const resources = {
     food: {
         name: 'food',
         abbreviation: 'F',
-        total: new Decimal(0),
+        total: new Decimal(1e5),
         production: new Decimal(0)
     }
 };
@@ -28,7 +28,7 @@ const stats = {
     },
     gatherRate: {
         value: new Decimal(0.1),
-        obtained: new Decimal(0)
+        upgrades: new Decimal(0)
     }
 };
 

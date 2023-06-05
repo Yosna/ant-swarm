@@ -82,8 +82,8 @@ class Colony {
                 property: 'innerHTML',
                 value: this.acquired
             },
-            colonyResourceProduction: {
-                selector: `#${this.resource.name}-production`,
+            colonyResourcePerSecond: {
+                selector: `#${this.resource.name}-per-second`,
                 property: 'innerHTML',
                 value: this.resourceGeneration
             }

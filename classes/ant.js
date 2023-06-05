@@ -164,18 +164,17 @@ class Ant {
     }
 
     get isUnlocked() {
-        const element = {
-            row: dom.getElement(`#${this.id}-row`),
-            stats: dom.getElement(`#${this.id}-stats`)
-        };
+        const antRow = dom.getElement(`#${this.id}-row`);
+        const antStats = dom.getElement(`#${this.id}-stats`);
 
         const isWithinRange = this.resource.total.greaterThan(this.baseCost.div(10));
         const isAvailable = this.acquired.greaterThan(0);
         const isUnlocked = isWithinRange || isAvailable;
-        const isHidden = element.row.classList.contains('hidden');
+        const isHidden = antRow.classList.contains('hidden');
+
         if (isUnlocked && isHidden) {
-            element.row.classList.remove('hidden');
-            element.stats.classList.remove('collapse');
+            antRow.classList.remove('hidden');
+            antStats.classList.remove('collapse');
             this.editSpecialCharacters();
         }
         return isUnlocked;

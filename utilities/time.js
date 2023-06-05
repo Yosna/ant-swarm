@@ -2,36 +2,41 @@ import Decimal from '../classes/decimal.mjs';
 import { stats } from '../index.js';
 
 const time = {
-    update: () => (stats.lastUpdate = Date.now()),
-
-    elapsed: (elapse) => {
-        const milliseconds = new Decimal(Date.now() - elapse);
-        let remainder = milliseconds;
-
-        const units = [
-            { name: 'days', suffix: 'd', divisor: 86400000 },
-            { name: 'hours', suffix: 'h', divisor: 3600000 },
-            { name: 'minutes', suffix: 'm', divisor: 60000 },
-            { name: 'seconds', suffix: 's', divisor: 1000 }
-        ];
-
-        const time = units.map(unit => {
-            const value = remainder.dividedBy(unit.divisor).floor();
-            const format = value.greaterThan(0) ? `${value}${unit.suffix}` : '';
-            remainder = remainder.minus(value.times(unit.divisor));
-            return format;
-        });
-
-        return { value: milliseconds, format: time.join(' ') };
-    },
-
-    get format() {
+    get timestamp() {
         const units = [
             `${(new Date()).getHours()}`,
             `${(new Date()).getMinutes()}`,
             `${(new Date()).getSeconds()}`
         ];
         return `[${units.join(':')}]:`;
+    },
+
+    get units() {
+        return [
+            { name: 'days', suffix: 'd', divisor: 86400000, empty: '' },
+            { name: 'hours', suffix: 'h', divisor: 3600000, empty: '' },
+            { name: 'minutes', suffix: 'm', divisor: 60000, empty: '' },
+            { name: 'seconds', suffix: 's', divisor: 1000, empty: '0s' }
+        ];
+    },
+
+    update: () => (stats.lastUpdate = Date.now()),
+
+    elapsed: function(elapse) {
+        const milliseconds = new Decimal(Date.now() - elapse);
+        const units = this.mapUnits(milliseconds).join(' ');
+
+        return { milliseconds, units };
+    },
+
+    mapUnits: function(remainder) {
+        return this.units.map(unit => {
+            const difference = remainder.dividedBy(unit.divisor).floor();
+            remainder = remainder.minus(difference.times(unit.divisor));
+            return difference.greaterThan(0)
+                ? `${difference}${unit.suffix}`
+                : `${unit.empty}`;
+        });
     }
 };
 

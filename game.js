@@ -7,7 +7,7 @@ import { stats, conditions } from './index.js';
 import { forageProgression } from './forage.js';
 import { iterateColonies, colonyProgression } from './colonies.js';
 
-const gameStatElements = {
+const elements = {
     creationDate: {
         selector: '#creation-date',
         property: 'innerHTML',
@@ -17,22 +17,19 @@ const gameStatElements = {
         selector: '#time-since-creation',
         property: 'innerHTML',
         get value() {
-            return time.elapsed(stats.firstUpdate).format;
+            return time.elapsed(stats.firstUpdate).units;
         }
     }
 };
 
-function offlineProgress() {
-    const offlineTime = time.elapsed(stats.lastUpdate);
-    const message = `Welcome back!\nYou were away for:\n${offlineTime.format}`;
+const offlineProgress = () => {
+    const offline = time.elapsed(stats.lastUpdate);
+    const message = `Welcome back!\nYou were away for:\n${offline.units}`;
     logger(message);
 
-    if (conditions.offlineProgression === false) {
-        logger('Offline progress disabled! Aborting progress...');
-        return;
-    }
+    if (conditions.offlineProgression === false) return;
 
-    let cycles = offlineTime.value.dividedBy(stats.tickSpeed).floor();
+    let cycles = offline.milliseconds.dividedBy(stats.tickSpeed).floor();
     let multiplier = new Decimal(1);
     // Cap the number of cycles to reduce loading time
     if (cycles.greaterThan(1000)) {
@@ -43,9 +40,9 @@ function offlineProgress() {
     for (let i = 0; i < cycles; i++) {
         generateProducts(multiplier);
     }
-}
+};
 
-function generateProducts(multiplier) {
+const generateProducts = (multiplier) => {
     for (const iteration of iterateColonies()) {
         if (iteration instanceof Ant) {
             const ant = iteration;
@@ -54,17 +51,17 @@ function generateProducts(multiplier) {
             ant.generate(production);
         }
     }
-}
+};
 
 // create the cycle that runs the game
-function gameProgression() {
+const gameProgression = () => {
     if (conditions.activeWindow.status) {
-        dom.updateElements(gameStatElements);
+        dom.updateElements(elements);
         forageProgression();
         colonyProgression();
         time.update();
     }
-}
+};
 
 export {
     offlineProgress,
