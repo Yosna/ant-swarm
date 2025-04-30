@@ -4,7 +4,7 @@ const resources = {
     food: {
         name: 'food',
         abbreviation: 'F',
-        total: new Decimal(1e5),
+        total: new Decimal(0),
         production: new Decimal(0)
     }
 };
