@@ -1,4 +1,4 @@
-import Decimal from '../classes/decimal.mjs';
+import Decimal from './decimal.mjs';
 import number from '../utilities/number.js';
 import dom from '../utilities/dom.js';
 import { stats, conditions } from '../index.js';

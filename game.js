@@ -1,4 +1,4 @@
-import Decimal from '../classes/decimal.mjs';
+import Decimal from './classes/decimal.mjs';
 import Ant from './classes/ant.js';
 import logger from './utilities/logger.js';
 import dom from './utilities/dom.js';
