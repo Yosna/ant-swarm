@@ -14,4 +14,4 @@ However, the current version is stable, interactable, and demonstrates an unders
 ## Live Deployment
 You can try the game [here](https://yosna.github.io/ant-swarm/)
 ## License
-- GNU General Public License v3.0; see [LICENSE](https://github.com/Yosna/Elden-Ring-Death-Counter/blob/main/LICENSE)
+- GNU General Public License v3.0; see [LICENSE](https://github.com/Yosna/ant-swarm/blob/main/LICENSE)
