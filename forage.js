@@ -128,6 +128,8 @@ const upgradeGatherRate = (selector) => {
     const cost = new Decimal(upgrade.dataset.cost);
     const boost = new Decimal(upgrade.dataset.boost);
 
+    console.log(resources.food.total.greaterThanOrEqualTo(cost));
+
     if (resources.food.total.greaterThanOrEqualTo(cost)) {
         resources.food.total = resources.food.total.minus(cost);
         stats.gatherRate.value = stats.gatherRate.value.times(boost);
