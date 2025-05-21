@@ -19,7 +19,7 @@ However, the current version is stable, interactable, and demonstrates an unders
 
 ## Live Deployment
 
-You can try the game [here](https://yosna.github.io/ant-swarm/)
+You can try the game [here](https://yosna.github.io/Ant-Swarm/)
 
 ## License
 
