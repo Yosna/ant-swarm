@@ -1,312 +1,510 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ant Swarm</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<body>
+  <body>
     <div class="window-container">
-        <div id="window-header"><h1>Ant Swarm</h1></div>
-        <div class="main-container" id="main-container">
-            <div class="menu-container" id="main-menu">
-                <div class="menu-button-container">
-                    <button type="button" class="menu-button" id="recruitment-container-button">Recruitment</button>
-                    <button type="button" class="menu-button hidden" id="garden-container-button">Garden</button>
-                </div>
-                <div class="save-button-container">
-                    <p>Save Options</p>
-                    <button type="button" id="save-button" style="width:100%">Save Game</button>
-                    <button type="button" class="import-export-toggle" data-modal="import-export-modal" style="width:60%;">Import/Export</button>
-                    <button type="button" id="delete-button" style="width:40%;">Delete</button>
-                </div>
-                <div class="settings-button-container">
-                    <button type="button" class="settings-toggle" data-modal="settings-modal" style="width:60%">Settings</button>
-                    <button type="button" class="stats-toggle" data-modal="stats-modal" style="width:40%">Stats</button>
-                </div>
-            </div>
-            <div class="game-container">
-                <div class="game-container-header" id="resource-container">
-                    <p class="resource"><span class="underline">Food</span>: <span id="food-total">0</span> (<span id="food-per-second">0</span>/s)</p>
-                </div>
-                <div class="game-container-body" id="recruitment-container">
-                    <div class="recruitment-container-body" id="garden-colony-recruitment-container">
-                        <div class="recruitment-row hidden" id="small-garden-worker-row">
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Recruited</span>: <span id="small-garden-worker-recruited">0</span></p>
-                                    <p><span class="underline">Acquired</span>:  <span id="small-garden-worker-acquired">0</span></p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Cost</span>: <span id="small-garden-worker-cost">0</span></p>
-                                    <p><span class="underline">Prod</span>: <span id="small-garden-worker-production">0</span> /s</p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <button type="button" class="recruit-button" id="small-garden-worker-button" data-name="Small Garden Worker">
-                                    Small Garden Worker<br>(x<span id="small-garden-worker-quantity" data-name="Small Garden Worker">1</span>)
-                                </button>
-                            </div>
-                        </div>
-                        <div class="recruitment-row hidden" id="regular-garden-worker-row">
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Recruited</span>: <span id="regular-garden-worker-recruited">0</span></p>
-                                    <p><span class="underline">Acquired</span>:  <span id="regular-garden-worker-acquired">0</span></p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Cost</span>: <span id="regular-garden-worker-cost">0</span></p>
-                                    <p><span class="underline">Prod</span>: <span id="regular-garden-worker-production">0</span> /s</p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <button type="button" class="recruit-button" id="regular-garden-worker-button" data-name="Regular Garden Worker">
-                                    Regular Garden Worker<br>(x<span id="regular-garden-worker-quantity" data-name="Regular Garden Worker">1</span>)
-                                </button>
-                            </div>
-                        </div>
-                        <div class="recruitment-row hidden" id="large-garden-worker-row">
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Recruited</span>: <span id="large-garden-worker-recruited">0</span></p>
-                                    <p><span class="underline">Acquired</span>:  <span id="large-garden-worker-acquired">0</span></p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Cost</span>: <span id="large-garden-worker-cost">0</span></p>
-                                    <p><span class="underline">Prod</span>: <span id="large-garden-worker-production">0</span> /s</p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <button type="button" class="recruit-button" id="large-garden-worker-button" data-name="Large Garden Worker">
-                                    Large Garden Worker<br>(x<span id="large-garden-worker-quantity" data-name="Large Garden Worker">1</span>)
-                                </button>
-                            </div>
-                        </div>
-                        <div class="recruitment-row hidden" id="small-garden-drone-row">
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Recruited</span>: <span id="small-garden-drone-recruited">0</span></p>
-                                    <p><span class="underline">Acquired</span>:  <span id="small-garden-drone-acquired">0</span></p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Cost</span>: <span id="small-garden-drone-cost">0</span></p>
-                                    <p><span class="underline">Prod</span>: <span id="small-garden-drone-production">0</span> /s</p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <button type="button" class="recruit-button" id="small-garden-drone-button" data-name="Small Garden Drone">
-                                    Small Garden Drone<br>(x<span id="small-garden-drone-quantity" data-name="Small Garden Drone">1</span>)
-                                </button>
-                            </div>
-                        </div>
-                        <div class="recruitment-row hidden" id="regular-garden-drone-row">
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Recruited</span>: <span id="regular-garden-drone-recruited">0</span></p>
-                                    <p><span class="underline">Acquired</span>:  <span id="regular-garden-drone-acquired">0</span></p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Cost</span>: <span id="regular-garden-drone-cost">0</span></p>
-                                    <p><span class="underline">Prod</span>: <span id="regular-garden-drone-production">0</span> /s</p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <button type="button" class="recruit-button" id="regular-garden-drone-button" data-name="Regular Garden Drone">
-                                    Regular Garden Drone<br>(x<span id="regular-garden-drone-quantity" data-name="Regular Garden Drone">1</span>)
-                                </button>
-                            </div>
-                        </div>
-                        <div class="recruitment-row hidden" id="large-garden-drone-row">
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Recruited</span>: <span id="large-garden-drone-recruited">0</span></p>
-                                    <p><span class="underline">Acquired</span>:  <span id="large-garden-drone-acquired">0</span></p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Cost</span>: <span id="large-garden-drone-cost">0</span></p>
-                                    <p><span class="underline">Prod</span>: <span id="large-garden-drone-production">0</span> /s</p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <button type="button" class="recruit-button" id="large-garden-drone-button" data-name="Large Garden Drone">
-                                    Large Garden Drone<br>(x<span id="large-garden-drone-quantity" data-name="Large Garden Drone">1</span>)
-                                </button>
-                            </div>
-                        </div>
-                        <div class="recruitment-row hidden" id="garden-queen-row">
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Recruited</span>: <span id="garden-queen-recruited">0</span></p>
-                                    <p><span class="underline">Acquired</span>:  <span id="garden-queen-acquired">0</span></p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <div class="recruitment-text">
-                                    <p><span class="underline">Cost</span>: <span id="garden-queen-cost">0</span></p>
-                                    <p><span class="underline">Prod</span>: <span id="garden-queen-production">0</span> /s</p>
-                                </div>
-                            </div>
-                            <div class="recruitment-cell">
-                                <button type="button" class="recruit-button" id="garden-queen-button" data-name="Garden Queen">
-                                    Garden Queen<br>(x<span id="garden-queen-quantity" data-name="Garden Queen">1</span>)
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="game-container-footer" id="recruitment-container-footer">
-                        <div class="upgrade-button-container" id="garden-upgrade-container">
-                        </div>
-                        <div class="forage-button-container">
-                            <button type="button" id="forage-button">Forage</button>
-                        </div>
-                        <div class="recruit-quantity-container">
-                            <div id="quantity-column">
-                                <span style="text-decoration: underline;">Quantity:</span>
-                                <select class="quantity-options" id="quantity-selection">
-                                    <option value="1">Buy 1</option>
-                                    <option value="5">Buy 5</option>
-                                    <option value="10">Buy 10</option>
-                                    <option value="25">Buy 25</option>
-                                    <option value="50">Buy 50</option>
-                                    <option value="100">Buy 100</option>
-                                    <option value="max">Buy Max</option>
-                                </select>
-                            </div>
-                            <div id="rounding-column">
-                                <span style="text-decoration: underline;">Rounding:</span>
-                                <button type="button" class="quantity-options" data-bool="false" id="rounding-button">
-                                    <span id="rounding-status">off</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="game-container-body collapse" id="garden-container">
-                </div>
-            </div>
-            <div class="menu-container" id="sub-menu">
-                <div class="submenu-button-container">
-                    <button type="button" class="menu-button recruitment-submenu-button"id="garden-colony-submenu-button">Garden Ants</button>
-                    <button type="button" class="menu-button recruitment-submenu-button hidden" id="harvester-ant-submenu-button">Harvester Ants</button>
-                </div>
-                <div class="message-log-container">
-                    <div class="message-log-header">
-                        <p>Message Log</p>
-                        <button type="button" id="clear-log-button">Clear</button>
-                    </div>
-                    <div class="message-log"></div>
-                </div>
-            </div>
+      <div id="window-header"><h1>Ant Swarm</h1></div>
+      <div class="main-container" id="main-container">
+        <div class="menu-container" id="main-menu">
+          <div class="menu-button-container">
+            <button type="button" class="menu-button" id="recruitment-container-button">
+              Recruitment
+            </button>
+            <button type="button" class="menu-button hidden" id="garden-container-button">
+              Garden
+            </button>
+          </div>
+          <div class="save-button-container">
+            <p>Save Options</p>
+            <button type="button" id="save-button" style="width: 100%">Save Game</button>
+            <button
+              type="button"
+              class="import-export-toggle"
+              data-modal="import-export-modal"
+              style="width: 60%"
+            >
+              Import/Export
+            </button>
+            <button type="button" id="delete-button" style="width: 40%">Delete</button>
+          </div>
+          <div class="settings-button-container">
+            <button
+              type="button"
+              class="settings-toggle"
+              data-modal="settings-modal"
+              style="width: 60%"
+            >
+              Settings
+            </button>
+            <button type="button" class="stats-toggle" data-modal="stats-modal" style="width: 40%">
+              Stats
+            </button>
+          </div>
         </div>
+        <div class="game-container">
+          <div class="game-container-header" id="resource-container">
+            <p class="resource">
+              <span class="underline">Food</span>: <span id="food-total">0</span> (<span
+                id="food-per-second"
+                >0</span
+              >/s)
+            </p>
+          </div>
+          <div class="game-container-body" id="recruitment-container">
+            <div class="recruitment-container-body" id="garden-colony-recruitment-container">
+              <div class="recruitment-row hidden" id="small-garden-worker-row">
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Recruited</span>:
+                      <span id="small-garden-worker-recruited">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Acquired</span>:
+                      <span id="small-garden-worker-acquired">0</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Cost</span>:
+                      <span id="small-garden-worker-cost">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Prod</span>:
+                      <span id="small-garden-worker-production">0</span> /s
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <button
+                    type="button"
+                    class="recruit-button"
+                    id="small-garden-worker-button"
+                    data-name="Small Garden Worker"
+                  >
+                    Small Garden Worker<br />(x<span
+                      id="small-garden-worker-quantity"
+                      data-name="Small Garden Worker"
+                      >1</span
+                    >)
+                  </button>
+                </div>
+              </div>
+              <div class="recruitment-row hidden" id="regular-garden-worker-row">
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Recruited</span>:
+                      <span id="regular-garden-worker-recruited">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Acquired</span>:
+                      <span id="regular-garden-worker-acquired">0</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Cost</span>:
+                      <span id="regular-garden-worker-cost">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Prod</span>:
+                      <span id="regular-garden-worker-production">0</span> /s
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <button
+                    type="button"
+                    class="recruit-button"
+                    id="regular-garden-worker-button"
+                    data-name="Regular Garden Worker"
+                  >
+                    Regular Garden Worker<br />(x<span
+                      id="regular-garden-worker-quantity"
+                      data-name="Regular Garden Worker"
+                      >1</span
+                    >)
+                  </button>
+                </div>
+              </div>
+              <div class="recruitment-row hidden" id="large-garden-worker-row">
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Recruited</span>:
+                      <span id="large-garden-worker-recruited">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Acquired</span>:
+                      <span id="large-garden-worker-acquired">0</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Cost</span>:
+                      <span id="large-garden-worker-cost">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Prod</span>:
+                      <span id="large-garden-worker-production">0</span> /s
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <button
+                    type="button"
+                    class="recruit-button"
+                    id="large-garden-worker-button"
+                    data-name="Large Garden Worker"
+                  >
+                    Large Garden Worker<br />(x<span
+                      id="large-garden-worker-quantity"
+                      data-name="Large Garden Worker"
+                      >1</span
+                    >)
+                  </button>
+                </div>
+              </div>
+              <div class="recruitment-row hidden" id="small-garden-drone-row">
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Recruited</span>:
+                      <span id="small-garden-drone-recruited">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Acquired</span>:
+                      <span id="small-garden-drone-acquired">0</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Cost</span>:
+                      <span id="small-garden-drone-cost">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Prod</span>:
+                      <span id="small-garden-drone-production">0</span> /s
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <button
+                    type="button"
+                    class="recruit-button"
+                    id="small-garden-drone-button"
+                    data-name="Small Garden Drone"
+                  >
+                    Small Garden Drone<br />(x<span
+                      id="small-garden-drone-quantity"
+                      data-name="Small Garden Drone"
+                      >1</span
+                    >)
+                  </button>
+                </div>
+              </div>
+              <div class="recruitment-row hidden" id="regular-garden-drone-row">
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Recruited</span>:
+                      <span id="regular-garden-drone-recruited">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Acquired</span>:
+                      <span id="regular-garden-drone-acquired">0</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Cost</span>:
+                      <span id="regular-garden-drone-cost">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Prod</span>:
+                      <span id="regular-garden-drone-production">0</span> /s
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <button
+                    type="button"
+                    class="recruit-button"
+                    id="regular-garden-drone-button"
+                    data-name="Regular Garden Drone"
+                  >
+                    Regular Garden Drone<br />(x<span
+                      id="regular-garden-drone-quantity"
+                      data-name="Regular Garden Drone"
+                      >1</span
+                    >)
+                  </button>
+                </div>
+              </div>
+              <div class="recruitment-row hidden" id="large-garden-drone-row">
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Recruited</span>:
+                      <span id="large-garden-drone-recruited">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Acquired</span>:
+                      <span id="large-garden-drone-acquired">0</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Cost</span>:
+                      <span id="large-garden-drone-cost">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Prod</span>:
+                      <span id="large-garden-drone-production">0</span> /s
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <button
+                    type="button"
+                    class="recruit-button"
+                    id="large-garden-drone-button"
+                    data-name="Large Garden Drone"
+                  >
+                    Large Garden Drone<br />(x<span
+                      id="large-garden-drone-quantity"
+                      data-name="Large Garden Drone"
+                      >1</span
+                    >)
+                  </button>
+                </div>
+              </div>
+              <div class="recruitment-row hidden" id="garden-queen-row">
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Recruited</span>:
+                      <span id="garden-queen-recruited">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Acquired</span>:
+                      <span id="garden-queen-acquired">0</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <div class="recruitment-text">
+                    <p>
+                      <span class="underline">Cost</span>: <span id="garden-queen-cost">0</span>
+                    </p>
+                    <p>
+                      <span class="underline">Prod</span>:
+                      <span id="garden-queen-production">0</span> /s
+                    </p>
+                  </div>
+                </div>
+                <div class="recruitment-cell">
+                  <button
+                    type="button"
+                    class="recruit-button"
+                    id="garden-queen-button"
+                    data-name="Garden Queen"
+                  >
+                    Garden Queen<br />(x<span id="garden-queen-quantity" data-name="Garden Queen"
+                      >1</span
+                    >)
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="game-container-footer" id="recruitment-container-footer">
+              <div class="upgrade-button-container" id="garden-upgrade-container"></div>
+              <div class="forage-button-container">
+                <button type="button" id="forage-button">Forage</button>
+              </div>
+              <div class="recruit-quantity-container">
+                <div id="quantity-column">
+                  <span style="text-decoration: underline">Quantity:</span>
+                  <select class="quantity-options" id="quantity-selection">
+                    <option value="1">Buy 1</option>
+                    <option value="5">Buy 5</option>
+                    <option value="10">Buy 10</option>
+                    <option value="25">Buy 25</option>
+                    <option value="50">Buy 50</option>
+                    <option value="100">Buy 100</option>
+                    <option value="max">Buy Max</option>
+                  </select>
+                </div>
+                <div id="rounding-column">
+                  <span style="text-decoration: underline">Rounding:</span>
+                  <button
+                    type="button"
+                    class="quantity-options"
+                    data-bool="false"
+                    id="rounding-button"
+                  >
+                    <span id="rounding-status">off</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="game-container-body collapse" id="garden-container"></div>
+        </div>
+        <div class="menu-container" id="sub-menu">
+          <div class="submenu-button-container">
+            <button
+              type="button"
+              class="menu-button recruitment-submenu-button"
+              id="garden-colony-submenu-button"
+            >
+              Garden Ants
+            </button>
+            <button
+              type="button"
+              class="menu-button recruitment-submenu-button hidden"
+              id="harvester-ant-submenu-button"
+            >
+              Harvester Ants
+            </button>
+          </div>
+          <div class="message-log-container">
+            <div class="message-log-header">
+              <p>Message Log</p>
+              <button type="button" id="clear-log-button">Clear</button>
+            </div>
+            <div class="message-log"></div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal collapse" id="settings-modal">
-        <h3 class="underline">Settings</h3>
-        <div id="settings-modal-body">
-            <div class="modal-list" id="settings-list"><hr>
-                <button type="button" id="offline-progression-button" data-name="Offline Progression">Offline Progression (<span id="offline-progression-status">on</span>)</button><hr>
-                <button type="button" id="auto-recruit-button" data-name="Auto Recruit">Auto Recruit (<span id="auto-recruit-status">on</span>)</button><hr>
-                <button type="button" class="highlight" id="auto-save-button" data-name="Auto Save">Auto Save (<span id="auto-save-status">on</span>)</button><hr>
-            </div>
+      <h3 class="underline">Settings</h3>
+      <div id="settings-modal-body">
+        <div class="modal-list" id="settings-list">
+          <hr />
+          <button type="button" id="offline-progression-button" data-name="Offline Progression">
+            Offline Progression (<span id="offline-progression-status">on</span>)
+          </button>
+          <hr />
+          <button type="button" id="auto-recruit-button" data-name="Auto Recruit">
+            Auto Recruit (<span id="auto-recruit-status">on</span>)
+          </button>
+          <hr />
+          <button type="button" class="highlight" id="auto-save-button" data-name="Auto Save">
+            Auto Save (<span id="auto-save-status">on</span>)
+          </button>
+          <hr />
         </div>
+      </div>
     </div>
     <div class="modal collapse" id="stats-modal">
-        <h3 class="underline">Stats</h3>
-        <div id="stats-modal-body">
-            <div class="modal-list" id="stat-list"><hr>
-                <div class="stat-entry">
-                    <span class="underline">Creation Date</span>:
-                    <span class="stat-entry-value" id="creation-date">0</span>
-                </div><hr>
-                <div class="stat-entry">
-                    <span class="underline">Time Since Creation</span>:
-                    <span class="stat-entry-value" id="time-since-creation">0</span>
-                </div><hr>
-                <div class="stat-entry">
-                    <span class="underline">Foraged</span>:
-                    <span class="stat-entry-value">
-                        <span id="forage-total">0</span> times
-                    </span>
-                </div><hr>
-                <div class="stat-entry">
-                    <span class="underline">Gather Rate</span>:
-                    <span class="stat-entry-value" id="gather-rate">0.1</span>
-                </div><hr>
-                <div class="stat-entry" id="garden-colony-stats">
-                    <span class="underline">Garden Ants</span>:
-                        <span class="stat-entry-value">
-                            <span id="garden-colony-total">0</span>&nbsp;
-                            <span class="arrow-pointer" id="garden-colony-arrow">&#9650;</span>
-                        </span>
-                    <div class="stat-subentries collapse" id="garden-colony-subentries">
-                        <div>&#x2502;</div>
-                        <div class="collapse" id="small-garden-worker-stats">
-                            <span id="SGW-se-char">&#x2514;&#x2500;</span> 
-                            <span class="underline">Small Workers</span>:
-                            <span class="stat-subentry-value" id="small-garden-worker-stat">0</span>
-                        </div>
-                        <div class="collapse" id="regular-garden-worker-stats">
-                            <span id="RGW-se-char">&#x2514;&#x2500;</span> 
-                            <span class="underline">Regular Workers</span>:
-                            <span class="stat-subentry-value" id="regular-garden-worker-stat">0</span>
-                        </div>
-                        <div class="collapse" id="large-garden-worker-stats">
-                            <span id="LGW-se-char">&#x2514;&#x2500;</span> 
-                            <span class="underline">Large Workers</span>:
-                            <span class="stat-subentry-value" id="large-garden-worker-stat">0</span>
-                        </div>
-                        <div class="collapse" id="small-garden-drone-stats">
-                            <span id="SGD-se-char">&#x2514;&#x2500;</span> 
-                            <span class="underline">Small Drones</span>:
-                            <span class="stat-subentry-value" id="small-garden-drone-stat">0</span>
-                        </div>
-                        <div class="collapse" id="regular-garden-drone-stats">
-                            <span id="RGD-se-char">&#x2514;&#x2500;</span> 
-                            <span class="underline">Regular Drones</span>:
-                            <span class="stat-subentry-value" id="regular-garden-drone-stat">0</span>
-                        </div>
-                        <div class="collapse" id="large-garden-drone-stats">
-                            <span id="LGD-se-char">&#x2514;&#x2500;</span> 
-                            <span class="underline">Large Drones</span>:
-                            <span class="stat-subentry-value" id="large-garden-drone-stat">0</span>
-                        </div>
-                        <div class="collapse" id="garden-queen-stats">
-                            <span id="GQ-se-char">&#x2514;&#x2500;</span> 
-                            <span class="underline">Queens</span>:
-                            <span class="stat-subentry-value" id="garden-queen-stat">0</span>
-                        </div>
-                    </div>
-                </div><hr>
+      <h3 class="underline">Stats</h3>
+      <div id="stats-modal-body">
+        <div class="modal-list" id="stat-list">
+          <hr />
+          <div class="stat-entry">
+            <span class="underline">Creation Date</span>:
+            <span class="stat-entry-value" id="creation-date">0</span>
+          </div>
+          <hr />
+          <div class="stat-entry">
+            <span class="underline">Time Since Creation</span>:
+            <span class="stat-entry-value" id="time-since-creation">0</span>
+          </div>
+          <hr />
+          <div class="stat-entry">
+            <span class="underline">Foraged</span>:
+            <span class="stat-entry-value"> <span id="forage-total">0</span> times </span>
+          </div>
+          <hr />
+          <div class="stat-entry">
+            <span class="underline">Gather Rate</span>:
+            <span class="stat-entry-value" id="gather-rate">0.1</span>
+          </div>
+          <hr />
+          <div class="stat-entry" id="garden-colony-stats">
+            <span class="underline">Garden Ants</span>:
+            <span class="stat-entry-value">
+              <span id="garden-colony-total">0</span>&nbsp;
+              <span class="arrow-pointer" id="garden-colony-arrow">&#9650;</span>
+            </span>
+            <div class="stat-subentries collapse" id="garden-colony-subentries">
+              <div>&#x2502;</div>
+              <div class="collapse" id="small-garden-worker-stats">
+                <span id="SGW-se-char">&#x2514;&#x2500;</span>
+                <span class="underline">Small Workers</span>:
+                <span class="stat-subentry-value" id="small-garden-worker-stat">0</span>
+              </div>
+              <div class="collapse" id="regular-garden-worker-stats">
+                <span id="RGW-se-char">&#x2514;&#x2500;</span>
+                <span class="underline">Regular Workers</span>:
+                <span class="stat-subentry-value" id="regular-garden-worker-stat">0</span>
+              </div>
+              <div class="collapse" id="large-garden-worker-stats">
+                <span id="LGW-se-char">&#x2514;&#x2500;</span>
+                <span class="underline">Large Workers</span>:
+                <span class="stat-subentry-value" id="large-garden-worker-stat">0</span>
+              </div>
+              <div class="collapse" id="small-garden-drone-stats">
+                <span id="SGD-se-char">&#x2514;&#x2500;</span>
+                <span class="underline">Small Drones</span>:
+                <span class="stat-subentry-value" id="small-garden-drone-stat">0</span>
+              </div>
+              <div class="collapse" id="regular-garden-drone-stats">
+                <span id="RGD-se-char">&#x2514;&#x2500;</span>
+                <span class="underline">Regular Drones</span>:
+                <span class="stat-subentry-value" id="regular-garden-drone-stat">0</span>
+              </div>
+              <div class="collapse" id="large-garden-drone-stats">
+                <span id="LGD-se-char">&#x2514;&#x2500;</span>
+                <span class="underline">Large Drones</span>:
+                <span class="stat-subentry-value" id="large-garden-drone-stat">0</span>
+              </div>
+              <div class="collapse" id="garden-queen-stats">
+                <span id="GQ-se-char">&#x2514;&#x2500;</span>
+                <span class="underline">Queens</span>:
+                <span class="stat-subentry-value" id="garden-queen-stat">0</span>
+              </div>
             </div>
+          </div>
+          <hr />
         </div>
+      </div>
     </div>
     <div class="modal collapse" id="import-export-modal">
-        <h3 class="underline">Import/Export</h3>
-        <textarea id="import-export-field"></textarea>
-        <div id="import-export-button-container">
-            <button type="button" id="import-button">Import Save</button>
-            <button type="button" class="export-button">Export Save</button>
-            <button type="button" class="export-button">Export as File</button>
-            <button type="button" class="import-export-toggle" data-modal="import-export-modal">Close</button>
-        </div>
+      <h3 class="underline">Import/Export</h3>
+      <textarea id="import-export-field"></textarea>
+      <div id="import-export-button-container">
+        <button type="button" id="import-button">Import Save</button>
+        <button type="button" class="export-button">Export Save</button>
+        <button type="button" class="export-button">Export as File</button>
+        <button type="button" class="import-export-toggle" data-modal="import-export-modal">
+          Close
+        </button>
+      </div>
     </div>
     <script type="module" src="index.js"></script>
     <script type="module" src="init.js"></script>
-</body>
-
+  </body>
 </html>
